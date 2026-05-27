@@ -31,6 +31,26 @@ window.LAB_I18N = {
     },
     sections: {
       about: { kicker: "01 — About", title: "主宰について" },
+      manifesto: {
+        kicker: "PRINCIPLES",
+        items: [
+          {
+            no: "01",
+            title: "本人主権の、データへ。",
+            body: "誰のものでもなかったパーソナルデータを、本人の手に戻す。分散 PDS と同意設計を、研究の前提条件にする。",
+          },
+          {
+            no: "02",
+            title: "個人最適化を、現場で。",
+            body: "実験室の中ではなく、教育・介護・地域コミュニティ。実際に人が暮らす場所で、Personal AI を機能させる。",
+          },
+          {
+            no: "03",
+            title: "見える思考、再利用できる知。",
+            body: "Graph-Document による思考の構造化と協働編集。学んだことが消えずに残り、次の学びの足場になる環境を。",
+          },
+        ],
+      },
       research: { kicker: "02 — Research", title: "研究プロジェクト" },
       map: {
         kicker: "03 — Research Map",
@@ -107,6 +127,26 @@ window.LAB_I18N = {
     },
     sections: {
       about: { kicker: "01 — About", title: "About the PI" },
+      manifesto: {
+        kicker: "PRINCIPLES",
+        items: [
+          {
+            no: "01",
+            title: "Data, returned to the person.",
+            body: "Personal data shouldn't belong to anyone but the person it's about. We make distributed PDS and consent design the precondition of every research thread.",
+          },
+          {
+            no: "02",
+            title: "Personalization, in the field.",
+            body: "Not in the lab, but in classrooms, eldercare homes, and local communities. We make Personal AI work in the places where people actually live.",
+          },
+          {
+            no: "03",
+            title: "Thinking made visible, knowledge made reusable.",
+            body: "Graph-Documents as a substrate for visible reasoning and shared learning. What was thought once should remain — to scaffold what comes next.",
+          },
+        ],
+      },
       research: { kicker: "02 — Research", title: "Research projects" },
       map: {
         kicker: "03 — Research Map",

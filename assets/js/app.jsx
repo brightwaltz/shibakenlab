@@ -254,7 +254,9 @@ function App() {
       <div className="cursor" id="cursor-glow" aria-hidden="true"></div>
       <Nav lang={lang} setLang={setLang} />
       <HeroSection lang={lang} mode={tw.heroMode} />
+      <window.KeywordTicker lang={lang} />
       <About lang={lang} />
+      <window.Manifesto lang={lang} />
       <ResearchThemes lang={lang} />
       <MapSection lang={lang} />
       <Gallery lang={lang} />
@@ -273,7 +275,53 @@ function App() {
         grain={tw.grain}
         setGrain={(v) => setTweak("grain", v)}
       />
+      <TweaksTrigger />
     </>
+  );
+}
+
+// Floating button that opens the Tweaks panel on the deployed site.
+// (The panel itself only opens via postMessage; in the editor host the
+//  toolbar provides the toggle, but on production we surface it ourselves.)
+function TweaksTrigger() {
+  const [open, setOpen] = React.useState(false);
+  React.useEffect(() => {
+    const onMsg = (e) => {
+      const ty = e?.data?.type;
+      if (ty === "__edit_mode_dismissed") setOpen(false);
+    };
+    window.addEventListener("message", onMsg);
+    return () => window.removeEventListener("message", onMsg);
+  }, []);
+  const toggle = () => {
+    const next = !open;
+    setOpen(next);
+    window.postMessage(
+      { type: next ? "__activate_edit_mode" : "__deactivate_edit_mode" },
+      "*"
+    );
+  };
+  return (
+    <button
+      type="button"
+      className="tweaks-trigger"
+      onClick={toggle}
+      aria-pressed={open}
+      aria-label="デザイン調整パネルを開く"
+      title="Tweaks — 色・3Dモードを切り替え"
+    >
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" strokeWidth="2"
+           strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="6" cy="6" r="2"/>
+        <path d="M6 8v12M6 2v2"/>
+        <circle cx="12" cy="14" r="2"/>
+        <path d="M12 16v4M12 2v10"/>
+        <circle cx="18" cy="9" r="2"/>
+        <path d="M18 11v9M18 2v5"/>
+      </svg>
+      <span>Tweaks</span>
+    </button>
   );
 }
 

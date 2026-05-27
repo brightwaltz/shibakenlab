@@ -55,18 +55,28 @@ function ResearchMap() {
       .attr("stroke", (d) => palette(d.group))
       .attr("stroke-width", (d) => d.group === "theme" ? 2 : 1);
 
+    // Labels:
+    //   - Theme nodes always show their label (centered above the circle).
+    //   - Keyword / paper / project labels appear only on the node's own
+    //     hover, eliminating the dense label collisions in the static view.
     nodeSel.append("text")
+      .attr("class", "map-node__label")
       .text((d) => d.label)
-      .attr("x", (d) => radius(d.group) + 8)
-      .attr("y", 4);
+      .attr("text-anchor", (d) => d.group === "theme" ? "middle" : "start")
+      .attr("x", (d) => d.group === "theme" ? 0 : radius(d.group) + 8)
+      .attr("y", (d) => d.group === "theme" ? -(radius(d.group) + 10) : 4);
 
     const sim = d3.forceSimulation(data.nodes)
-      .force("link", d3.forceLink(data.links).id((d) => d.id).distance((l) =>
-        (l.source.group === "theme" && l.target.group === "theme") ? 140 : 70))
-      .force("charge", d3.forceManyBody().strength((d) => d.group === "theme" ? -380 : -90))
+      .force("link", d3.forceLink(data.links).id((d) => d.id).distance((l) => {
+        // theme<->theme: medium spacing; theme<->other: longer; others: shorter
+        if (l.source.group === "theme" && l.target.group === "theme") return 200;
+        if (l.source.group === "theme" || l.target.group === "theme") return 110;
+        return 70;
+      }))
+      .force("charge", d3.forceManyBody().strength((d) => d.group === "theme" ? -700 : -160))
       .force("center", d3.forceCenter(W / 2, H / 2))
-      .force("collide", d3.forceCollide((d) => radius(d.group) + 14))
-      .alpha(1).alphaDecay(0.025);
+      .force("collide", d3.forceCollide((d) => radius(d.group) + (d.group === "theme" ? 36 : 22)))
+      .alpha(1).alphaDecay(0.022);
 
     sim.on("tick", () => {
       // Clamp node positions inside the SVG so labels don't escape the wrap.
@@ -104,9 +114,12 @@ function ResearchMap() {
       nodeSel.classed("is-dim", (x) => !ns.has(x.id));
       linkSel.classed("is-dim", (l) =>
         !(l.source.id === d.id || l.target.id === d.id));
+      // Reveal labels of all neighbors while hovering.
+      nodeSel.classed("is-focused", (x) => ns.has(x.id));
     }).on("mouseleave", () => {
       nodeSel.classed("is-dim", false);
       linkSel.classed("is-dim", false);
+      nodeSel.classed("is-focused", false);
     });
 
     // Click any node → scroll to the corresponding research item.

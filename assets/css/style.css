@@ -277,6 +277,9 @@ button { font: inherit; color: inherit; }
   font-size: var(--type-h2); letter-spacing: -0.005em; line-height: 1.08;
   margin: 12px 0 0; font-weight: 600; text-wrap: balance;
 }
+/* Short JA titles (e.g. 「業績」, 「更新情報」) look weak at default scale;
+   bump them up so they hold the page. */
+.section__title:not(:has(*)):lang(ja) { font-size: clamp(32px, 4.4vw, 56px); }
 .section__sub {
   color: var(--c-ink-2); max-width: 56ch; margin: 0;
 }
@@ -329,7 +332,13 @@ button { font: inherit; color: inherit; }
   border: 1px solid var(--c-line);
   font-size: var(--type-small); color: var(--c-ink);
 }
-.about-alt b { letter-spacing: 0.06em; text-transform: uppercase; font-size: var(--type-micro); display: block; margin-bottom: 4px; color: var(--c-ink-3); }
+.about-alt b {
+  letter-spacing: 0.08em; text-transform: uppercase;
+  font-size: var(--type-micro); display: block; margin-bottom: 6px;
+  background: var(--grad-accent);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  font-weight: 600;
+}
 
 .about-links { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
 .chip {
@@ -342,25 +351,153 @@ button { font: inherit; color: inherit; }
 .chip:hover { color: var(--c-ink); border-color: rgba(255,255,255,0.25); transform: translateY(-2px); }
 .chip svg { width: 12px; height: 12px; }
 
+/* ── Keyword ticker (Now exploring belt) ──────────────────────────────────── */
+.ticker {
+  position: relative; z-index: 3;
+  display: flex; align-items: center; gap: 24px;
+  margin-top: -60px; margin-bottom: -20px;
+  padding: 16px var(--pad-x);
+  border-top: 1px solid var(--c-line-2);
+  border-bottom: 1px solid var(--c-line-2);
+  background: rgba(5, 8, 24, 0.6);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+          backdrop-filter: blur(12px) saturate(140%);
+  overflow: hidden;
+}
+.ticker__label {
+  flex-shrink: 0;
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: var(--type-micro); letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--c-ink-3);
+}
+.ticker__label::before {
+  content: ""; width: 8px; height: 8px; border-radius: 50%;
+  background: var(--c-a1);
+  box-shadow: 0 0 12px var(--c-a1);
+  animation: tickerPulse 1.8s ease-in-out infinite;
+}
+@keyframes tickerPulse {
+  0%, 100% { opacity: 0.4; transform: scale(0.9); }
+  50%      { opacity: 1;   transform: scale(1.15); }
+}
+.ticker__track {
+  flex: 1; overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 60px, #000 calc(100% - 60px), transparent);
+          mask-image: linear-gradient(90deg, transparent, #000 60px, #000 calc(100% - 60px), transparent);
+}
+.ticker__row {
+  display: flex; gap: 32px; align-items: center;
+  animation: tickerMarquee 60s linear infinite;
+  width: max-content;
+}
+@keyframes tickerMarquee {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.ticker__chip {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: var(--type-small); letter-spacing: 0.04em;
+  color: var(--c-ink-2);
+  white-space: nowrap;
+}
+.ticker__dot {
+  width: 4px; height: 4px; border-radius: 50%;
+  background: var(--grad-accent);
+}
+
+/* ── Manifesto (three-principle statement section) ────────────────────────── */
+.manifesto {
+  position: relative;
+  padding: clamp(96px, 12vw, 180px) var(--pad-x);
+  background:
+    radial-gradient(80vw 60vw at 50% 0%,
+      color-mix(in oklab, var(--c-a2) 14%, transparent), transparent 60%);
+}
+.manifesto__rule {
+  position: absolute; left: var(--pad-x); right: var(--pad-x); top: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--c-line), transparent);
+}
+.manifesto__kicker {
+  font-size: var(--type-micro); letter-spacing: 0.24em; text-transform: uppercase;
+  color: var(--c-ink-3);
+  margin-bottom: clamp(28px, 4vw, 56px);
+}
+.manifesto__grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: clamp(28px, 4vw, 64px);
+}
+@media (max-width: 880px) {
+  .manifesto__grid { grid-template-columns: 1fr; gap: 40px; }
+}
+.manifesto__item {
+  border-top: 1px solid var(--c-line);
+  padding-top: 22px;
+}
+.manifesto__no {
+  font-size: var(--type-micro); letter-spacing: 0.12em;
+  font-variant-numeric: tabular-nums;
+  background: var(--grad-accent);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  margin-bottom: 14px;
+  font-weight: 600;
+}
+.manifesto__title {
+  font-size: clamp(22px, 2.4vw, 32px);
+  line-height: 1.18; letter-spacing: -0.01em;
+  margin: 0 0 16px; font-weight: 600;
+  text-wrap: balance;
+}
+.manifesto__body {
+  font-size: var(--type-small); line-height: 1.78;
+  color: var(--c-ink-2); margin: 0;
+  text-wrap: pretty;
+}
+
 /* ── Research theme cards ─────────────────────────────────────────────────── */
 .themes {
   display: grid; grid-template-columns: repeat(12, 1fr); gap: clamp(14px, 1.6vw, 22px);
 }
 .theme {
   position: relative;
-  grid-column: span 4;
+  grid-column: span 6;
   padding: clamp(22px, 2.6vw, 34px);
   min-height: 260px;
   display: flex; flex-direction: column; gap: 14px;
   overflow: hidden;
 }
-.theme:nth-child(1), .theme:nth-child(2) { grid-column: span 6; }
-@media (max-width: 1100px) {
-  .theme { grid-column: span 6; }
-  .theme:nth-child(1), .theme:nth-child(2) { grid-column: span 6; }
+/* Feature card spans full width and gets a thicker accent edge */
+.theme--feature {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  gap: clamp(24px, 4vw, 56px);
+  min-height: 360px;
+  align-items: center;
+  padding: clamp(28px, 3.4vw, 44px);
+}
+.theme--feature::before {
+  content: "";
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: var(--grad-accent);
+  opacity: 0.85;
+}
+.theme__feature-text {
+  display: flex; flex-direction: column; gap: 14px;
+}
+.theme--feature .theme__title { font-size: clamp(26px, 2.4vw, 34px); }
+.theme--feature .theme__sub   { font-size: clamp(15px, 1.2vw, 17px); }
+.theme__diagram {
+  width: 100%;
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 12px 32px rgba(0,0,0,0.4));
+}
+@media (max-width: 980px) {
+  .theme--feature { grid-template-columns: 1fr; }
 }
 @media (max-width: 640px) {
-  .theme, .theme:nth-child(1), .theme:nth-child(2) { grid-column: span 12; }
+  .theme { grid-column: span 12; }
 }
 
 .theme__no {
@@ -410,11 +547,21 @@ button { font: inherit; color: inherit; }
 }
 .map-node circle { transition: transform .25s var(--ease-out), opacity .25s; cursor: pointer; }
 .map-node text { fill: var(--c-ink); font-size: 11px; letter-spacing: 0.02em; pointer-events: none; }
-.map-node--theme text { font-weight: 600; }
+.map-node--theme text { font-weight: 600; font-size: 12.5px; }
 .map-node--theme circle { filter: drop-shadow(0 0 12px color-mix(in oklab, var(--c-a2) 60%, transparent)); }
-.map-link { stroke: rgba(255,255,255,0.16); stroke-width: 1px; transition: stroke .3s; }
+/* Non-theme labels hidden until the node is hovered; eliminates dense
+   collisions in the static view. */
+.map-node:not(.map-node--theme) .map-node__label {
+  opacity: 0;
+  transition: opacity .2s var(--ease-out);
+}
+.map-node:not(.map-node--theme):hover .map-node__label,
+.map-node:not(.map-node--theme).is-focused .map-node__label {
+  opacity: 1;
+}
 .map-node.is-dim text { opacity: 0.18; }
 .map-node.is-dim circle { opacity: 0.18; }
+.map-link { stroke: rgba(255,255,255,0.16); stroke-width: 1px; transition: stroke .3s; }
 .map-link.is-dim { stroke-opacity: 0.05; }
 
 /* ── Infographics gallery ─────────────────────────────────────────────────── */
@@ -617,63 +764,6 @@ select.pub-tag option { background: #0e1230; color: #fff; }
 .project__title { font-size: clamp(17px, 1.3vw, 20px); margin: 0; line-height: 1.4; }
 .project__meta { display: flex; gap: 16px; margin-top: 10px; font-size: var(--type-small); color: var(--c-ink-2); }
 
-/* ── Active research projects (compact cards under .themes) ─────────────── */
-.proj-list__head { margin: clamp(40px, 5vw, 64px) 0 18px; }
-.proj-list__title {
-  margin: 0 0 6px;
-  font-size: clamp(18px, 1.4vw, 22px);
-  font-weight: 600;
-  letter-spacing: -0.005em;
-}
-.proj-list__sub {
-  margin: 0;
-  color: var(--c-ink-3);
-  font-size: var(--type-small);
-  line-height: 1.6;
-  max-width: 64ch;
-}
-.proj-list {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: clamp(12px, 1.4vw, 18px);
-}
-@media (max-width: 1100px) { .proj-list { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 640px)  { .proj-list { grid-template-columns: 1fr; } }
-.proj-item {
-  padding: clamp(16px, 1.8vw, 22px);
-  display: flex; flex-direction: column; gap: 10px;
-}
-.proj-item__partner {
-  font-size: var(--type-micro);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--c-ink-3);
-}
-.proj-item__title {
-  margin: 0;
-  font-size: clamp(15px, 1.1vw, 17px);
-  font-weight: 600;
-  line-height: 1.35;
-}
-.proj-item__body {
-  margin: 0;
-  font-size: var(--type-small);
-  color: var(--c-ink-2);
-  line-height: 1.65;
-}
-.proj-item__kw {
-  display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto;
-}
-.proj-item__kw span {
-  font-size: 10.5px;
-  letter-spacing: 0.04em;
-  padding: 3px 8px;
-  border-radius: 999px;
-  background: var(--c-glass);
-  border: 1px solid var(--c-line);
-  color: var(--c-ink-3);
-}
-
 /* ── Access ───────────────────────────────────────────────────────────────── */
 .access-grid {
   display: grid; grid-template-columns: 1fr 1fr; gap: clamp(20px, 3vw, 40px);
@@ -764,6 +854,39 @@ select.pub-tag option { background: #0e1230; color: #fff; }
 }
 .footer a:hover { color: var(--c-ink); }
 
+/* ── Tweaks trigger (visible toggle for the production site) ──────────────── */
+.tweaks-trigger {
+  position: fixed; right: 18px; bottom: 18px; z-index: 2147483645;
+  appearance: none; border: 1px solid var(--c-line);
+  background: rgba(5, 8, 24, 0.7);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+          backdrop-filter: blur(16px) saturate(160%);
+  color: var(--c-ink);
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 14px; border-radius: 999px;
+  font: 500 12px/1 "Inter", "Noto Sans JP", system-ui, sans-serif;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  cursor: default;
+  transition: transform .35s var(--ease-out),
+              background .35s var(--ease-out),
+              border-color .35s var(--ease-out);
+  box-shadow: 0 8px 24px -8px rgba(0, 0, 0, 0.5);
+}
+.tweaks-trigger:hover {
+  transform: translateY(-2px);
+  background: rgba(5, 8, 24, 0.9);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+.tweaks-trigger[aria-pressed="true"] {
+  background: var(--grad-accent);
+  border-color: transparent;
+  color: #fff;
+}
+.tweaks-trigger svg { opacity: 0.85; }
+@media (max-width: 640px) {
+  .tweaks-trigger { right: 12px; bottom: 12px; padding: 9px 12px; }
+}
+
 /* ── Reveal animations (scroll-driven) ────────────────────────────────────── */
 /* Final state (opacity:1, transform:none) is asserted explicitly on .is-in so
    the page is readable even when the browser pauses CSS animations (hidden
@@ -788,19 +911,6 @@ select.pub-tag option { background: #0e1230; color: #fff; }
 .reveal[data-d="4"].is-in { animation-delay: 320ms; }
 .reveal[data-d="5"].is-in { animation-delay: 400ms; }
 
-/* ── Flash highlight (used when scrolling from the research map) ──────────── */
-@keyframes flashRing {
-  0%   { box-shadow: 0 0 0 0 color-mix(in oklab, var(--c-a2) 70%, transparent); }
-  40%  { box-shadow: 0 0 0 8px color-mix(in oklab, var(--c-a2) 35%, transparent); }
-  100% { box-shadow: 0 0 0 0 color-mix(in oklab, var(--c-a2) 0%, transparent); }
-}
-.is-flash {
-  animation: flashRing 1.4s var(--ease-out);
-  outline: 1px solid color-mix(in oklab, var(--c-a2) 60%, transparent);
-  outline-offset: 2px;
-  transition: outline-color .4s;
-}
-
 /* ── Reduced motion ───────────────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
@@ -817,3 +927,75 @@ select.pub-tag option { background: #0e1230; color: #fff; }
   transition: opacity .4s;
 }
 @media (pointer: coarse) { .cursor { display: none; } }
+
+
+/* ── Active research projects (compact cards under .themes) ─────────────── */
+.proj-list__head { margin: clamp(40px, 5vw, 64px) 0 18px; }
+.proj-list__title {
+  margin: 0 0 6px;
+  font-size: clamp(18px, 1.4vw, 22px);
+  font-weight: 600;
+  letter-spacing: -0.005em;
+}
+.proj-list__sub {
+  margin: 0;
+  color: var(--c-ink-3);
+  font-size: var(--type-small);
+  line-height: 1.6;
+  max-width: 64ch;
+}
+.proj-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(12px, 1.4vw, 18px);
+}
+@media (max-width: 1100px) { .proj-list { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 640px)  { .proj-list { grid-template-columns: 1fr; } }
+.proj-item {
+  padding: clamp(16px, 1.8vw, 22px);
+  display: flex; flex-direction: column; gap: 10px;
+}
+.proj-item__partner {
+  font-size: var(--type-micro);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--c-ink-3);
+}
+.proj-item__title {
+  margin: 0;
+  font-size: clamp(15px, 1.1vw, 17px);
+  font-weight: 600;
+  line-height: 1.35;
+}
+.proj-item__body {
+  margin: 0;
+  font-size: var(--type-small);
+  color: var(--c-ink-2);
+  line-height: 1.65;
+}
+.proj-item__kw {
+  display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto;
+}
+.proj-item__kw span {
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: var(--c-glass);
+  border: 1px solid var(--c-line);
+  color: var(--c-ink-3);
+}
+
+
+/* ── Flash highlight (used when scrolling from the research map) ──────────── */
+@keyframes flashRing {
+  0%   { box-shadow: 0 0 0 0 color-mix(in oklab, var(--c-a2) 70%, transparent); }
+  40%  { box-shadow: 0 0 0 8px color-mix(in oklab, var(--c-a2) 35%, transparent); }
+  100% { box-shadow: 0 0 0 0 color-mix(in oklab, var(--c-a2) 0%, transparent); }
+}
+.is-flash {
+  animation: flashRing 1.4s var(--ease-out);
+  outline: 1px solid color-mix(in oklab, var(--c-a2) 60%, transparent);
+  outline-offset: 2px;
+  transition: outline-color .4s;
+}

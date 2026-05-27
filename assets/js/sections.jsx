@@ -154,12 +154,68 @@ function About({ lang }) {
 window.About = About;
 
 // ─────────────────────────────────────────────────────────────────────────
+// Manifesto — three principles that name the lab's stance
+// ─────────────────────────────────────────────────────────────────────────
+function Manifesto({ lang }) {
+  const i = t(lang).sections.manifesto;
+  return (
+    <section id="manifesto" className="manifesto">
+      <div className="manifesto__rule" aria-hidden="true"></div>
+      <div className="manifesto__kicker reveal">{i.kicker}</div>
+      <div className="manifesto__grid">
+        {i.items.map((it, idx) => (
+          <div key={it.no} className="manifesto__item reveal" data-d={idx + 1}>
+            <div className="manifesto__no">{it.no}</div>
+            <h3 className="manifesto__title">{it.title}</h3>
+            <p className="manifesto__body">{it.body}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+window.Manifesto = Manifesto;
+
+// ─────────────────────────────────────────────────────────────────────────
+// Keyword ticker — "Now exploring" belt that scrolls under the hero
+// ─────────────────────────────────────────────────────────────────────────
+function KeywordTicker({ lang }) {
+  const kws = [
+    "Personal AI", "Distributed PDS", "Graph-Document", "Small LMs",
+    "LiDAR Home Sensing", "Recurrent Education", "Consent-by-Design",
+    "Engagement Evaluation", "RAG Quality", "Dementia Care",
+    "Service Informatics", "Critical Thinking",
+  ];
+  // Duplicate the list so the marquee loops seamlessly.
+  const line = [...kws, ...kws];
+  return (
+    <div className="ticker" aria-hidden="true">
+      <div className="ticker__label">
+        {lang === "ja" ? "Now exploring" : "Now exploring"}
+      </div>
+      <div className="ticker__track">
+        <div className="ticker__row">
+          {line.map((k, idx) => (
+            <span key={idx} className="ticker__chip">
+              <span className="ticker__dot"></span>{k}
+            </span>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+window.KeywordTicker = KeywordTicker;
+
+// ─────────────────────────────────────────────────────────────────────────
 // Research themes
 // ─────────────────────────────────────────────────────────────────────────
 function ResearchThemes({ lang }) {
   const i = t(lang).sections.research;
   const themes = window.LAB_THEMES;
   const projects = Array.isArray(window.LAB_PROJECTS_LIST) ? window.LAB_PROJECTS_LIST : [];
+  // First theme renders as a wider feature card with an SVG diagram.
+  const [feature, ...rest] = themes;
   return (
     <section id="research" className="section">
       <div className="section__head reveal">
@@ -175,8 +231,24 @@ function ResearchThemes({ lang }) {
       </div>
 
       <div className="themes">
-        {themes.map((th, idx) => (
-          <article key={th.id} data-theme-id={th.id} className="theme glass reveal" data-d={idx % 5}>
+        {/* Feature card — Personal AI gets a wider footprint + diagram */}
+        <article data-theme-id={feature.id} className="theme theme--feature glass reveal">
+          <div className="theme__feature-text">
+            <div className="theme__no">{feature.no}</div>
+            <div className="theme__icon"><Icon name={feature.icon} /></div>
+            <h3 className="theme__title">{feature[lang].title}</h3>
+            <p className="theme__sub">{feature[lang].sub}</p>
+            <p className="theme__body">{feature[lang].body}</p>
+            <div className="theme__kw">
+              {feature.kw.map((k) => <span key={k}>{k}</span>)}
+            </div>
+          </div>
+          <PaiDiagram lang={lang} />
+        </article>
+
+        {/* Remaining themes — regular grid */}
+        {rest.map((th, idx) => (
+          <article key={th.id} data-theme-id={th.id} className="theme glass reveal" data-d={(idx % 4) + 1}>
             <div className="theme__no">{th.no}</div>
             <div className="theme__icon"><Icon name={th.icon} /></div>
             <h3 className="theme__title">{th[lang].title}</h3>
@@ -232,6 +304,100 @@ function ResearchThemes({ lang }) {
   );
 }
 window.ResearchThemes = ResearchThemes;
+
+// Tiny inline diagram for the Personal AI feature card.
+//   user (person) ─ PDS (distributed dots) ─ SLM agent ─ services
+// Pure SVG, no external deps. Animates a "data → agent" pulse.
+function PaiDiagram({ lang }) {
+  return (
+    <svg className="theme__diagram" viewBox="0 0 520 180" aria-hidden="true">
+      <defs>
+        <linearGradient id="paiGrad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%"  stopColor="var(--c-a1)"/>
+          <stop offset="50%" stopColor="var(--c-a2)"/>
+          <stop offset="100%" stopColor="var(--c-a3)"/>
+        </linearGradient>
+        <radialGradient id="paiCore" cx="50%" cy="50%" r="50%">
+          <stop offset="0%"  stopColor="rgba(34,211,238,0.55)"/>
+          <stop offset="100%" stopColor="rgba(34,211,238,0)"/>
+        </radialGradient>
+      </defs>
+
+      {/* Backdrop grid */}
+      <rect x="0" y="0" width="520" height="180" fill="rgba(255,255,255,0.012)"/>
+
+      {/* Person (left) */}
+      <g transform="translate(50, 90)">
+        <circle r="22" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.3)" strokeWidth="1.2"/>
+        <circle cy="-6" r="6" fill="rgba(255,255,255,0.6)"/>
+        <path d="M -10 10 Q 0 4 10 10 L 10 14 Q 0 8 -10 14 Z" fill="rgba(255,255,255,0.6)"/>
+        <text x="0" y="44" fill="rgba(236,238,246,0.55)" fontSize="10"
+              textAnchor="middle" letterSpacing="0.1em">{lang === "ja" ? "本人" : "Person"}</text>
+      </g>
+
+      {/* PDS — scattered data points */}
+      <g transform="translate(180, 90)">
+        <circle r="42" fill="rgba(59,130,246,0.04)" stroke="rgba(255,255,255,0.12)" strokeDasharray="3 3"/>
+        {[
+          [-22, -12], [-8, -22], [14, -16], [-18, 6], [4, 4],
+          [22, 10], [-12, 18], [10, 22], [0, -4], [-26, 0],
+        ].map(([x, y], i) => (
+          <circle key={i} cx={x} cy={y} r="2.5"
+                  fill={i % 3 === 0 ? "var(--c-a1)" : i % 3 === 1 ? "var(--c-a2)" : "var(--c-a3)"}
+                  opacity="0.85"/>
+        ))}
+        <text x="0" y="62" fill="rgba(236,238,246,0.55)" fontSize="10"
+              textAnchor="middle" letterSpacing="0.1em">PDS</text>
+      </g>
+
+      {/* SLM agent — central node */}
+      <g transform="translate(330, 90)">
+        <circle r="36" fill="url(#paiCore)"/>
+        <circle r="22" fill="rgba(5,8,24,0.85)" stroke="url(#paiGrad)" strokeWidth="1.6"/>
+        <text x="0" y="4" fill="#fff" fontSize="11" fontWeight="600"
+              textAnchor="middle" letterSpacing="0.06em">SLM</text>
+        <text x="0" y="56" fill="rgba(236,238,246,0.55)" fontSize="10"
+              textAnchor="middle" letterSpacing="0.1em">{lang === "ja" ? "パーソナル AI" : "Personal AI"}</text>
+      </g>
+
+      {/* Services — three small endpoints on the right */}
+      <g transform="translate(460, 90)">
+        {[[-40, -28], [-30, 0], [-44, 28]].map(([x, y], i) => (
+          <g key={i} transform={`translate(${x}, ${y})`}>
+            <rect x="-18" y="-9" width="36" height="18" rx="4"
+                  fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.18)"/>
+          </g>
+        ))}
+        <text x="-30" y="58" fill="rgba(236,238,246,0.55)" fontSize="10"
+              textAnchor="middle" letterSpacing="0.1em">{lang === "ja" ? "支援サービス" : "Services"}</text>
+      </g>
+
+      {/* Connecting lines + animated pulse */}
+      <g>
+        <line x1="80" y1="90" x2="142" y2="90" stroke="rgba(255,255,255,0.22)"/>
+        <line x1="220" y1="90" x2="298" y2="90" stroke="rgba(255,255,255,0.22)"/>
+        <line x1="362" y1="90" x2="420" y2="90" stroke="rgba(255,255,255,0.22)"/>
+        <line x1="430" y1="62" x2="430" y2="118" stroke="rgba(255,255,255,0.14)"/>
+        {/* Pulses */}
+        <circle r="3" fill="var(--c-a1)">
+          <animate attributeName="cx" values="80;142" dur="2.4s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="0;1;0" dur="2.4s" repeatCount="indefinite"/>
+          <animate attributeName="cy" values="90;90" dur="2.4s" repeatCount="indefinite"/>
+        </circle>
+        <circle r="3" fill="var(--c-a2)">
+          <animate attributeName="cx" values="220;298" dur="2.4s" begin="0.4s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="0;1;0" dur="2.4s" begin="0.4s" repeatCount="indefinite"/>
+          <animate attributeName="cy" values="90;90" dur="2.4s" repeatCount="indefinite"/>
+        </circle>
+        <circle r="3" fill="var(--c-a3)">
+          <animate attributeName="cx" values="362;420" dur="2.4s" begin="0.8s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="0;1;0" dur="2.4s" begin="0.8s" repeatCount="indefinite"/>
+          <animate attributeName="cy" values="90;90" dur="2.4s" repeatCount="indefinite"/>
+        </circle>
+      </g>
+    </svg>
+  );
+}
 
 // ─────────────────────────────────────────────────────────────────────────
 // Research map section wrapper
