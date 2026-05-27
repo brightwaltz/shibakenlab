@@ -405,19 +405,21 @@ function Publications({ lang }) {
         </div>
       </a>
 
-      {/* KAKENHI / projects strip */}
-      <div className="projects">
-        {window.LAB_PROJECTS.map((pr, idx) => (
-          <div key={idx} className="project glass reveal">
-            <p className="project__fund">{pr.fund}</p>
-            <p className="project__title">{pr[lang].title}</p>
-            <div className="project__meta">
-              <span>{pr.term}</span>
-              <span>{pr[lang].role}</span>
+      {/* KAKENHI / projects strip — rendered only when data is provided */}
+      {Array.isArray(window.LAB_PROJECTS) && window.LAB_PROJECTS.length > 0 && (
+        <div className="projects">
+          {window.LAB_PROJECTS.map((pr, idx) => (
+            <div key={idx} className="project glass reveal">
+              <p className="project__fund">{pr.fund}</p>
+              <p className="project__title">{pr[lang].title}</p>
+              <div className="project__meta">
+                <span>{pr.term}</span>
+                <span>{pr[lang].role}</span>
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </section>
   );
 }

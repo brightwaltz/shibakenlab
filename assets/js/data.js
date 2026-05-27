@@ -57,17 +57,17 @@ window.LAB_I18N = {
         kicker: "06 — Access",
         title: "ラボへのアクセス",
         addr: "〒194-8610 東京都町田市玉川学園 6-1-1",
-        building: "玉川大学 工学部 ソフトウェアサイエンス学科",
+        building: "玉川大学 STREAM Hall2019",
         nearest: "小田急線「玉川学園前」駅 徒歩約 15 分",
-        visit: "訪問の前にメールでご一報ください。",
+        visit: "訪問の前にコンタクトからご一報ください。",
       },
       news: { kicker: "07 — News", title: "更新情報" },
       contact: {
         kicker: "08 — Contact",
         title: "共同研究・取材・進学相談",
         body:
-          "研究・教育・社会実装に関するご相談、共同研究やメディア取材、進学希望の学生からのご連絡を歓迎します。",
-        cta: "メールを送る",
+          "研究・教育・社会実装に関するご相談、共同研究やメディア取材からのご連絡を歓迎します。",
+        cta: "お問い合わせ",
       },
     },
     foot: {
@@ -135,7 +135,7 @@ window.LAB_I18N = {
         addr: "6-1-1 Tamagawagakuen, Machida, Tokyo 194-8610, Japan",
         building: "School of Engineering, Dept. of Software Science, Tamagawa Univ.",
         nearest: "≈15 min walk from Tamagawagakuen-mae Sta. (Odakyu Line)",
-        visit: "Please email ahead before visiting.",
+        visit: "Please contact ahead before visiting.",
       },
       news: { kicker: "07 — News", title: "News" },
       contact: {
@@ -143,7 +143,7 @@ window.LAB_I18N = {
         title: "Collaborate, interview, or apply",
         body:
           "We welcome inquiries about joint research, interviews, and prospective students who want to join the lab.",
-        cta: "Send email",
+        cta: "Contact",
       },
     },
     foot: {
