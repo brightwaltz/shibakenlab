@@ -159,6 +159,7 @@ window.About = About;
 function ResearchThemes({ lang }) {
   const i = t(lang).sections.research;
   const themes = window.LAB_THEMES;
+  const projects = Array.isArray(window.LAB_PROJECTS_LIST) ? window.LAB_PROJECTS_LIST : [];
   return (
     <section id="research" className="section">
       <div className="section__head reveal">
@@ -168,8 +169,8 @@ function ResearchThemes({ lang }) {
         </div>
         <p className="section__sub">
           {lang === "ja"
-            ? "「本人主権のパーソナルデータ × 個人最適化」を軸に、5つのテーマで研究を進めています。"
-            : "Five threads, all rooted in user-sovereign personal data and individual optimization."}
+            ? "「本人主権のパーソナルデータ × 個人最適化」を軸に、下記のテーマで研究を進めています。"
+            : "All threads are rooted in user-sovereign personal data and individual optimization. Below: the active research."}
         </p>
       </div>
 
@@ -187,6 +188,45 @@ function ResearchThemes({ lang }) {
           </article>
         ))}
       </div>
+
+      {projects.length > 0 && (
+        <>
+          <div className="proj-list__head reveal">
+            <h3 className="proj-list__title">
+              {lang === "ja" ? "進行中の研究プロジェクト" : "Active projects"}
+            </h3>
+            <p className="proj-list__sub">
+              {lang === "ja"
+                ? "上記 5 テーマを軸に、企業・地域・学内連携で進めている取り組み。"
+                : "Concrete projects we're pursuing with partners, communities and within the university — all aligned to the five threads above."}
+            </p>
+          </div>
+          <div className="proj-list">
+            {projects.map((p, idx) => (
+              <article
+                key={p.id}
+                className="proj-item glass reveal"
+                data-d={(idx % 4) + 1}
+              >
+                <div className="proj-item__partner">
+                  {lang === "ja" ? p.partnerJa : p.partnerEn}
+                </div>
+                <h4 className="proj-item__title">
+                  {lang === "ja" ? p.titleJa : p.titleEn}
+                </h4>
+                <p className="proj-item__body">
+                  {lang === "ja" ? p.bodyJa : p.bodyEn}
+                </p>
+                {p.kw && p.kw.length > 0 && (
+                  <div className="proj-item__kw">
+                    {p.kw.map((k) => <span key={k}>{k}</span>)}
+                  </div>
+                )}
+              </article>
+            ))}
+          </div>
+        </>
+      )}
     </section>
   );
 }

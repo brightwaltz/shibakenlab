@@ -63,6 +63,7 @@ function Nav({ lang, setLang }) {
         {link("publications", i.publications)}
         {link("access",       i.access)}
         {link("news",         i.news)}
+        {link("contact",      i.contact)}
       </nav>
       <div className="nav__lang" role="group" aria-label={I18N[lang].aria.langtoggle}>
         <button aria-pressed={lang === "ja"} onClick={() => setLang("ja")}>JA</button>

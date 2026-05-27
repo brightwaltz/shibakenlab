@@ -31,7 +31,7 @@ window.LAB_I18N = {
     },
     sections: {
       about: { kicker: "01 — About", title: "主宰について" },
-      research: { kicker: "02 — Research", title: "5つの研究テーマ" },
+      research: { kicker: "02 — Research", title: "研究プロジェクト" },
       map: {
         kicker: "03 — Research Map",
         title: "研究のつながりを、グラフで見る",
@@ -107,7 +107,7 @@ window.LAB_I18N = {
     },
     sections: {
       about: { kicker: "01 — About", title: "About the PI" },
-      research: { kicker: "02 — Research", title: "Five research themes" },
+      research: { kicker: "02 — Research", title: "Research projects" },
       map: {
         kicker: "03 — Research Map",
         title: "An interactive map of what we study",
@@ -285,6 +285,108 @@ window.LAB_THEMES = [
       body: "Web & service informatics with HCI. Field implementations include a case-record DB for acupuncture clinics, conversational AI for arcades, and RAG-based matching for enterprises."
     },
     kw: ["Service", "HCI", "RAG", "Field Implementation"],
+  },
+];
+
+// ── Active research projects (smaller cards rendered after LAB_THEMES) ──────
+//   Compact entries: partner / context tag, title, 1–3 sentence body, keywords.
+//   Add/edit freely; cards auto-grid below the 5 themes in the Research section.
+window.LAB_PROJECTS_LIST = [
+  {
+    id: "heroic",
+    partnerJa: "株式会社 HEROIC 共同研究",
+    partnerEn: "Joint research with HEROIC, Inc.",
+    titleJa: "マルチモーダルセンシングによる人的資本エンゲージメント評価",
+    titleEn: "Engagement assessment via multimodal sensing for human-capital visualization",
+    bodyJa:
+      "企業の競争力と持続成長の源泉となる「人的資本」のエンゲージメントを、生体・行動・環境センシング情報から定量評価する手法を開発。人材戦略や投資判断に活用できる新しいフレームワークの構築を目指す。",
+    bodyEn:
+      "Develops a method to quantitatively assess the engagement of human capital — a key driver of corporate competitiveness — by combining biometric, behavioral and environmental sensing into a single framework usable for HR strategy and investment decisions.",
+    kw: ["Engagement", "Multimodal", "Human Capital"],
+  },
+  {
+    id: "coral",
+    partnerJa: "玉川学園サンゴ研究部 連携",
+    partnerEn: "with Tamagawa Coral Research Club",
+    titleJa: "サンゴ養殖支援サービスアプリの開発",
+    titleEn: "Coral aquaculture support app",
+    bodyJa:
+      "新入部員や学生がサンゴの飼育・養殖を理解しやすくするための教育支援アプリ。飼育過程を学べるアニメーション生成 AI、長文から音声ポッドキャストを生成する仕組み、対話型 AI による Q&A サポートを組み合わせる。",
+    bodyEn:
+      "An educational app that helps new club members and students get into coral husbandry — combining generative animation, long-form-text-to-podcast synthesis, and a conversational AI Q&A assistant.",
+    kw: ["Education", "Generative AI", "Podcast"],
+  },
+  {
+    id: "sawaru",
+    partnerJa: "東京藝術大学 × 萩 × 筑波技術大学 × 玉川大学（2026）",
+    partnerEn: "Tokyo Univ. of the Arts × Hagi × Tsukuba Tech × Tamagawa (2026)",
+    titleJa: "「さわるかたち みるかたち」展",
+    titleEn: "“Forms to Touch, Forms to See” exhibition",
+    bodyJa:
+      "地域中核事業 J-PEAKS「視覚・聴覚障がい × AI × アート」の一環として、山口県・萩市の明倫学舎で開催された展覧会に協力者として参画。3D プリント・センシングを用いた触れる造形を通じ、萩焼の新たな可能性と多様な人々のつながりを探った（2026.3.29–4.29）。",
+    bodyEn:
+      "Joined as a collaborator in the J-PEAKS regional initiative “Accessibility × AI × Art” exhibition at Meirin Gakusha, Hagi. Through 3D-printed and sensor-driven tactile pieces, the project explored new dimensions of Hagi-yaki ceramics with a diverse audience (29 Mar – 29 Apr 2026).",
+    kw: ["Accessibility", "Art × AI", "3D Print", "Hagi-yaki"],
+  },
+  {
+    id: "arcade",
+    partnerJa: "ゲームセンター企業 連携アプリ",
+    partnerEn: "Arcade-operator collaboration",
+    titleJa: "LINE × ChatGPT による現場トラブル即時解決",
+    titleEn: "On-site troubleshooting via LINE × ChatGPT",
+    bodyJa:
+      "店舗内 QR コードから LINE 経由で AI にアクセスし、ChatGPT がトラブルシュートを対話的に支援する仕組み。現場スタッフの負担を軽減しつつ、利用者の満足度を高める設計。",
+    bodyEn:
+      "QR codes in arcades open a LINE bot that walks users through troubleshooting via ChatGPT — reducing on-floor staff load while raising customer satisfaction.",
+    kw: ["LINE", "ChatGPT", "Field Ops", "QR"],
+  },
+  {
+    id: "match",
+    partnerJa: "企業マッチング対話システム",
+    partnerEn: "Enterprise–user matching dialog",
+    titleJa: "RAG × LINE による最適マッチング",
+    titleEn: "LINE-fronted matching with RAG",
+    bodyJa:
+      "LINE をフロントに、ChatGPT / Claude による推論を Azure AI Search の RAG で補強。企業情報とユーザ希望を文脈検索し、適合度の高い提案を生成することで人材・サービス・製品のマッチング効率を高める。",
+    bodyEn:
+      "A LINE-fronted dialog system that combines ChatGPT/Claude reasoning with Azure AI Search–based retrieval-augmented generation, surfacing high-fit matches across talent, services and products.",
+    kw: ["RAG", "Azure AI Search", "LINE", "Matching"],
+  },
+  {
+    id: "manawakari",
+    partnerJa: "LINE 公式アカウント「ものわかりの良い上司」",
+    partnerEn: "LINE bot “The Understanding Boss”",
+    titleJa: "気軽に相談できる共感型 AI ボット",
+    titleEn: "Empathetic conversational bot for everyday worries",
+    bodyJa:
+      "学生や利用者の悩みを柔らかく受け止め、共感的に返答する AI エージェント。LINE を窓口に ChatGPT で自然な対話を実現。公開アカウントとして配信中。",
+    bodyEn:
+      "An always-on LINE bot that listens to small worries and responds empathetically. ChatGPT powers the conversation; deployed as a public LINE account.",
+    kw: ["LINE", "Empathy", "ChatGPT", "Mental Wellness"],
+  },
+  {
+    id: "pds-app",
+    partnerJa: "パーソナルデータ分散管理アプリ",
+    partnerEn: "Distributed personal-data management app",
+    titleJa: "iOS / Android / macOS 対応の PDS クライアント",
+    titleEn: "Cross-platform PDS client (Flutter)",
+    bodyJa:
+      "Flutter / Dart によるクロスプラットフォーム実装。ユーザ同意に基づくアクセス制御と利用履歴の可視化を備え、将来的なパーソナル AI（PAI）への接続を見据えた設計。",
+    bodyEn:
+      "A Flutter/Dart cross-platform client (iOS / Android / macOS) that lets individuals record and govern their own data — consent-based access control plus a visible usage log, designed to plug into future Personal AI agents.",
+    kw: ["Flutter", "PDS", "Consent", "Personal AI"],
+  },
+  {
+    id: "acupuncture",
+    partnerJa: "鍼灸院 症例データベース（国内共同研究）",
+    partnerEn: "Acupuncture case database (domestic collaboration)",
+    titleJa: "電子システムで筋骨格痛症例を構造化",
+    titleEn: "Structured case records for musculoskeletal-pain clinics",
+    bodyJa:
+      "鍼灸院における症例情報を体系的に蓄積し、臨床研究や教育に資する基盤を構築。将来の自然言語処理・症状分類 AI を見据えた構造化と、現場の入力効率を両立する設計。",
+    bodyEn:
+      "Designs and builds a case-record database for acupuncture clinics — balancing efficient on-site input with structuring that supports future NLP- and classification-driven analysis.",
+    kw: ["Clinical", "NLP-ready", "Acupuncture", "Database"],
   },
 ];
 

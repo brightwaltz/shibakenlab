@@ -617,6 +617,63 @@ select.pub-tag option { background: #0e1230; color: #fff; }
 .project__title { font-size: clamp(17px, 1.3vw, 20px); margin: 0; line-height: 1.4; }
 .project__meta { display: flex; gap: 16px; margin-top: 10px; font-size: var(--type-small); color: var(--c-ink-2); }
 
+/* ── Active research projects (compact cards under .themes) ─────────────── */
+.proj-list__head { margin: clamp(40px, 5vw, 64px) 0 18px; }
+.proj-list__title {
+  margin: 0 0 6px;
+  font-size: clamp(18px, 1.4vw, 22px);
+  font-weight: 600;
+  letter-spacing: -0.005em;
+}
+.proj-list__sub {
+  margin: 0;
+  color: var(--c-ink-3);
+  font-size: var(--type-small);
+  line-height: 1.6;
+  max-width: 64ch;
+}
+.proj-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(12px, 1.4vw, 18px);
+}
+@media (max-width: 1100px) { .proj-list { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 640px)  { .proj-list { grid-template-columns: 1fr; } }
+.proj-item {
+  padding: clamp(16px, 1.8vw, 22px);
+  display: flex; flex-direction: column; gap: 10px;
+}
+.proj-item__partner {
+  font-size: var(--type-micro);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--c-ink-3);
+}
+.proj-item__title {
+  margin: 0;
+  font-size: clamp(15px, 1.1vw, 17px);
+  font-weight: 600;
+  line-height: 1.35;
+}
+.proj-item__body {
+  margin: 0;
+  font-size: var(--type-small);
+  color: var(--c-ink-2);
+  line-height: 1.65;
+}
+.proj-item__kw {
+  display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto;
+}
+.proj-item__kw span {
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: var(--c-glass);
+  border: 1px solid var(--c-line);
+  color: var(--c-ink-3);
+}
+
 /* ── Access ───────────────────────────────────────────────────────────────── */
 .access-grid {
   display: grid; grid-template-columns: 1fr 1fr; gap: clamp(20px, 3vw, 40px);
