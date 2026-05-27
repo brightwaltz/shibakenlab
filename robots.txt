@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://brightwaltz.github.io/lab/sitemap.xml
+Sitemap: https://brightwaltz.github.io/shibakenlab/sitemap.xml

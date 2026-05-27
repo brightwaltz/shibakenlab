@@ -1,7 +1,8 @@
 # 柴田研究室サイト（玉川大学 工学部 ソフトウェアサイエンス学科）
 
 このリポジトリは、**サービス情報学研究室（柴田健一）** の公式サイトのソースです。
-本番は GitHub Pages 上で `https://brightwaltz.github.io/lab/` として配信される想定です。
+本番は GitHub Pages 上で `https://brightwaltz.github.io/shibakenlab/` として配信されます。
+`main` ブランチへの push をトリガーに GitHub Actions が自動デプロイします。
 
 ---
 
@@ -16,9 +17,11 @@
 ## ファイル構成
 
 ```
-/lab/                              # ← GitHub Pages 上のサブパス（このリポジトリの中身を /lab/ 直下に置く）
+shibakenlab/                       # ← このリポジトリ。リポジトリ直下が公開ルート
 ├─ index.html                      # 1 ページ完結のホームページ（全セクション）
 ├─ README.md                       # この運用マニュアル
+├─ robots.txt / sitemap.xml        # SEO 用
+├─ .github/workflows/deploy.yml    # GitHub Pages への自動デプロイ
 ├─ assets/
 │  ├─ css/
 │  │  └─ style.css                 # 全スタイル（CSS Custom Properties でテーマ切替）
@@ -48,22 +51,19 @@ python3 -m http.server 8000
 ```
 
 ブラウザで `http://localhost:8000/` を開くと、`index.html` が読み込まれます。
-本番（GitHub Pages サブパス `/lab/`）でも同じファイル一式がそのまま動きます — すべて相対パスで書かれているため。
+本番（`https://brightwaltz.github.io/shibakenlab/`）でも同じファイル一式がそのまま動きます — すべて相対パスで書かれているため。
 
 ---
 
-## デプロイ（GitHub Pages サブパス `/lab/`）
+## デプロイ（GitHub Actions による自動公開）
 
-1. `brightwaltz.github.io` リポジトリの `/lab/` フォルダにこのプロジェクトのファイル一式をコピーする。
-   ```
-   brightwaltz.github.io/
-   └─ lab/
-      ├─ index.html
-      ├─ assets/...
-      └─ README.md
-   ```
-2. 通常通り main ブランチに push すれば、`https://brightwaltz.github.io/lab/` で公開されます。
-3. すべての参照は **相対パス** なので、`/lab/` 配下に置けばそのまま動作します。`<base href>` の指定は不要です。
+このリポジトリには `.github/workflows/deploy.yml` が含まれており、**`main` ブランチへ push されるたびに GitHub Pages へ自動デプロイ** されます。
+
+1. ローカルで編集 → `git commit` → `git push origin main`
+2. https://github.com/brightwaltz/shibakenlab/actions でワークフローの進行を確認
+3. デプロイ成功後、`https://brightwaltz.github.io/shibakenlab/` に反映されます（通常 30 秒〜2 分）
+
+初回のみ、リポジトリの **Settings → Pages → Build and deployment → Source** を `GitHub Actions` に設定する必要があります（ワークフロー側で `enablement: true` を指定しているため、自動で有効化されることもあります）。
 
 ---
 
