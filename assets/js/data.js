@@ -486,15 +486,80 @@ window.LAB_INFOGRAPHICS = [
     sumEn: "Integrates personal traits × Google Calendar with ChatGPT Atlas; significantly raises plan-completion rate (p<0.05).",
     year: 2025,
   },
-  // ── サンプル追加例 ──────────────────────────────────────────────────────
-  // {
-  //   src: "assets/images/infographics/02-xxx.png",
-  //   titleJa: "…",
-  //   titleEn: "…",
-  //   sumJa: "…",
-  //   sumEn: "…",
-  //   year: 2024,                  // ← 年度ごとにグループ表示されます
-  // },
+  {
+    src: "assets/images/infographics/02-study-planner-overview.png",
+    titleJa: "個別最適化学習計画支援システムの全体像",
+    titleEn: "Adaptive study planner — system overview",
+    sumJa: "学習者の個別特性に応じて計画を立案・伴走する AI 支援システムの構成と狙い。",
+    sumEn: "End-to-end overview of an AI study-planner that adapts to each learner's traits and habits.",
+    year: 2025,
+  },
+  {
+    src: "assets/images/infographics/03-vr-ai-housing-eval.png",
+    titleJa: "VR × AI による住環境評価",
+    titleEn: "VR × AI housing-environment assessment",
+    sumJa: "VR 空間内のセンシングと AI 解析で、住環境の快適性・安全性を定量評価する取り組み。",
+    sumEn: "Quantitative comfort and safety assessment of living spaces via VR sensing and AI analysis.",
+    year: 2025,
+  },
+  {
+    src: "assets/images/infographics/04-vr-ai-housing-eval-detail.png",
+    titleJa: "VR × AI 住環境評価 — 処理フロー詳細",
+    titleEn: "VR × AI housing assessment — detailed pipeline",
+    sumJa: "ユーザー入力から評価結果出力までの処理パイプラインを段階別に整理。",
+    sumEn: "Step-by-step processing pipeline from user input to evaluation output.",
+    year: 2025,
+  },
+  {
+    src: "assets/images/infographics/05-vr-ai-housing-proposal.png",
+    titleJa: "VR × AI 住環境 — 改善提案までの拡張",
+    titleEn: "VR × AI housing — from evaluation to suggestions",
+    sumJa: "評価で終わらず、AI による住環境改善案の自動提案までを射程に入れた拡張版。",
+    sumEn: "Extends beyond evaluation: AI auto-suggests concrete improvements to the living space.",
+    year: 2025,
+  },
+  {
+    src: "assets/images/infographics/06-chatbot-tone-experiment.png",
+    titleJa: "チャットボットの口調比較 — 検証実験",
+    titleEn: "Chatbot tone — comparative experiment",
+    sumJa: "口調の違いがユーザー体験・印象に与える影響を実験的に検証。",
+    sumEn: "Experimentally tests how different chatbot tones shape user experience and perception.",
+    year: 2025,
+  },
+  {
+    src: "assets/images/infographics/07-chatbot-tone-analysis.png",
+    titleJa: "チャットボット口調 — 比較分析",
+    titleEn: "Chatbot tone — analytical study",
+    sumJa: "実験結果から、目的・相手別に最適な口調パターンを統計的に分析。",
+    sumEn: "Statistical analysis surfacing tone patterns optimal for each purpose and user.",
+    year: 2025,
+  },
+  {
+    src: "assets/images/infographics/08-parenting-ai-architecture.png",
+    titleJa: "次世代 AI 子育て支援システム — 仕組み",
+    titleEn: "Next-gen AI parenting support — architecture",
+    sumJa: "家庭内データと専門知見を統合した子育てパートナー AI のアーキテクチャ。",
+    sumEn: "Architecture of a parenting-partner AI that integrates household data with expert knowledge.",
+    year: 2025,
+  },
+  {
+    src: "assets/images/infographics/09-parenting-ai-system.png",
+    titleJa: "次世代 AI 育児支援システム",
+    titleEn: "Next-gen AI childcare support",
+    sumJa: "発達段階に応じたアドバイス・記録・気づきの可視化を一元化。",
+    sumEn: "Unifies developmental-stage advice, daily logs, and insight visualization.",
+    year: 2025,
+  },
+  {
+    src: "assets/images/infographics/10-personal-data-parenting-ai.png",
+    titleJa: "パーソナルデータを活用した子育て AI",
+    titleEn: "Parenting AI powered by personal data",
+    sumJa: "本人主権のパーソナルデータをもとに、家庭ごとに最適化された助言を生成。",
+    sumEn: "Generates family-specific guidance grounded in user-sovereign personal data.",
+    year: 2025,
+  },
+  // <!-- TODO: タイトル・要約は仮置きです。各卒業研究の正式タイトルと
+  //     主要な貢献に合わせて主宰側でレビュー・修正してください。 -->
 ];
 
 // ── News (front-matter normalized) ──────────────────────────────────────────
