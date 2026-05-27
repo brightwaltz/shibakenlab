@@ -143,7 +143,6 @@ function App() {
   const MapSection       = window.MapSection;
   const Gallery          = window.Gallery;
   const Publications     = window.Publications;
-  const Member           = window.Member;
   const Access           = window.Access;
   const News             = window.News;
   const Contact          = window.Contact;
@@ -259,7 +258,6 @@ function App() {
       <MapSection lang={lang} />
       <Gallery lang={lang} />
       <Publications lang={lang} />
-      <Member lang={lang} />
       <Access lang={lang} />
       <News lang={lang} />
       <Contact lang={lang} />

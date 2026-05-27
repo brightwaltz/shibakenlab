@@ -1,6 +1,6 @@
 /* ───────────────────────────────────────────────────────────────────────────
    Section components — About, Research, Gallery (+ Lightbox), Publications,
-   Member/Projects, Access, News, Contact, Footer.
+   Access, News, Contact, Footer.
 
    All read from window.LAB_*; language comes from a `lang` prop ("ja" | "en").
    ─────────────────────────────────────────────────────────────────────────── */
@@ -9,35 +9,37 @@ const t = (lang) => window.LAB_I18N[lang];
 
 // ── tiny inline icons (Lucide-ish, kept simple to avoid bloat) ──────────────
 function Icon({ name }) {
-  const common = { width: 22, height: 22, viewBox: "0 0 24 24", fill: "none",
-                   stroke: "currentColor", strokeWidth: 1.6, strokeLinecap: "round", strokeLinejoin: "round" };
+  const common = {
+    width: 22, height: 22, viewBox: "0 0 24 24", fill: "none",
+    stroke: "currentColor", strokeWidth: 1.6, strokeLinecap: "round", strokeLinejoin: "round"
+  };
   switch (name) {
     case "brain-circuit": return (
-      <svg {...common}><path d="M12 5a3 3 0 0 0-3 3v.5"/><path d="M9 8.5a3 3 0 1 0 0 6v.5"/>
-        <path d="M9 15a3 3 0 0 0 3 3v.5"/><path d="M12 5a3 3 0 0 1 3 3v.5"/>
-        <path d="M15 8.5a3 3 0 1 1 0 6v.5"/><path d="M15 15a3 3 0 0 1-3 3"/><circle cx="6" cy="11.5" r="1"/><circle cx="18" cy="11.5" r="1"/></svg>
+      <svg {...common}><path d="M12 5a3 3 0 0 0-3 3v.5" /><path d="M9 8.5a3 3 0 1 0 0 6v.5" />
+        <path d="M9 15a3 3 0 0 0 3 3v.5" /><path d="M12 5a3 3 0 0 1 3 3v.5" />
+        <path d="M15 8.5a3 3 0 1 1 0 6v.5" /><path d="M15 15a3 3 0 0 1-3 3" /><circle cx="6" cy="11.5" r="1" /><circle cx="18" cy="11.5" r="1" /></svg>
     );
     case "graph": return (
-      <svg {...common}><circle cx="6" cy="6" r="2"/><circle cx="18" cy="6" r="2"/><circle cx="12" cy="18" r="2"/>
-        <path d="M7.5 7.2 11 16.8"/><path d="M16.5 7.2 13 16.8"/><path d="M8 6h8"/></svg>
+      <svg {...common}><circle cx="6" cy="6" r="2" /><circle cx="18" cy="6" r="2" /><circle cx="12" cy="18" r="2" />
+        <path d="M7.5 7.2 11 16.8" /><path d="M16.5 7.2 13 16.8" /><path d="M8 6h8" /></svg>
     );
     case "compass": return (
-      <svg {...common}><circle cx="12" cy="12" r="9"/><path d="m14.5 9.5-2 5-5 2 2-5 5-2z"/></svg>
+      <svg {...common}><circle cx="12" cy="12" r="9" /><path d="m14.5 9.5-2 5-5 2 2-5 5-2z" /></svg>
     );
     case "waveform": return (
-      <svg {...common}><path d="M3 12h2l1 -6 2 12 2-9 2 6 2-4 2 8 2-6 2 3 2-2"/></svg>
+      <svg {...common}><path d="M3 12h2l1 -6 2 12 2-9 2 6 2-4 2 8 2-6 2 3 2-2" /></svg>
     );
     case "compass-rose": return (
-      <svg {...common}><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18M5.6 5.6l12.8 12.8M18.4 5.6 5.6 18.4"/></svg>
+      <svg {...common}><circle cx="12" cy="12" r="9" /><path d="M12 3v18M3 12h18M5.6 5.6l12.8 12.8M18.4 5.6 5.6 18.4" /></svg>
     );
     case "arrow": return (
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="arr"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="arr"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
     );
     case "search": return (
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>
     );
     case "external": return (
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 4h6v6M10 14 20 4M19 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h5"/></svg>
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 4h6v6M10 14 20 4M19 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h5" /></svg>
     );
     default: return null;
   }
@@ -66,6 +68,24 @@ function About({ lang }) {
 
       <div className="about-grid">
         <div className="about-card glass reveal">
+          <img
+            src="assets/images/kenichishibata.jpg"
+            alt={lang === "ja" ? "柴田 健一 プロフィール写真" : "Portrait of Kenichi Shibata"}
+            loading="lazy"
+            decoding="async"
+            width="887"
+            height="887"
+            style={{
+              display: "block",
+              width: "clamp(120px, 18vw, 168px)",
+              aspectRatio: "1 / 1",
+              borderRadius: "50%",
+              objectFit: "cover",
+              margin: "0 auto 20px",
+              border: "1px solid rgba(255,255,255,0.12)",
+              boxShadow: "0 20px 60px -20px color-mix(in oklab, var(--c-a2) 60%, transparent)",
+            }}
+          />
           <div className="about-name">{bio.name[lang]}</div>
           <div className="about-namesub">{bio.nameSub[lang]}</div>
           <div className="about-title">{bio.title[lang]}</div>
@@ -79,7 +99,7 @@ function About({ lang }) {
           <p className="about-bio">{bio.bio[lang]}</p>
 
           <div className="about-alt">
-            <b>{lang === "ja" ? "もう一つの顔" : "And, in parallel"}</b>
+            <b>{lang === "ja" ? "Music" : "And, in parallel"}</b>
             {bio.altLife[lang]}
           </div>
 
@@ -90,6 +110,19 @@ function About({ lang }) {
               </a>
             ))}
           </div>
+
+          <p
+            style={{
+              marginTop: 24,
+              color: "var(--c-ink-2)",
+              fontSize: "var(--type-small)",
+              lineHeight: 1.7,
+            }}
+          >
+            {lang === "ja"
+              ? "卒業研究や共同研究に興味のある学生・社会人の方は、Contact からご相談ください。"
+              : "Students and external collaborators interested in joint work: please reach out via the Contact section below."}
+          </p>
         </div>
       </div>
     </section>
@@ -180,7 +213,7 @@ function Gallery({ lang }) {
     const onKey = (e) => {
       if (open === null) return;
       if (e.key === "Escape") setOpen(null);
-      if (e.key === "ArrowLeft")  setOpen((o) => (o + items.length - 1) % items.length);
+      if (e.key === "ArrowLeft") setOpen((o) => (o + items.length - 1) % items.length);
       if (e.key === "ArrowRight") setOpen((o) => (o + 1) % items.length);
     };
     window.addEventListener("keydown", onKey);
@@ -310,7 +343,7 @@ function Publications({ lang }) {
         <div className="pub-card__right" aria-hidden="true">
           <div className="pub-card__stat">
             <b>20+</b>
-            <span>{lang === "ja" ? "論文" : "Papers"}</span>
+            <span>{lang === "ja" ? "Paper" : "Papers"}</span>
           </div>
           <div className="pub-card__stat">
             <b>33+</b>
@@ -318,11 +351,11 @@ function Publications({ lang }) {
           </div>
           <div className="pub-card__stat">
             <b>3</b>
-            <span>{lang === "ja" ? "受賞" : "Awards"}</span>
+            <span>{lang === "ja" ? "Award" : "Awards"}</span>
           </div>
           <div className="pub-card__stat">
             <b>2</b>
-            <span>{lang === "ja" ? "科研費" : "KAKENHI"}</span>
+            <span>{lang === "ja" ? "Grant" : "KAKENHI"}</span>
           </div>
         </div>
       </a>
@@ -344,53 +377,6 @@ function Publications({ lang }) {
   );
 }
 window.Publications = Publications;
-
-// ─────────────────────────────────────────────────────────────────────────
-// Member (PI only)
-// ─────────────────────────────────────────────────────────────────────────
-function Member({ lang }) {
-  const i = t(lang).sections.member;
-  return (
-    <section id="member" className="section">
-      <div className="section__head reveal">
-        <div>
-          <div className="section__kicker">{i.kicker}</div>
-          <h2 className="section__title">{i.title}</h2>
-        </div>
-        <p className="section__sub">
-          {lang === "ja"
-            ? "現時点では主宰のみ。学生メンバーは新年度に随時掲載予定です。"
-            : "At the moment, the PI only. Student members will be listed each spring."}
-        </p>
-      </div>
-
-      <div className="glass reveal" style={{ padding: "clamp(28px, 4vw, 56px)", textAlign: "center" }}>
-        <div style={{
-          display: "inline-flex", alignItems: "center", justifyContent: "center",
-          width: 96, height: 96, borderRadius: "50%",
-          background: "var(--grad-accent)",
-          fontSize: 38, fontWeight: 600, color: "#fff",
-          boxShadow: "0 20px 60px -20px color-mix(in oklab, var(--c-a2) 60%, transparent)"
-        }}>柴</div>
-        <h3 style={{ fontSize: "var(--type-h2)", margin: "20px 0 4px", fontWeight: 600 }}>
-          {window.LAB_BIO.name[lang]}
-        </h3>
-        <p style={{ color: "var(--c-ink-3)", margin: 0, fontSize: "var(--type-small)", letterSpacing: "0.08em" }}>
-          {window.LAB_BIO.title[lang]}
-        </p>
-        <p style={{
-          maxWidth: 560, margin: "24px auto 0", color: "var(--c-ink-2)",
-          fontSize: "var(--type-small)", lineHeight: 1.7,
-        }}>
-          {lang === "ja"
-            ? "卒業研究や共同研究に興味のある学生・社会人の方は、Contact からご相談ください。"
-            : "Students and external collaborators interested in joint work: please reach out via the Contact section below."}
-        </p>
-      </div>
-    </section>
-  );
-}
-window.Member = Member;
 
 // ─────────────────────────────────────────────────────────────────────────
 // Access
@@ -415,8 +401,6 @@ function Access({ lang }) {
           <p>{i.building}</p>
           <h4>Nearest station</h4>
           <p>{i.nearest}</p>
-          <h4>{lang === "ja" ? "代表電話" : "Phone"}</h4>
-          <p>042-739-8111</p>
         </div>
         <a
           className="access-map-card glass reveal"
@@ -429,30 +413,30 @@ function Access({ lang }) {
           <svg className="access-map-svg" viewBox="0 0 400 400" aria-hidden="true">
             <defs>
               <linearGradient id="mp-bg" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stopColor="rgba(34,211,238,0.18)"/>
-                <stop offset="100%" stopColor="rgba(139,92,246,0.18)"/>
+                <stop offset="0%" stopColor="rgba(34,211,238,0.18)" />
+                <stop offset="100%" stopColor="rgba(139,92,246,0.18)" />
               </linearGradient>
               <pattern id="mp-grid" width="32" height="32" patternUnits="userSpaceOnUse">
-                <path d="M 32 0 L 0 0 0 32" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="1"/>
+                <path d="M 32 0 L 0 0 0 32" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="1" />
               </pattern>
             </defs>
-            <rect width="400" height="400" fill="url(#mp-bg)"/>
-            <rect width="400" height="400" fill="url(#mp-grid)"/>
+            <rect width="400" height="400" fill="url(#mp-bg)" />
+            <rect width="400" height="400" fill="url(#mp-grid)" />
             {/* Stylized road traces */}
-            <path d="M 0 240 Q 120 220 200 240 T 400 200" stroke="rgba(255,255,255,0.18)" strokeWidth="3" fill="none"/>
-            <path d="M 60 0 Q 80 140 220 200 T 400 320" stroke="rgba(255,255,255,0.14)" strokeWidth="2" fill="none"/>
-            <path d="M 0 100 Q 180 110 260 60 T 400 100" stroke="rgba(255,255,255,0.10)" strokeWidth="2" fill="none"/>
+            <path d="M 0 240 Q 120 220 200 240 T 400 200" stroke="rgba(255,255,255,0.18)" strokeWidth="3" fill="none" />
+            <path d="M 60 0 Q 80 140 220 200 T 400 320" stroke="rgba(255,255,255,0.14)" strokeWidth="2" fill="none" />
+            <path d="M 0 100 Q 180 110 260 60 T 400 100" stroke="rgba(255,255,255,0.10)" strokeWidth="2" fill="none" />
             {/* Tamagawa-gakuen-mae station marker */}
             <g transform="translate(140, 280)">
-              <circle r="14" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.3)"/>
+              <circle r="14" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.3)" />
               <text x="0" y="36" fill="rgba(236,238,246,0.7)" fontSize="11" textAnchor="middle" letterSpacing="0.05em">玉川学園前駅</text>
             </g>
             {/* Lab marker (gradient pulse) */}
             <g transform="translate(240, 180)">
-              <circle r="34" fill="rgba(59,130,246,0.18)"/>
-              <circle r="22" fill="rgba(59,130,246,0.32)"/>
-              <circle r="12" fill="#3B82F6"/>
-              <circle r="4" fill="#fff"/>
+              <circle r="34" fill="rgba(59,130,246,0.18)" />
+              <circle r="22" fill="rgba(59,130,246,0.32)" />
+              <circle r="12" fill="#3B82F6" />
+              <circle r="4" fill="#fff" />
               <text x="0" y="-46" fill="#fff" fontSize="12" fontWeight="600" textAnchor="middle" letterSpacing="0.05em">柴田研究室</text>
             </g>
           </svg>
@@ -518,8 +502,8 @@ function Contact({ lang }) {
         <div className="eyebrow">{i.kicker}</div>
         <h2 className="contact__big">
           {lang === "ja"
-            ? <><em>個人最適化</em>を、<br/>一緒に設計しませんか。</>
-            : <>Let's design <em>personalization</em><br/> together.</>}
+            ? <><em>個人最適化</em>を、<br />一緒に設計しませんか。</>
+            : <>Let's design <em>personalization</em><br /> together.</>}
         </h2>
         <p className="contact__body">{i.body}</p>
         <div className="contact__links">
