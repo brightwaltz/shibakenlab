@@ -393,7 +393,7 @@ window.LAB_PROJECTS_LIST = [
 // ── Research-map graph (node-link, for D3 force) ────────────────────────────
 window.LAB_GRAPH = {
   nodes: [
-    // theme nodes
+    // theme nodes (5)
     { id: "pai", group: "theme", label: "Personal AI" },
     { id: "graphdoc", group: "theme", label: "Graph-Document" },
     { id: "learn", group: "theme", label: "Learning Support" },
@@ -405,40 +405,60 @@ window.LAB_GRAPH = {
     { id: "kw-consent", group: "keyword", label: "Consent" },
     { id: "kw-rag", group: "keyword", label: "RAG" },
     { id: "kw-llm", group: "keyword", label: "LLM" },
+    { id: "kw-line", group: "keyword", label: "LINE" },
     { id: "kw-lidar", group: "keyword", label: "LiDAR" },
     { id: "kw-dementia", group: "keyword", label: "Dementia" },
     { id: "kw-eng", group: "keyword", label: "Engagement" },
     { id: "kw-recur", group: "keyword", label: "Recurrent Edu." },
     { id: "kw-collab", group: "keyword", label: "Collaboration" },
-    // project / paper nodes
+    { id: "kw-acc", group: "keyword", label: "Accessibility" },
+    // paper nodes
     { id: "p-slmpai", group: "paper", label: "SLM × PAI '25" },
     { id: "p-graph24", group: "paper", label: "Graph-Doc '24" },
     { id: "p-class24", group: "paper", label: "Gen-AI Class '24" },
     { id: "p-elder", group: "paper", label: "Elder SNS '25" },
     { id: "p-care", group: "paper", label: "Dementia obs. '17" },
+    // project nodes (active projects from LAB_PROJECTS_LIST + KAKEN grants)
     { id: "p-heroic", group: "project", label: "HEROIC Engagement" },
     { id: "p-coral", group: "project", label: "Coral × AI" },
+    { id: "p-sawaru", group: "project", label: "Sawaru Art '26" },
+    { id: "p-arcade", group: "project", label: "Arcade LINE" },
+    { id: "p-match", group: "project", label: "Matching RAG" },
+    { id: "p-manawakari", group: "project", label: "LINE Wellness" },
+    { id: "p-pds-app", group: "project", label: "PDS App" },
     { id: "p-hari", group: "project", label: "Acupuncture DB" },
     { id: "p-lidar", group: "project", label: "KAKEN: LiDAR Home" },
     { id: "p-recur", group: "project", label: "KAKEN: Graph-Doc" },
   ],
   links: [
-    // PAI
+    // Personal AI
     ["pai", "kw-pds"], ["pai", "kw-slm"], ["pai", "kw-consent"],
-    ["pai", "p-slmpai"], ["pai", "p-elder"],
+    ["pai", "p-slmpai"], ["pai", "p-elder"], ["pai", "p-pds-app"],
     // Graph-Document
     ["graphdoc", "kw-rag"], ["graphdoc", "kw-collab"],
     ["graphdoc", "p-graph24"], ["graphdoc", "p-recur"],
+    ["graphdoc", "p-match"],
     // Learning Support
     ["learn", "kw-llm"], ["learn", "kw-recur"],
     ["learn", "p-class24"], ["learn", "p-recur"],
+    ["learn", "p-coral"], ["learn", "p-manawakari"],
     // Multimodal Sensing
     ["sense", "kw-lidar"], ["sense", "kw-dementia"], ["sense", "kw-eng"],
     ["sense", "p-care"], ["sense", "p-heroic"], ["sense", "p-lidar"],
-    // Service
+    ["sense", "p-sawaru"],
+    // Service Informatics
     ["service", "p-coral"], ["service", "p-hari"], ["service", "p-heroic"],
-    ["service", "kw-rag"],
-    // Cross links
+    ["service", "p-arcade"], ["service", "p-match"], ["service", "p-manawakari"],
+    ["service", "p-sawaru"],
+    ["service", "kw-rag"], ["service", "kw-line"], ["service", "kw-acc"],
+    // Project ↔ keyword wiring (deeper connections so hovering reveals stack)
+    ["p-heroic", "kw-eng"],
+    ["p-arcade", "kw-line"], ["p-arcade", "kw-llm"],
+    ["p-match", "kw-line"], ["p-match", "kw-rag"], ["p-match", "kw-llm"],
+    ["p-manawakari", "kw-line"], ["p-manawakari", "kw-llm"],
+    ["p-pds-app", "kw-pds"], ["p-pds-app", "kw-consent"],
+    ["p-sawaru", "kw-acc"],
+    // Cross-theme spine
     ["pai", "graphdoc"], ["graphdoc", "learn"], ["learn", "sense"],
     ["sense", "service"], ["service", "pai"],
   ].map(([s, t]) => ({ source: s, target: t })),
