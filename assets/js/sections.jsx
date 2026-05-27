@@ -107,6 +107,23 @@ function About({ lang }) {
           <div className="about-alt">
             <b>{lang === "ja" ? "Music" : "And, in parallel"}</b>
             {bio.altLife[lang]}
+            <div style={{ marginTop: 10, fontSize: "var(--type-micro)" }}>
+              <a
+                href="https://www.youtube.com/user/brightwaltz"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  color: "var(--c-ink-3)",
+                  textDecoration: "underline",
+                  textDecorationStyle: "dotted",
+                  textUnderlineOffset: "3px",
+                }}
+              >
+                {lang === "ja"
+                  ? "▶ YouTube で聴く（参考まで）"
+                  : "▶ Listen on YouTube (for reference)"}
+              </a>
+            </div>
           </div>
 
           <div className="about-links">
@@ -554,7 +571,7 @@ function Contact({ lang }) {
         </h2>
         <p className="contact__body">{i.body}</p>
         <div className="contact__links">
-          <a className="btn btn--primary" href="https://researchmap.jp/brightwaltz" target="_blank" rel="noopener noreferrer">
+          <a className="btn btn--primary" href="https://brightwaltz.mystrikingly.com/#contact" target="_blank" rel="noopener noreferrer">
             {i.cta} <Icon name="arrow" />
           </a>
           <a className="btn" href="https://brightwaltz.mystrikingly.com/#contact" target="_blank" rel="noopener noreferrer">
