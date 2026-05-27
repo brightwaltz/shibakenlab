@@ -426,7 +426,7 @@ window.LAB_GRAPH = {
     { id: "p-match", group: "project", label: "Matching RAG" },
     { id: "p-manawakari", group: "project", label: "LINE Wellness" },
     { id: "p-pds-app", group: "project", label: "PDS App" },
-    { id: "p-hari", group: "project", label: "Acupuncture DB" },
+    { id: "p-acupuncture", group: "project", label: "Acupuncture DB" },
     { id: "p-lidar", group: "project", label: "KAKEN: LiDAR Home" },
     { id: "p-recur", group: "project", label: "KAKEN: Graph-Doc" },
   ],
@@ -447,7 +447,7 @@ window.LAB_GRAPH = {
     ["sense", "p-care"], ["sense", "p-heroic"], ["sense", "p-lidar"],
     ["sense", "p-sawaru"],
     // Service Informatics
-    ["service", "p-coral"], ["service", "p-hari"], ["service", "p-heroic"],
+    ["service", "p-coral"], ["service", "p-acupuncture"], ["service", "p-heroic"],
     ["service", "p-arcade"], ["service", "p-match"], ["service", "p-manawakari"],
     ["service", "p-sawaru"],
     ["service", "kw-rag"], ["service", "kw-line"], ["service", "kw-acc"],

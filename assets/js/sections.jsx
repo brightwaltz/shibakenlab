@@ -205,6 +205,7 @@ function ResearchThemes({ lang }) {
             {projects.map((p, idx) => (
               <article
                 key={p.id}
+                data-project-id={`p-${p.id}`}
                 className="proj-item glass reveal"
                 data-d={(idx % 4) + 1}
               >

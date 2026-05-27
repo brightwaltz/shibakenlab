@@ -788,6 +788,19 @@ select.pub-tag option { background: #0e1230; color: #fff; }
 .reveal[data-d="4"].is-in { animation-delay: 320ms; }
 .reveal[data-d="5"].is-in { animation-delay: 400ms; }
 
+/* ── Flash highlight (used when scrolling from the research map) ──────────── */
+@keyframes flashRing {
+  0%   { box-shadow: 0 0 0 0 color-mix(in oklab, var(--c-a2) 70%, transparent); }
+  40%  { box-shadow: 0 0 0 8px color-mix(in oklab, var(--c-a2) 35%, transparent); }
+  100% { box-shadow: 0 0 0 0 color-mix(in oklab, var(--c-a2) 0%, transparent); }
+}
+.is-flash {
+  animation: flashRing 1.4s var(--ease-out);
+  outline: 1px solid color-mix(in oklab, var(--c-a2) 60%, transparent);
+  outline-offset: 2px;
+  transition: outline-color .4s;
+}
+
 /* ── Reduced motion ───────────────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }

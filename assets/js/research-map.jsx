@@ -109,11 +109,38 @@ function ResearchMap() {
       linkSel.classed("is-dim", false);
     });
 
-    // Click theme → scroll to that research card
+    // Click any node → scroll to the corresponding research item.
+    //   theme   → the matching theme card  (data-theme-id="<id>")
+    //   project → the matching project card (data-project-id="<id>")
+    //   keyword → the Research section header (no specific card)
+    //   paper   → the Publications section (papers live there)
+    // A brief .is-flash class is added to the destination card so the user
+    // gets a visual cue about where they landed.
+    const flash = (el) => {
+      if (!el) return;
+      el.classList.add("is-flash");
+      window.setTimeout(() => el.classList.remove("is-flash"), 1400);
+    };
+    const scrollToTarget = (targetEl, opts = { block: "center" }) => {
+      if (!targetEl) return;
+      targetEl.scrollIntoView({ behavior: "smooth", ...opts });
+      flash(targetEl);
+    };
+
     nodeSel.on("click", (event, d) => {
       if (d.group === "theme") {
-        const card = document.querySelector(`[data-theme-id="${d.id}"]`);
-        if (card) card.scrollIntoView({ behavior: "smooth", block: "center" });
+        scrollToTarget(document.querySelector(`[data-theme-id="${d.id}"]`));
+      } else if (d.group === "project") {
+        const card = document.querySelector(`[data-project-id="${d.id}"]`);
+        // Project cards live in the Research section. Fall back to the
+        // section heading when a project node has no rendered card yet
+        // (e.g. KAKEN entries that aren't in LAB_PROJECTS_LIST).
+        if (card) scrollToTarget(card);
+        else scrollToTarget(document.getElementById("research"), { block: "start" });
+      } else if (d.group === "paper") {
+        scrollToTarget(document.getElementById("publications"), { block: "start" });
+      } else if (d.group === "keyword") {
+        scrollToTarget(document.getElementById("research"), { block: "start" });
       }
     });
 
