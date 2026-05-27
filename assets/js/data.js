@@ -21,8 +21,8 @@ window.LAB_I18N = {
     },
     hero: {
       eyebrow: "サービス情報学研究室 / Service Informatics Lab",
-      title_a: "個人最適化が、",
-      title_b: "明日のあたりまえになる。",
+      title_a: "あなたを理解し、",
+      title_b: "暮らしに溶け込むAIを、研究する。",
       sub:
         "パーソナルデータと小さな AI が、本人の手で扱える社会へ。\n玉川大学 工学部 ソフトウェアサイエンス学科・柴田研究室は、\n Personal AI、Graph-Document、学習支援の研究を進めています。",
       cta1: "研究テーマを見る",
@@ -97,8 +97,8 @@ window.LAB_I18N = {
     },
     hero: {
       eyebrow: "Service Informatics Lab / Tamagawa University",
-      title_a: "Personalization,",
-      title_b: "made human-scale.",
+      title_a: "We research AI that understands you",
+      title_b: "and blends into everyday life.",
       sub:
         "Decentralized personal data and small, on-device AI returned to the person.\nShibata Lab at Tamagawa University researches PDS & Personal AI,\nGraph-Document for learning, and observational sensing in real-world contexts.",
       cta1: "See research",
