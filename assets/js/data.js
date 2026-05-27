@@ -210,60 +210,80 @@ window.LAB_THEMES = [
     id: "pai",
     no: "T1",
     icon: "brain-circuit",
-    ja: { title: "Personal Data & Personal AI",
-          sub: "分散 PDS と SLM が、本人に専属する。",
-          body: "分散型パーソナルデータストア（PDS）に基づく個人最適化型支援サービス。本人同意とガバナンス、小規模言語モデルを核としたパーソナル AI（PAI）の社会実装設計。" },
-    en: { title: "Personal Data & Personal AI",
-          sub: "Decentralized PDS + small LMs, owned by the user.",
-          body: "Individually-optimized services on top of distributed Personal Data Stores. Consent, governance and small language models combined into Personal AI agents fielded in real contexts." },
+    ja: {
+      title: "Personal Data & Personal AI",
+      sub: "分散 PDS と SLM が、本人に専属する。",
+      body: "分散型パーソナルデータストア（PDS）に基づく個人最適化型支援サービス。本人同意とガバナンス、小規模言語モデルを核としたパーソナル AI（PAI）の社会実装設計。"
+    },
+    en: {
+      title: "Personal Data & Personal AI",
+      sub: "Decentralized PDS + small LMs, owned by the user.",
+      body: "Individually-optimized services on top of distributed Personal Data Stores. Consent, governance and small language models combined into Personal AI agents fielded in real contexts."
+    },
     kw: ["PDS", "PAI", "Consent", "Privacy-by-Design", "SLM"],
   },
   {
     id: "graphdoc",
     no: "T2",
     icon: "graph",
-    ja: { title: "Graph-Document",
-          sub: "考えを構造化し、再利用可能にする。",
-          body: "グラフ文書の協働編集による思考の可視化と再利用。学習・研修・社内ナレッジでの構造化、RAG 入出力の品質設計を扱う。" },
-    en: { title: "Graph-Document",
-          sub: "Structured thinking that survives copy-paste.",
-          body: "Collaborative graph-document authoring as a substrate for visible reasoning and reuse — applied to education, training, and the I/O quality of retrieval-augmented generation." },
+    ja: {
+      title: "Graph-Document",
+      sub: "考えを構造化し、再利用可能にする。",
+      body: "グラフ文書の協働編集による思考の可視化と再利用。学習・研修・社内ナレッジでの構造化、RAG 入出力の品質設計を扱う。"
+    },
+    en: {
+      title: "Graph-Document",
+      sub: "Structured thinking that survives copy-paste.",
+      body: "Collaborative graph-document authoring as a substrate for visible reasoning and reuse — applied to education, training, and the I/O quality of retrieval-augmented generation."
+    },
     kw: ["Graph", "Collaboration", "Critical Thinking", "RAG"],
   },
   {
     id: "learn",
     no: "T3",
     icon: "compass",
-    ja: { title: "Learning Support",
-          sub: "「いつ・何を」を、本人と設計する。",
-          body: "大学教育・社会人学び直しのための学習支援。生成 AI を組み込んだ授業デザイン、LLM × 個人特性 × カレンダーの統合による学習計画支援。" },
-    en: { title: "Learning Support",
-          sub: "Designing the “when” and “what” with the learner.",
-          body: "Learning support for higher and recurrent education. Class design with generative AI in the loop; LLM × personal traits × external calendar for individualized planning." },
+    ja: {
+      title: "Learning Support",
+      sub: "「いつ・何を」を、本人と設計する。",
+      body: "大学教育・社会人学び直しのための学習支援。生成 AI を組み込んだ授業デザイン、LLM × 個人特性 × カレンダーの統合による学習計画支援。"
+    },
+    en: {
+      title: "Learning Support",
+      sub: "Designing the “when” and “what” with the learner.",
+      body: "Learning support for higher and recurrent education. Class design with generative AI in the loop; LLM × personal traits × external calendar for individualized planning."
+    },
     kw: ["Higher Ed", "Recurrent", "LLM-in-the-loop", "Evaluation"],
   },
   {
     id: "sense",
     no: "T4",
     icon: "waveform",
-    ja: { title: "Multimodal Sensing",
-          sub: "現場に馴染む、軽い計測。",
-          body: "音・映像・行動データなど多視点観察から状態理解と評価を行う。LiDAR による在宅環境の 3 次元化、エンゲージメント評価、認知症ケアでの多職種連携支援。" },
-    en: { title: "Multimodal Sensing",
-          sub: "Light-weight observation that fits the field.",
-          body: "Multi-perspective observation across audio, video and behavior. LiDAR-based 3-D in-home modeling, engagement evaluation, and multidisciplinary support for dementia care." },
+    ja: {
+      title: "Multimodal Sensing",
+      sub: "現場に馴染む、軽い計測。",
+      body: "音・映像・行動データなど多視点観察から状態理解と評価を行う。LiDAR による在宅環境の 3 次元化、エンゲージメント評価、認知症ケアでの多職種連携支援。"
+    },
+    en: {
+      title: "Multimodal Sensing",
+      sub: "Light-weight observation that fits the field.",
+      body: "Multi-perspective observation across audio, video and behavior. LiDAR-based 3-D in-home modeling, engagement evaluation, and multidisciplinary support for dementia care."
+    },
     kw: ["LiDAR", "Engagement", "Aging Society", "Dementia"],
   },
   {
     id: "service",
     no: "T5",
     icon: "compass-rose",
-    ja: { title: "Service Informatics & HCI",
-          sub: "技術と現場をつなぐ、サービス設計。",
-          body: "Web & サービス情報学、ヒューマンインタフェース。鍼灸院での症例 DB、ゲームセンター向け対話 AI、企業マッチング RAG など、現場ドメインへの実装。" },
-    en: { title: "Service Informatics & HCI",
-          sub: "Service design that connects tech to the field.",
-          body: "Web & service informatics with HCI. Field implementations include a case-record DB for acupuncture clinics, conversational AI for arcades, and RAG-based matching for enterprises." },
+    ja: {
+      title: "Service Informatics & HCI",
+      sub: "技術と現場をつなぐ、サービス設計。",
+      body: "Web & サービス情報学、ヒューマンインタフェース。鍼灸院での症例 DB、ゲームセンター向け対話 AI、企業マッチング RAG など、現場ドメインへの実装。"
+    },
+    en: {
+      title: "Service Informatics & HCI",
+      sub: "Service design that connects tech to the field.",
+      body: "Web & service informatics with HCI. Field implementations include a case-record DB for acupuncture clinics, conversational AI for arcades, and RAG-based matching for enterprises."
+    },
     kw: ["Service", "HCI", "RAG", "Field Implementation"],
   },
 ];
@@ -450,24 +470,24 @@ window.LAB_PUBLICATIONS = [
 ];
 
 // ── KAKENHI / funded projects ───────────────────────────────────────────────
-window.LAB_PROJECTS = [
-  {
-    ja: { title: "リカレント教育のためのグラフ文書を用いたデータ駆動型の学習環境構築",
-          role: "代表" },
-    en: { title: "Data-driven recurrent-education environment with graph documents",
-          role: "PI" },
-    fund: "JSPS KAKENHI · 若手研究 / Grant-in-Aid for Early-Career Scientists",
-    term: "2023.04 — 2026.03",
-  },
-  {
-    ja: { title: "LiDAR によって 3 次元化した在宅環境情報の臨床利用に関する研究",
-          role: "共同研究者" },
-    en: { title: "Clinical use of 3-D in-home environment data captured by LiDAR",
-          role: "Co-I" },
-    fund: "JSPS KAKENHI · 基盤研究 (C) / Grant-in-Aid (C)",
-    term: "2024.04 — 2027.03",
-  },
-];
+// window.LAB_PROJECTS = [
+//   {
+//     ja: { title: "リカレント教育のためのグラフ文書を用いたデータ駆動型の学習環境構築",
+//           role: "代表" },
+//     en: { title: "Data-driven recurrent-education environment with graph documents",
+//           role: "PI" },
+//     fund: "JSPS KAKENHI · 若手研究 / Grant-in-Aid for Early-Career Scientists",
+//     term: "2023.04 — 2026.03",
+//   },
+//   {
+//     ja: { title: "LiDAR によって 3 次元化した在宅環境情報の臨床利用に関する研究",
+//           role: "共同研究者" },
+//     en: { title: "Clinical use of 3-D in-home environment data captured by LiDAR",
+//           role: "Co-I" },
+//     fund: "JSPS KAKENHI · 基盤研究 (C) / Grant-in-Aid (C)",
+//     term: "2024.04 — 2027.03",
+//   },
+// ];
 
 // ── Infographics gallery ────────────────────────────────────────────────────
 // Each item belongs to a 年度 (FY).  Items are grouped by year in the UI;
@@ -577,8 +597,8 @@ window.LAB_NEWS = [
 // ── Palettes (used by Tweaks) ───────────────────────────────────────────────
 // Each palette stores: [primary, deep, accent1, accent2, accent3]
 window.LAB_PALETTES = [
-  { id: "tama-night",  label: "Tamagawa Night", colors: ["#0B2C5C", "#061838", "#22D3EE", "#3B82F6", "#8B5CF6"] },
-  { id: "linear-cool", label: "Linear Cool",     colors: ["#0E1230", "#06081C", "#5EEAD4", "#7C3AED", "#A78BFA"] },
-  { id: "vercel-mono", label: "Vercel Mono",     colors: ["#0A0A0A", "#000000", "#FAFAFA", "#888888", "#444444"] },
-  { id: "ember",       label: "Ember Glow",      colors: ["#221026", "#0D0612", "#FB7185", "#F59E0B", "#A855F7"] },
+  { id: "tama-night", label: "Tamagawa Night", colors: ["#0B2C5C", "#061838", "#22D3EE", "#3B82F6", "#8B5CF6"] },
+  { id: "linear-cool", label: "Linear Cool", colors: ["#0E1230", "#06081C", "#5EEAD4", "#7C3AED", "#A78BFA"] },
+  { id: "vercel-mono", label: "Vercel Mono", colors: ["#0A0A0A", "#000000", "#FAFAFA", "#888888", "#444444"] },
+  { id: "ember", label: "Ember Glow", colors: ["#221026", "#0D0612", "#FB7185", "#F59E0B", "#A855F7"] },
 ];

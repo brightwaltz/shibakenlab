@@ -68,24 +68,30 @@ function About({ lang }) {
 
       <div className="about-grid">
         <div className="about-card glass reveal">
-          <img
-            src="assets/images/kenichishibata.jpg"
-            alt={lang === "ja" ? "柴田 健一 プロフィール写真" : "Portrait of Kenichi Shibata"}
-            loading="lazy"
-            decoding="async"
-            width="887"
-            height="887"
+          <div
             style={{
-              display: "block",
-              width: "clamp(120px, 18vw, 168px)",
-              aspectRatio: "1 / 1",
+              width: "clamp(140px, 22vw, 200px)",
+              height: "clamp(140px, 22vw, 200px)",
               borderRadius: "50%",
-              objectFit: "cover",
-              margin: "0 auto 20px",
+              overflow: "hidden",
+              margin: "0 auto 22px",
               border: "1px solid rgba(255,255,255,0.12)",
               boxShadow: "0 20px 60px -20px color-mix(in oklab, var(--c-a2) 60%, transparent)",
             }}
-          />
+          >
+            <img
+              src="assets/images/kenichishibata.jpg"
+              alt={lang === "ja" ? "柴田 健一 プロフィール写真" : "Portrait of Kenichi Shibata"}
+              loading="lazy"
+              decoding="async"
+              style={{
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                display: "block",
+              }}
+            />
+          </div>
           <div className="about-name">{bio.name[lang]}</div>
           <div className="about-namesub">{bio.nameSub[lang]}</div>
           <div className="about-title">{bio.title[lang]}</div>
@@ -197,6 +203,9 @@ function Gallery({ lang }) {
   const i = t(lang).sections.gallery;
   const items = window.LAB_INFOGRAPHICS;
   const [open, setOpen] = React.useState(null);
+  // Per-year "expanded" state — default collapsed (show first PREVIEW only).
+  const [expanded, setExpanded] = React.useState({});
+  const PREVIEW = 2;
 
   // Group by year (descending). Flat indices preserved for lightbox nav.
   const groups = React.useMemo(() => {
@@ -230,36 +239,72 @@ function Gallery({ lang }) {
         <p className="section__sub">{i.sub}</p>
       </div>
 
-      {groups.map(([year, list]) => (
-        <div key={year} className="gallery-group">
-          <div className="gallery-group__head reveal">
-            <span className="gallery-group__year">{year}{lang === "ja" ? "年度" : ""}</span>
-            <span className="gallery-group__count">
-              {list.length} {lang === "ja" ? "作品" : (list.length === 1 ? "work" : "works")}
-            </span>
-            <span className="gallery-group__rule" aria-hidden="true"></span>
-          </div>
+      {groups.map(([year, list]) => {
+        const isOpen = !!expanded[year];
+        const hasMore = list.length > PREVIEW;
+        const visible = isOpen || !hasMore ? list : list.slice(0, PREVIEW);
+        const hiddenCount = list.length - PREVIEW;
+        return (
+          <div key={year} className="gallery-group">
+            <div className="gallery-group__head reveal">
+              <span className="gallery-group__year">{year}{lang === "ja" ? "年度" : ""}</span>
+              <span className="gallery-group__count">
+                {list.length} {lang === "ja" ? "作品" : (list.length === 1 ? "work" : "works")}
+              </span>
+              <span className="gallery-group__rule" aria-hidden="true"></span>
+            </div>
 
-          <div className="gallery">
-            {list.map((g, k) => (
-              <button
-                key={g.src}
-                className="gallery-item reveal"
-                data-d={(k % 4) + 1}
-                onClick={() => setOpen(g._idx)}
-                aria-label={g[lang === "ja" ? "titleJa" : "titleEn"]}
-                type="button"
+            <div className="gallery">
+              {visible.map((g, k) => (
+                <button
+                  key={g.src}
+                  className="gallery-item reveal"
+                  data-d={(k % 4) + 1}
+                  onClick={() => setOpen(g._idx)}
+                  aria-label={g[lang === "ja" ? "titleJa" : "titleEn"]}
+                  type="button"
+                >
+                  <img src={g.src} loading="lazy" alt={g[lang === "ja" ? "titleJa" : "titleEn"]} />
+                  <div className="gallery-cap">
+                    <b>{g[lang === "ja" ? "titleJa" : "titleEn"]}</b>
+                    <span>{g[lang === "ja" ? "sumJa" : "sumEn"]}</span>
+                  </div>
+                </button>
+              ))}
+            </div>
+
+            {hasMore && (
+              <div
+                className="reveal"
+                style={{ display: "flex", justifyContent: "center", marginTop: 22 }}
               >
-                <img src={g.src} loading="lazy" alt={g[lang === "ja" ? "titleJa" : "titleEn"]} />
-                <div className="gallery-cap">
-                  <b>{g[lang === "ja" ? "titleJa" : "titleEn"]}</b>
-                  <span>{g[lang === "ja" ? "sumJa" : "sumEn"]}</span>
-                </div>
-              </button>
-            ))}
+                <button
+                  type="button"
+                  className="chip"
+                  aria-expanded={isOpen}
+                  onClick={() => setExpanded((s) => ({ ...s, [year]: !isOpen }))}
+                  style={{ cursor: "pointer" }}
+                >
+                  {isOpen
+                    ? (lang === "ja" ? "閉じる" : "Show less")
+                    : (lang === "ja"
+                        ? `他の研究を見る (+${hiddenCount})`
+                        : `Show more works (+${hiddenCount})`)}
+                  <svg
+                    width="12" height="12" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                    aria-hidden="true"
+                    style={{ transition: "transform .25s var(--ease-out)",
+                             transform: isOpen ? "rotate(180deg)" : "rotate(0deg)" }}
+                  >
+                    <path d="M6 9l6 6 6-6" />
+                  </svg>
+                </button>
+              </div>
+            )}
           </div>
-        </div>
-      ))}
+        );
+      })}
 
       {open !== null && (
         <Lightbox
