@@ -120,8 +120,8 @@ function About({ lang }) {
                 }}
               >
                 {lang === "ja"
-                  ? "▶ YouTube で聴く（参考まで）"
-                  : "▶ Listen on YouTube (for reference)"}
+                  ? "▶ YouTube で聴く"
+                  : "▶ Listen on YouTube"}
               </a>
             </div>
           </div>
@@ -636,7 +636,7 @@ function Footer({ lang }) {
       <div>© 2026 Service Informatics Lab · {f.tama}</div>
       <div style={{ display: "flex", gap: 18 }}>
         <a href="https://www.tamagawa.ac.jp/college_of_engineering/teachers/software/shibata.html" target="_blank" rel="noopener noreferrer">{f.tama}</a>
-        <a href="https://github.com/brightwaltz/brightwaltz.github.io" target="_blank" rel="noopener noreferrer">{f.src}</a>
+        <a href="https://github.com/brightwaltz/shibakenlab" target="_blank" rel="noopener noreferrer">{f.src}</a>
         <span>{f.crafted}</span>
       </div>
     </footer>
