@@ -187,11 +187,22 @@ function App() {
     return () => { cancelAnimationFrame(raf); window.removeEventListener("pointermove", onMove); };
   }, [tw.cursor]);
 
-  // Reveal-on-scroll (with safety net for backgrounded/hidden iframes where IO
-  // callbacks never fire — any reveal element that's actually in the viewport
-  // after 700ms gets unmasked regardless).
+  // Reveal-on-scroll
+  //   Uses IntersectionObserver where possible, plus a viewport-rect sweep
+  //   triggered by Lenis's own scroll event (Lenis's instant scrolls don't
+  //   always re-trigger IO callbacks in all engines).
   React.useEffect(() => {
-    const els = document.querySelectorAll(".reveal");
+    const sweep = () => {
+      document.querySelectorAll(".reveal:not(.is-in)").forEach((el) => {
+        const r = el.getBoundingClientRect();
+        const margin = window.innerHeight * 0.08;
+        if (r.top < window.innerHeight - margin && r.bottom > 0) {
+          el.classList.add("is-in");
+        }
+      });
+    };
+    window.__sweepReveals = sweep;
+
     const io = new IntersectionObserver((entries) => {
       entries.forEach((e) => {
         if (e.isIntersecting) {
@@ -200,37 +211,41 @@ function App() {
         }
       });
     }, { rootMargin: "0px 0px -8% 0px", threshold: 0.05 });
-    els.forEach((el) => io.observe(el));
-    const fallback = setTimeout(() => {
-      document.querySelectorAll(".reveal:not(.is-in)").forEach((el) => {
-        const r = el.getBoundingClientRect();
-        if (r.top < window.innerHeight && r.bottom > 0) el.classList.add("is-in");
-      });
-    }, 700);
-    return () => { io.disconnect(); clearTimeout(fallback); };
-  });
+    document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
 
-  // Lenis smooth scroll
+    const t0 = setTimeout(sweep, 200);
+    const t1 = setTimeout(sweep, 700);
+    // Heartbeat sweep: catches throttled/backgrounded contexts where Lenis's
+    // rAF loop never advances and IO callbacks don't trigger.
+    const heartbeat = setInterval(sweep, 1500);
+    const onVis = () => { if (document.visibilityState === "visible") sweep(); };
+    document.addEventListener("visibilitychange", onVis);
+    window.addEventListener("scroll", sweep, { passive: true });
+    return () => {
+      io.disconnect();
+      clearTimeout(t0); clearTimeout(t1);
+      clearInterval(heartbeat);
+      document.removeEventListener("visibilitychange", onVis);
+      window.removeEventListener("scroll", sweep);
+      delete window.__sweepReveals;
+    };
+  }, []);
+
+  // Native smooth scroll for anchor links — Lenis was removed in favor of
+  // native scrolling for snappier feel and broader compatibility.
   React.useEffect(() => {
-    if (!window.Lenis) return;
-    const lenis = new window.Lenis({
-      duration: 0.7,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      smoothWheel: true,
-      wheelMultiplier: 1.15,
-    });
-    window.__lenis = lenis;  // exposed for programmatic scroll / debugging
-    function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
-    requestAnimationFrame(raf);
-    // anchor links handled by Lenis
-    document.querySelectorAll('a[href^="#"]').forEach((a) => {
-      a.addEventListener("click", (e) => {
-        const id = a.getAttribute("href").slice(1);
-        const target = document.getElementById(id);
-        if (target) { e.preventDefault(); lenis.scrollTo(target, { offset: -64 }); }
-      });
-    });
-    return () => lenis.destroy();
+    const onClick = (e) => {
+      const a = e.target.closest('a[href^="#"]');
+      if (!a) return;
+      const id = a.getAttribute("href").slice(1);
+      const target = document.getElementById(id);
+      if (!target) return;
+      e.preventDefault();
+      const y = target.getBoundingClientRect().top + window.scrollY - 64;
+      window.scrollTo({ top: y, behavior: "smooth" });
+    };
+    document.addEventListener("click", onClick);
+    return () => document.removeEventListener("click", onClick);
   }, []);
 
   return (

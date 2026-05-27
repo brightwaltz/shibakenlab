@@ -6,3 +6,6 @@ node_modules/
 .env.local
 .vscode/
 .idea/
+
+# Design/work snapshots from parallel agents (kept locally for diff/backup only)
+shibakenlab[0-9]*/

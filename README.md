@@ -230,7 +230,7 @@ CSS Custom Properties で全てコントロールしています（`assets/css/s
 ## ライセンス / クレジット
 
 - コンテンツ著作権: 柴田研究室 / 玉川大学
-- フレームワーク: React 18, Three.js, D3.js, Lenis, GSAP（CDN ロード）
+- フレームワーク: React 18, Three.js, D3.js（CDN ロード）
 - フォント: Inter, Noto Sans JP（Google Fonts）
 
 不明点や追加要望は、リポジトリの Issue または主宰までご連絡ください。

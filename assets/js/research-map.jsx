@@ -69,6 +69,12 @@ function ResearchMap() {
       .alpha(1).alphaDecay(0.025);
 
     sim.on("tick", () => {
+      // Clamp node positions inside the SVG so labels don't escape the wrap.
+      const pad = 60;
+      data.nodes.forEach((d) => {
+        d.x = Math.max(pad, Math.min(W - pad, d.x));
+        d.y = Math.max(pad, Math.min(H - pad, d.y));
+      });
       linkSel
         .attr("x1", (d) => d.source.x)
         .attr("y1", (d) => d.source.y)

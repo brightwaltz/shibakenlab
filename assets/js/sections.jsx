@@ -418,14 +418,49 @@ function Access({ lang }) {
           <h4>{lang === "ja" ? "代表電話" : "Phone"}</h4>
           <p>042-739-8111</p>
         </div>
-        <div className="map-iframe-wrap reveal" data-d="1">
-          <iframe
-            title="Tamagawa University Map"
-            src="https://www.openstreetmap.org/export/embed.html?bbox=139.45%2C35.55%2C139.49%2C35.58&amp;layer=mapnik&amp;marker=35.566%2C139.469"
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-          ></iframe>
-        </div>
+        <a
+          className="access-map-card glass reveal"
+          data-d="1"
+          href="https://www.google.com/maps/search/?api=1&query=玉川大学+工学部"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={lang === "ja" ? "地図アプリで開く" : "Open in maps"}
+        >
+          <svg className="access-map-svg" viewBox="0 0 400 400" aria-hidden="true">
+            <defs>
+              <linearGradient id="mp-bg" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stopColor="rgba(34,211,238,0.18)"/>
+                <stop offset="100%" stopColor="rgba(139,92,246,0.18)"/>
+              </linearGradient>
+              <pattern id="mp-grid" width="32" height="32" patternUnits="userSpaceOnUse">
+                <path d="M 32 0 L 0 0 0 32" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="1"/>
+              </pattern>
+            </defs>
+            <rect width="400" height="400" fill="url(#mp-bg)"/>
+            <rect width="400" height="400" fill="url(#mp-grid)"/>
+            {/* Stylized road traces */}
+            <path d="M 0 240 Q 120 220 200 240 T 400 200" stroke="rgba(255,255,255,0.18)" strokeWidth="3" fill="none"/>
+            <path d="M 60 0 Q 80 140 220 200 T 400 320" stroke="rgba(255,255,255,0.14)" strokeWidth="2" fill="none"/>
+            <path d="M 0 100 Q 180 110 260 60 T 400 100" stroke="rgba(255,255,255,0.10)" strokeWidth="2" fill="none"/>
+            {/* Tamagawa-gakuen-mae station marker */}
+            <g transform="translate(140, 280)">
+              <circle r="14" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.3)"/>
+              <text x="0" y="36" fill="rgba(236,238,246,0.7)" fontSize="11" textAnchor="middle" letterSpacing="0.05em">玉川学園前駅</text>
+            </g>
+            {/* Lab marker (gradient pulse) */}
+            <g transform="translate(240, 180)">
+              <circle r="34" fill="rgba(59,130,246,0.18)"/>
+              <circle r="22" fill="rgba(59,130,246,0.32)"/>
+              <circle r="12" fill="#3B82F6"/>
+              <circle r="4" fill="#fff"/>
+              <text x="0" y="-46" fill="#fff" fontSize="12" fontWeight="600" textAnchor="middle" letterSpacing="0.05em">柴田研究室</text>
+            </g>
+          </svg>
+          <div className="access-map-cta">
+            <span>{lang === "ja" ? "地図アプリで開く" : "Open in maps"}</span>
+            <Icon name="external" />
+          </div>
+        </a>
       </div>
     </section>
   );
@@ -512,7 +547,7 @@ function Footer({ lang }) {
       <div>© 2026 Service Informatics Lab · {f.tama}</div>
       <div style={{ display: "flex", gap: 18 }}>
         <a href="https://www.tamagawa.ac.jp/college_of_engineering/teachers/software/shibata.html" target="_blank" rel="noopener noreferrer">{f.tama}</a>
-        <a href="https://github.com/brightwaltz/shibakenlab" target="_blank" rel="noopener noreferrer">{f.src}</a>
+        <a href="https://github.com/brightwaltz/brightwaltz.github.io" target="_blank" rel="noopener noreferrer">{f.src}</a>
         <span>{f.crafted}</span>
       </div>
     </footer>
