@@ -29,10 +29,34 @@ jobs:
         with:
           enablement: true
 
+      - name: Stage site (exclude source-only assets & internal files)
+        run: |
+          mkdir -p _site
+          rsync -a \
+            --exclude='_site' \
+            --exclude='.git' \
+            --exclude='.github' \
+            --exclude='.claude' \
+            --exclude='.gitignore' \
+            --exclude='.DS_Store' \
+            --exclude='research_infographic' \
+            --exclude='screenshots' \
+            --exclude='uploads' \
+            --exclude='README.md' \
+            ./ _site/
+
+      - name: Stamp sitemap lastmod with today's date (UTC)
+        run: |
+          if [ -f _site/sitemap.xml ]; then
+            today=$(date -u +%Y-%m-%d)
+            sed -i "s|<lastmod>[^<]*</lastmod>|<lastmod>${today}</lastmod>|g" _site/sitemap.xml
+            echo "sitemap.xml lastmod -> ${today}"
+          fi
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: .
+          path: _site
 
       - name: Deploy to GitHub Pages
         id: deployment

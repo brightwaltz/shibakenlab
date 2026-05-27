@@ -65,6 +65,17 @@ python3 -m http.server 8000
 
 初回のみ、リポジトリの **Settings → Pages → Build and deployment → Source** を `GitHub Actions` に設定する必要があります（ワークフロー側で `enablement: true` を指定しているため、自動で有効化されることもあります）。
 
+### デプロイから除外されるもの
+
+ワークフローの「Stage site」ステップで、本番に出さないディレクトリ／ファイルを除外しています。**ローカルには残るがサイトには出ない**ものは以下：
+
+- `research_infographic/` — NotebookLM 出力の原寸 PNG（合計 60MB 強）。実際に表示するのは `assets/images/infographics/` 配下に置いた最適化版。
+- `screenshots/` — 開発時の動作確認画像。
+- `uploads/` — 一時アップロード置き場。
+- `README.md` / `.github/` / `.claude/` — 運用ドキュメントと開発ツール設定。
+
+加えて、ワークフローは `sitemap.xml` の `<lastmod>` をデプロイ時の日付に自動で書き換えてからアップロードします。
+
 ---
 
 ## コンテンツの更新方法

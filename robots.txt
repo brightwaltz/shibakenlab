@@ -1,4 +1,10 @@
 User-agent: *
 Allow: /
 
+# Internal / source-only directories (also excluded from the Pages deploy artifact,
+# kept here as a defense-in-depth signal for crawlers).
+Disallow: /research_infographic/
+Disallow: /screenshots/
+Disallow: /uploads/
+
 Sitemap: https://brightwaltz.github.io/shibakenlab/sitemap.xml

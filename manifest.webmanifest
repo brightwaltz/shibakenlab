@@ -1,0 +1,20 @@
+{
+  "name": "サービス情報学研究室 / 柴田研究室",
+  "short_name": "柴田研究室",
+  "description": "玉川大学 工学部 ソフトウェアサイエンス学科 柴田研究室 (Service Informatics Lab)",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#050818",
+  "theme_color": "#0B2C5C",
+  "lang": "ja",
+  "dir": "ltr",
+  "icons": [
+    {
+      "src": "./favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
