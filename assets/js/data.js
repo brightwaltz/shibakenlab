@@ -750,9 +750,9 @@ window.LAB_NEWS = [
     titleJa: "研究室公式サイトを公開しました",
     titleEn: "The lab website is now live.",
     bodyJa:
-      "サービス情報学研究室の公式サイトを公開しました。研究テーマ、最新の業績、卒業研究のインフォグラフィック、訪問アクセス情報を一望できるように再設計しています。サイトのソースは GitHub で公開しており、今後 Claude と GitHub を経由して継続的に更新していきます。",
+      "サービス情報学研究室の公式サイトを公開しました。研究テーマ、最新の業績、卒業研究のインフォグラフィック、訪問アクセス情報を一望できるように再設計しています。サイトのソースは GitHub で公開しています。",
     bodyEn:
-      "We launched the official site of the Service Informatics Lab. It centralizes our research themes, latest publications, student infographics, and access information. The site is open-source on GitHub and will be updated continuously via Claude + GitHub.",
+      "We launched the official site of the Service Informatics Lab. It centralizes our research themes, latest publications, student infographics, and access information. The site is open-source on GitHub.",
   },
 ];
 
