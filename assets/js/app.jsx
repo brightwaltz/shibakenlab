@@ -37,6 +37,32 @@ function applyPalette(id) {
 }
 
 // ── Nav ─────────────────────────────────────────────────────────────────────
+// Brand mark — a tiny 3×3 mini-grid of dots that telegraphs "PDS → SLM core".
+// The center dot pulses; surrounding dots use the accent gradient.
+function BrandMark() {
+  return (
+    <svg className="brand-mark" viewBox="0 0 20 20" aria-hidden="true">
+      <defs>
+        <linearGradient id="bm-grad" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%"  stopColor="var(--c-a1)"/>
+          <stop offset="50%" stopColor="var(--c-a2)"/>
+          <stop offset="100%" stopColor="var(--c-a3)"/>
+        </linearGradient>
+      </defs>
+      {[
+        [3, 3, 1.2], [10, 3, 1.4], [17, 3, 1.2],
+        [3, 10, 1.4], [10, 10, 2.4], [17, 10, 1.4],
+        [3, 17, 1.2], [10, 17, 1.4], [17, 17, 1.2],
+      ].map(([x, y, r], i) => (
+        <circle key={i} cx={x} cy={y} r={r}
+                fill={i === 4 ? "url(#bm-grad)" : "rgba(255,255,255,0.55)"}
+                className={i === 4 ? "brand-mark__core" : "brand-mark__dot"}
+                style={i === 4 ? null : { animationDelay: `${i * 0.12}s` }}/>
+      ))}
+    </svg>
+  );
+}
+
 function Nav({ lang, setLang }) {
   const i = I18N[lang].nav;
   const [atTop, setAtTop] = React.useState(true);
@@ -52,7 +78,7 @@ function Nav({ lang, setLang }) {
   return (
     <header className="nav" data-at-top={atTop}>
       <a href="#home" className="nav__brand">
-        <span className="dot" aria-hidden="true"></span>
+        <BrandMark />
         <span>{lang === "ja" ? "サービス情報学研究室" : "Service Informatics Lab"}</span>
       </a>
       <nav className="nav__menu">
@@ -66,8 +92,10 @@ function Nav({ lang, setLang }) {
         {link("contact",      i.contact)}
       </nav>
       <div className="nav__lang" role="group" aria-label={I18N[lang].aria.langtoggle}>
-        <button aria-pressed={lang === "ja"} onClick={() => setLang("ja")}>JA</button>
-        <button aria-pressed={lang === "en"} onClick={() => setLang("en")}>EN</button>
+        <button aria-pressed={lang === "ja"} onClick={() => setLang("ja")}
+                title="Switch to Japanese (press L)">JA</button>
+        <button aria-pressed={lang === "en"} onClick={() => setLang("en")}
+                title="Switch to English (press L)">EN</button>
       </div>
     </header>
   );
@@ -77,6 +105,7 @@ function Nav({ lang, setLang }) {
 function HeroSection({ lang, mode }) {
   const h = I18N[lang].hero;
   const Hero = window.Hero;
+  const MagneticButton = window.MagneticButton;
   return (
     <section id="home" className="hero">
       <div className="hero__canvas">
@@ -90,8 +119,12 @@ function HeroSection({ lang, mode }) {
         </h1>
         <p className="hero__sub reveal" data-d="2">{h.sub}</p>
         <div className="hero__ctas reveal" data-d="3">
-          <a className="btn btn--primary" href="#research">{h.cta1} <Icon name="arrow" /></a>
-          <a className="btn" href="#contact">{h.cta2} <Icon name="arrow" /></a>
+          <MagneticButton href="#research" className="btn btn--primary">
+            {h.cta1} <Icon name="arrow" />
+          </MagneticButton>
+          <MagneticButton href="#contact" className="btn">
+            {h.cta2} <Icon name="arrow" />
+          </MagneticButton>
         </div>
       </div>
       <div className="hero__scroll">
@@ -157,15 +190,91 @@ function App() {
     document.documentElement.lang = l;
     document.body.setAttribute("data-lang", l);
   };
-  React.useEffect(() => { document.documentElement.lang = lang; document.body.setAttribute("data-lang", lang); }, [lang]);
+  React.useEffect(() => {
+    document.documentElement.lang = lang;
+    document.body.setAttribute("data-lang", lang);
+    // Swap OG image to the locale-specific one so social shares match
+    // ?lang=en pages.
+    const ogPng = document.querySelector('meta[property="og:image"]');
+    const twPng = document.querySelector('meta[name="twitter:image"]');
+    const url   = lang === "en"
+      ? "https://brightwaltz.github.io/shibakenlab/assets/images/og-image-en.png"
+      : "https://brightwaltz.github.io/shibakenlab/assets/images/og-image.png";
+    if (ogPng) ogPng.setAttribute("content", url);
+    if (twPng) twPng.setAttribute("content", url);
+  }, [lang]);
 
   // Apply palette + grain + cursor settings from tweaks
-  React.useEffect(() => { applyPalette(tw.palette); }, [tw.palette]);
+  React.useEffect(() => {
+    applyPalette(tw.palette);
+    // Tell CSS whether to honor prefers-color-scheme.  Only when the user
+    // has the default ("tama-night") palette do we let the OS preference take
+    // over via the @media block in style.css.
+    document.documentElement.setAttribute(
+      "data-os-theme",
+      tw.palette === "tama-night" ? "auto" : "user"
+    );
+  }, [tw.palette]);
   React.useEffect(() => {
     document.body.style.setProperty("--grain-on", tw.grain ? "1" : "0");
     const bg = document.querySelector(".stage-bg");
     if (bg) bg.style.setProperty("--grain-display", tw.grain ? "block" : "none");
   }, [tw.grain]);
+
+  // Keyboard shortcut: L toggles language.  Ignored when the user is typing
+  // in a form field.
+  React.useEffect(() => {
+    const onKey = (e) => {
+      if (e.key && e.key.toLowerCase() !== "l") return;
+      if (e.ctrlKey || e.metaKey || e.altKey) return;
+      const tag = (e.target.tagName || "").toLowerCase();
+      if (tag === "input" || tag === "textarea" || e.target.isContentEditable) return;
+      setLang(lang === "ja" ? "en" : "ja");
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [lang]);
+
+  // Reading progress bar (top edge).  Updated on scroll/resize.
+  React.useEffect(() => {
+    const el = document.getElementById("read-progress");
+    if (!el) return;
+    const update = () => {
+      const docH = document.documentElement.scrollHeight - window.innerHeight;
+      const t = docH > 0 ? Math.min(1, window.scrollY / docH) : 0;
+      el.style.transform = `scaleX(${t})`;
+    };
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    return () => {
+      window.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+    };
+  }, []);
+
+  // Scroll-driven scene morph for the Hero particles.
+  //   morph = 0  → PDS scattered shell
+  //   morph = 1  → graph rings
+  //   morph = 2  → SLM core (collapsed)
+  // Drives the shared `window.__heroScrollMorph` variable that hero.jsx reads.
+  React.useEffect(() => {
+    const hero = document.querySelector(".hero");
+    const update = () => {
+      const h = hero?.offsetHeight || window.innerHeight;
+      const y = Math.max(0, window.scrollY);
+      // 0 at the top of hero, 1 at the bottom; multiply by 2 for the two-stage morph.
+      const t = Math.min(1, y / (h * 0.95)) * 2;
+      window.__heroScrollMorph = t;
+    };
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    return () => {
+      window.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+    };
+  }, []);
 
   // Cursor glow
   React.useEffect(() => {
@@ -250,6 +359,12 @@ function App() {
 
   return (
     <>
+      <a href="#home" className="skip-link">
+        {lang === "ja" ? "本文へスキップ" : "Skip to content"}
+      </a>
+      <div className="read-progress" aria-hidden="true">
+        <div className="read-progress__bar" id="read-progress"></div>
+      </div>
       <div className="stage-bg" aria-hidden="true"></div>
       <div className="cursor" id="cursor-glow" aria-hidden="true"></div>
       <Nav lang={lang} setLang={setLang} />
@@ -265,6 +380,7 @@ function App() {
       <News lang={lang} />
       <Contact lang={lang} />
       <Footer lang={lang} />
+      <LangHint lang={lang} />
       <LabTweaks
         palette={tw.palette}
         setPalette={(v) => setTweak("palette", v)}
@@ -277,6 +393,30 @@ function App() {
       />
       <TweaksTrigger />
     </>
+  );
+}
+
+// Subtle keyboard-hint pill that auto-dismisses after a few seconds (or first
+// scroll). Tells visitors that L toggles language.
+function LangHint({ lang }) {
+  const [visible, setVisible] = React.useState(true);
+  React.useEffect(() => {
+    const dismiss = () => setVisible(false);
+    const t = setTimeout(dismiss, 8000);
+    window.addEventListener("scroll", dismiss, { passive: true, once: true });
+    window.addEventListener("keydown", dismiss, { once: true });
+    return () => { clearTimeout(t); };
+  }, []);
+  if (!visible) return null;
+  return (
+    <div className="lang-hint" role="note" aria-live="polite">
+      <kbd>L</kbd>
+      <span>
+        {lang === "ja"
+          ? "を押して English へ"
+          : "to switch to 日本語"}
+      </span>
+    </div>
   );
 }
 

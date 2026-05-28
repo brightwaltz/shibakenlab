@@ -84,11 +84,13 @@ function Hero({ mode = "particles" }) {
     const buildParticles = () => {
       const pal = HERO_PALETTE();
       const isMobile = window.innerWidth < 760;
-      const count = isMobile ? 1600 : 4200;
+      const count = isMobile ? 1600 : 4800;
 
       const geom = new THREE.BufferGeometry();
-      const positions = new Float32Array(count * 3);
-      const initial   = new Float32Array(count * 3);
+      const positions = new Float32Array(count * 3);   // current (animated)
+      const initial   = new Float32Array(count * 3);   // PDS — scattered shell
+      const target1   = new Float32Array(count * 3);   // Graph network — concentric rings
+      const target2   = new Float32Array(count * 3);   // SLM core — tight central sphere
       const colors    = new Float32Array(count * 3);
       const sizes     = new Float32Array(count);
 
@@ -97,7 +99,7 @@ function Hero({ mode = "particles" }) {
       const c3 = new THREE.Color(pal.a3);
 
       for (let i = 0; i < count; i++) {
-        // Distribute roughly across an elongated shell — like a slow nebula.
+        // Initial: scattered PDS nebula.
         const r = 8 + Math.pow(Math.random(), 1.5) * 14;
         const phi   = Math.acos(2 * Math.random() - 1);
         const theta = Math.random() * Math.PI * 2;
@@ -107,14 +109,34 @@ function Hero({ mode = "particles" }) {
         positions[i * 3 + 0] = initial[i * 3 + 0] = x;
         positions[i * 3 + 1] = initial[i * 3 + 1] = y;
         positions[i * 3 + 2] = initial[i * 3 + 2] = z;
+
+        // Target 1: concentric rings (graph rendering). 3 rings.
+        const ring = Math.floor(Math.random() * 3);
+        const ringR = 6 + ring * 5.5;
+        const ringTheta = Math.random() * Math.PI * 2;
+        const jitter = (Math.random() - 0.5) * 0.6;
+        target1[i * 3 + 0] = Math.cos(ringTheta) * (ringR + jitter) * 1.4;
+        target1[i * 3 + 1] = Math.sin(ringTheta) * (ringR + jitter) * 0.9;
+        target1[i * 3 + 2] = (Math.random() - 0.5) * 2.0;
+
+        // Target 2: tight central sphere (SLM core), with outliers fading.
+        const coreR = Math.pow(Math.random(), 2.0) * 5.5;
+        const coreP = Math.acos(2 * Math.random() - 1);
+        const coreT = Math.random() * Math.PI * 2;
+        target2[i * 3 + 0] = coreR * Math.sin(coreP) * Math.cos(coreT) * 1.1;
+        target2[i * 3 + 1] = coreR * Math.sin(coreP) * Math.sin(coreT);
+        target2[i * 3 + 2] = coreR * Math.cos(coreP) * 0.9;
+
         const mix = Math.random();
         const col = mix < 0.5 ? c1.clone().lerp(c2, mix * 2) : c2.clone().lerp(c3, (mix - 0.5) * 2);
         colors[i * 3 + 0] = col.r;
         colors[i * 3 + 1] = col.g;
         colors[i * 3 + 2] = col.b;
-        sizes[i] = 0.07 + Math.random() * 0.16;
+        sizes[i] = 0.09 + Math.random() * 0.20;
       }
       geom.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+      geom.setAttribute("aPos1",    new THREE.BufferAttribute(target1, 3));
+      geom.setAttribute("aPos2",    new THREE.BufferAttribute(target2, 3));
       geom.setAttribute("color",    new THREE.BufferAttribute(colors, 3));
       geom.setAttribute("size",     new THREE.BufferAttribute(sizes, 1));
 
@@ -122,6 +144,7 @@ function Hero({ mode = "particles" }) {
         uniforms: {
           uTime:    { value: 0 },
           uMouse:   { value: new THREE.Vector2(0, 0) },
+          uMorph:   { value: 0 }, // 0..1 (PDS → graph), 1..2 (graph → core)
         },
         transparent: true,
         depthWrite: false,
@@ -129,27 +152,38 @@ function Hero({ mode = "particles" }) {
         vertexShader: `
           attribute float size;
           attribute vec3 color;
+          attribute vec3 aPos1;
+          attribute vec3 aPos2;
           varying vec3 vColor;
           varying float vDist;
           uniform float uTime;
           uniform vec2 uMouse;
+          uniform float uMorph;
           void main() {
-            vec3 p = position;
-            // slow swirl
-            float a = uTime * 0.08;
+            // Morph state 0..1: PDS → graph; 1..2: graph → SLM core
+            float t1 = clamp(uMorph, 0.0, 1.0);
+            float t2 = clamp(uMorph - 1.0, 0.0, 1.0);
+            vec3 p = mix(position, aPos1, t1);
+            p = mix(p, aPos2, t2);
+
+            // slow swirl that softens as we collapse to the core
+            float a = uTime * 0.08 * (1.0 - 0.5 * t2);
             float ca = cos(a), sa = sin(a);
             p.xz = mat2(ca, -sa, sa, ca) * p.xz;
             // gentle vertical drift
-            p.y += sin(uTime * 0.4 + position.x * 0.2) * 0.18;
+            p.y += sin(uTime * 0.4 + position.x * 0.2) * 0.18 * (1.0 - t2);
             // mouse-driven distortion (radial push)
             vec2 toM = p.xy - uMouse * 12.0;
             float dM = length(toM);
             float push = exp(-dM * 0.15) * 1.4;
             p.xy += normalize(toM + 0.0001) * push;
+
             vColor = color;
             vec4 mv = modelViewMatrix * vec4(p, 1.0);
             vDist = -mv.z;
-            gl_PointSize = size * (320.0 / -mv.z);
+            // Particles bloom slightly as they settle into the core
+            float sizeBoost = mix(1.0, 1.35, t2);
+            gl_PointSize = size * (320.0 / -mv.z) * sizeBoost;
             gl_Position = projectionMatrix * mv;
           }
         `,
@@ -173,6 +207,10 @@ function Hero({ mode = "particles" }) {
         update(t) {
           mat.uniforms.uTime.value = t;
           mat.uniforms.uMouse.value.set(pointer.x, pointer.y);
+          // Driven by global scroll progress within the hero. 0 at top, 2 at bottom.
+          const morph = window.__heroScrollMorph || 0;
+          // Ease the morph for visual continuity
+          mat.uniforms.uMorph.value += (morph - mat.uniforms.uMorph.value) * 0.08;
           points.rotation.y += 0.0006;
         },
         dispose() {

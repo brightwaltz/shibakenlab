@@ -31,17 +31,30 @@
   <meta name="twitter:description" content="あなたを理解し、暮らしに溶け込むAIを、研究する。" />
   <meta name="twitter:image" content="https://brightwaltz.github.io/shibakenlab/assets/images/og-image.png" />
 
-  <!-- JSON-LD: Person + Organization -->
+  <!-- JSON-LD: Person + Organization + ResearchOrganization -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@graph": [
       {
-        "@type": "Organization",
+        "@type": ["Organization", "ResearchOrganization"],
         "@id": "https://brightwaltz.github.io/shibakenlab/#org",
         "name": "サービス情報学研究室 (柴田研究室)",
-        "alternateName": "Service Informatics Lab",
+        "alternateName": ["Service Informatics Lab", "Shibata Lab"],
         "url": "https://brightwaltz.github.io/shibakenlab/",
+        "logo": "https://brightwaltz.github.io/shibakenlab/favicon.svg",
+        "image": "https://brightwaltz.github.io/shibakenlab/assets/images/og-image.png",
+        "description": "あなたを理解し、暮らしに溶け込むAIを、研究する。Personal AI、Graph-Document、学習支援、Multimodal Sensing、Service Informatics & HCI に関する研究を行う、玉川大学 工学部 ソフトウェアサイエンス学科の研究室。",
+        "knowsAbout": [
+          "Personal Data Store",
+          "Personal AI",
+          "Small Language Models",
+          "Graph Document",
+          "Recurrent Education",
+          "Multimodal Sensing",
+          "Service Informatics",
+          "Human-Computer Interaction"
+        ],
         "parentOrganization": {
           "@type": "CollegeOrUniversity",
           "name": "玉川大学 工学部 ソフトウェアサイエンス学科",
@@ -54,7 +67,8 @@
           "addressRegion": "東京都",
           "postalCode": "194-8610",
           "addressCountry": "JP"
-        }
+        },
+        "member": { "@id": "https://brightwaltz.github.io/shibakenlab/#pi" }
       },
       {
         "@type": "Person",

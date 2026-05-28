@@ -80,9 +80,10 @@ button { font: inherit; color: inherit; }
 .stage-bg {
   position: fixed; inset: 0; z-index: -2; pointer-events: none;
   background:
-    radial-gradient(60vw 60vw at 12% 8%, color-mix(in oklab, var(--c-a1) 22%, transparent), transparent 60%),
-    radial-gradient(50vw 50vw at 88% 22%, color-mix(in oklab, var(--c-a3) 22%, transparent), transparent 65%),
-    radial-gradient(70vw 70vw at 60% 110%, color-mix(in oklab, var(--c-a2) 18%, transparent), transparent 60%),
+    radial-gradient(55vw 55vw at 18% 12%, color-mix(in oklab, var(--c-a1) 22%, transparent), transparent 60%),
+    radial-gradient(50vw 50vw at 86% 18%, color-mix(in oklab, var(--c-a3) 22%, transparent), transparent 65%),
+    radial-gradient(48vw 48vw at 82% 72%, color-mix(in oklab, var(--c-a2) 22%, transparent), transparent 60%),
+    radial-gradient(70vw 70vw at 30% 110%, color-mix(in oklab, var(--c-a2) 16%, transparent), transparent 60%),
     linear-gradient(180deg, var(--c-bg) 0%, var(--c-bg-2) 100%);
   filter: saturate(120%);
 }
@@ -173,8 +174,11 @@ button { font: inherit; color: inherit; }
 .hero__veil {
   position: absolute; inset: 0; z-index: 1; pointer-events: none;
   background:
-    linear-gradient(180deg, rgba(5,8,24,0.55) 0%, rgba(5,8,24,0.0) 25%,
-                            rgba(5,8,24,0.0) 65%, rgba(5,8,24,0.85) 100%);
+    /* Subtle dark wedge behind the headline so the text reads, but not so
+       aggressive that it kills the particles on the right side. */
+    linear-gradient(120deg, rgba(5,8,24,0.55) 0%, rgba(5,8,24,0.0) 55%),
+    linear-gradient(180deg, rgba(5,8,24,0.0) 0%, rgba(5,8,24,0.0) 75%,
+                            rgba(5,8,24,0.55) 100%);
 }
 .hero__inner {
   position: relative; z-index: 2;
@@ -198,12 +202,17 @@ button { font: inherit; color: inherit; }
   font-weight: 700;
   margin: 0;
   text-wrap: pretty;
-  max-width: 16ch;
+  max-width: 22ch;
 }
 .hero__title em {
   font-style: normal;
   background: var(--grad-accent);
   -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+/* Keep CJK title line atomic — never break inside the second em-wrapped phrase */
+.hero__title em {
+  word-break: keep-all;
+  overflow-wrap: normal;
 }
 .hero__sub {
   max-width: 64ch;
@@ -405,12 +414,16 @@ button { font: inherit; color: inherit; }
   background: var(--grad-accent);
 }
 
-/* ── Manifesto (three-principle statement section) ────────────────────────── */
+/* ── Manifesto (sticky horizontal sequence of 3 principles) ───────────────── */
 .manifesto {
   position: relative;
-  padding: clamp(96px, 12vw, 180px) var(--pad-x);
+  /* Tall wrapper enables sticky-scroll behavior.
+     stage = 100vh, each transition adds 80vh of scroll space,
+     plus 30vh tail so card 3 has time to settle at center. */
+  height: calc(100vh + (var(--m-len, 3) - 1) * 80vh + 30vh);
+  padding: 0 var(--pad-x);
   background:
-    radial-gradient(80vw 60vw at 50% 0%,
+    radial-gradient(80vw 60vw at 50% 50%,
       color-mix(in oklab, var(--c-a2) 14%, transparent), transparent 60%);
 }
 .manifesto__rule {
@@ -418,40 +431,106 @@ button { font: inherit; color: inherit; }
   height: 1px;
   background: linear-gradient(90deg, transparent, var(--c-line), transparent);
 }
+.manifesto__stage {
+  position: sticky; top: 0; height: 100vh;
+  display: flex; flex-direction: column; justify-content: center;
+  overflow: hidden;
+}
+.manifesto__head {
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin-bottom: clamp(24px, 4vh, 56px);
+}
 .manifesto__kicker {
   font-size: var(--type-micro); letter-spacing: 0.24em; text-transform: uppercase;
   color: var(--c-ink-3);
-  margin-bottom: clamp(28px, 4vw, 56px);
 }
-.manifesto__grid {
-  display: grid; grid-template-columns: repeat(3, 1fr);
-  gap: clamp(28px, 4vw, 64px);
-}
-@media (max-width: 880px) {
-  .manifesto__grid { grid-template-columns: 1fr; gap: 40px; }
-}
-.manifesto__item {
-  border-top: 1px solid var(--c-line);
-  padding-top: 22px;
-}
-.manifesto__no {
-  font-size: var(--type-micro); letter-spacing: 0.12em;
+.manifesto__count {
   font-variant-numeric: tabular-nums;
+  font-size: var(--type-small); letter-spacing: 0.12em;
+  color: var(--c-ink-3);
+}
+.manifesto__count em {
+  font-style: normal; font-weight: 600;
   background: var(--grad-accent);
   -webkit-background-clip: text; background-clip: text; color: transparent;
-  margin-bottom: 14px;
-  font-weight: 600;
+  font-size: clamp(20px, 2.4vw, 28px);
+  margin-right: 4px;
+}
+
+.manifesto__viewport {
+  position: relative;
+  flex: 1;
+  display: grid;
+  place-items: center;
+  /* Cards stack on top of each other; we move them with transform. */
+}
+.manifesto__card {
+  grid-column: 1; grid-row: 1;
+  width: 100%; max-width: 900px;
+  text-align: center;
+  padding: 0 24px;
+  /* No transition — opacity & transform track scroll position directly.
+     A 60Hz scroll already produces smooth motion; a CSS transition on top
+     just lags + restarts on every scroll event. */
+  will-change: transform, opacity;
+}
+.manifesto__no {
+  font-size: clamp(60px, 12vw, 160px); line-height: 1;
+  font-weight: 700; font-variant-numeric: tabular-nums;
+  background: var(--grad-accent);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  letter-spacing: -0.04em;
+  margin-bottom: 8px;
+  opacity: 0.32;
 }
 .manifesto__title {
-  font-size: clamp(22px, 2.4vw, 32px);
-  line-height: 1.18; letter-spacing: -0.01em;
-  margin: 0 0 16px; font-weight: 600;
+  font-size: clamp(28px, 4.5vw, 56px);
+  line-height: 1.15; letter-spacing: -0.012em;
+  margin: 0 auto 20px; font-weight: 600;
   text-wrap: balance;
+  max-width: 18ch;
 }
 .manifesto__body {
-  font-size: var(--type-small); line-height: 1.78;
-  color: var(--c-ink-2); margin: 0;
+  font-size: clamp(15px, 1.4vw, 19px); line-height: 1.78;
+  color: var(--c-ink-2); margin: 0 auto;
   text-wrap: pretty;
+  max-width: 52ch;
+}
+
+.manifesto__nav {
+  display: flex; gap: 10px; justify-content: center;
+  margin-top: clamp(24px, 4vh, 48px);
+}
+.manifesto__dot {
+  width: 56px; height: 3px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 999px; overflow: hidden;
+  position: relative;
+}
+.manifesto__dotfill {
+  position: absolute; inset: 0;
+  background: var(--grad-accent);
+  width: 0%;
+  transition: width 0.1s linear;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .manifesto {
+    height: auto;
+    padding: clamp(96px, 12vw, 180px) var(--pad-x);
+  }
+  .manifesto__stage { position: static; height: auto; }
+  .manifesto__viewport { display: flex; flex-direction: column; gap: 48px; }
+  .manifesto__card {
+    transform: none !important; opacity: 1 !important; filter: none !important;
+  }
+  .manifesto__nav { display: none; }
+}
+
+@media (max-width: 880px) {
+  .manifesto {
+    height: calc(100vh + (var(--m-len, 3) - 1) * 100vh);
+  }
 }
 
 /* ── Research theme cards ─────────────────────────────────────────────────── */
@@ -523,6 +602,8 @@ button { font: inherit; color: inherit; }
   padding: 4px 9px; border-radius: 999px;
   background: rgba(255,255,255,0.04); border: 1px solid var(--c-line);
   color: var(--c-ink-2);
+  white-space: nowrap;
+  max-width: 100%;
 }
 
 /* ── Research map (D3 force graph) ────────────────────────────────────────── */
@@ -561,6 +642,10 @@ button { font: inherit; color: inherit; }
 }
 .map-node.is-dim text { opacity: 0.18; }
 .map-node.is-dim circle { opacity: 0.18; }
+.map-node.is-theme-focused circle {
+  filter: drop-shadow(0 0 18px var(--c-a1));
+  stroke-width: 3 !important;
+}
 .map-link { stroke: rgba(255,255,255,0.16); stroke-width: 1px; transition: stroke .3s; }
 .map-link.is-dim { stroke-opacity: 0.05; }
 
@@ -885,6 +970,245 @@ select.pub-tag option { background: #0e1230; color: #fff; }
 .tweaks-trigger svg { opacity: 0.85; }
 @media (max-width: 640px) {
   .tweaks-trigger { right: 12px; bottom: 12px; padding: 9px 12px; }
+}
+
+/* ── Accessibility primitives ─────────────────────────────────────────────── */
+.skip-link {
+  position: fixed; top: -100px; left: 12px; z-index: 2147483647;
+  padding: 10px 16px; border-radius: 8px;
+  background: #fff; color: #050818;
+  font: 600 14px/1 "Inter", "Noto Sans JP", system-ui, sans-serif;
+  text-decoration: none;
+  transition: top .2s var(--ease-out);
+}
+.skip-link:focus { top: 12px; outline: 2px solid var(--c-a1); outline-offset: 2px; }
+
+:focus-visible {
+  outline: 2px solid var(--c-a1);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+/* Disable outline on non-keyboard focus (default in modern browsers) */
+:focus:not(:focus-visible) { outline: none; }
+
+/* ── Reading progress bar (top edge) ──────────────────────────────────────── */
+.read-progress {
+  position: fixed; top: 0; left: 0; right: 0; height: 2px;
+  z-index: 2147483646; pointer-events: none;
+  background: transparent;
+}
+.read-progress__bar {
+  height: 100%; width: 100%;
+  background: var(--grad-accent);
+  transform: scaleX(0); transform-origin: 0 50%;
+  transition: transform 0.12s linear;
+  box-shadow: 0 0 10px color-mix(in oklab, var(--c-a1) 70%, transparent);
+}
+
+/* ── Brand mark (mini-grid replacing the single nav dot) ──────────────────── */
+.brand-mark {
+  width: 22px; height: 22px;
+  filter: drop-shadow(0 0 8px color-mix(in oklab, var(--c-a2) 50%, transparent));
+}
+.brand-mark__dot { animation: bmPulse 2.6s ease-in-out infinite; }
+.brand-mark__core { transform-origin: center; animation: bmCorePulse 2.6s ease-in-out infinite; }
+@keyframes bmPulse {
+  0%, 100% { opacity: 0.4; }
+  50%      { opacity: 1; }
+}
+@keyframes bmCorePulse {
+  0%, 100% { transform: scale(0.92); }
+  50%      { transform: scale(1.08); }
+}
+
+/* ── Language-hint pill ───────────────────────────────────────────────────── */
+.lang-hint {
+  position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%);
+  z-index: 2147483644; pointer-events: none;
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 8px 14px; border-radius: 999px;
+  background: rgba(5,8,24,0.7); border: 1px solid var(--c-line);
+  -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+  font-size: var(--type-micro); letter-spacing: 0.06em; color: var(--c-ink-2);
+  animation: hintIn 0.6s var(--ease-out) 1s both,
+             hintOut 0.6s var(--ease-out) 7.4s forwards;
+}
+@keyframes hintIn {
+  from { opacity: 0; transform: translate(-50%, 16px); }
+  to   { opacity: 1; transform: translate(-50%, 0); }
+}
+@keyframes hintOut {
+  to { opacity: 0; transform: translate(-50%, 16px); }
+}
+.lang-hint kbd {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid var(--c-line);
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 11px;
+  color: var(--c-ink);
+}
+@media (pointer: coarse) { .lang-hint { display: none; } }
+
+/* ── Magnetic button wrapper ──────────────────────────────────────────────── */
+.magnetic {
+  display: inline-flex;
+  /* Outer takes the cursor-pull; inner takes the hover scale.
+     Layering them prevents transform conflicts. */
+  will-change: transform;
+}
+.magnetic__inner {
+  display: inline-flex; align-items: center; gap: 10px;
+}
+
+/* ── Expanded Footer ──────────────────────────────────────────────────────── */
+.footer-x {
+  position: relative; margin-top: 60px;
+  border-top: 1px solid var(--c-line);
+  padding: clamp(48px, 6vw, 80px) var(--pad-x) 32px;
+  background:
+    radial-gradient(60vw 50vw at 18% 100%,
+      color-mix(in oklab, var(--c-a2) 10%, transparent), transparent 60%);
+}
+.footer-x__top {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr 1fr;
+  gap: clamp(28px, 4vw, 64px);
+  margin-bottom: 48px;
+}
+.footer-x__brand { max-width: 460px; }
+.footer-x__title {
+  font-size: clamp(24px, 2.4vw, 32px);
+  font-weight: 600; margin: 0 0 8px;
+  letter-spacing: -0.005em;
+}
+.footer-x__sub {
+  color: var(--c-ink-3);
+  font-size: var(--type-small);
+  margin: 0 0 24px;
+}
+.footer-x__github {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 16px; border-radius: 999px;
+  background: var(--c-glass); border: 1px solid var(--c-line);
+  font-size: var(--type-small); color: var(--c-ink);
+  transition: all .3s var(--ease-out);
+}
+.footer-x__github:hover {
+  border-color: rgba(255,255,255,0.25); transform: translateY(-2px);
+  background: var(--c-glass-2);
+}
+.footer-x__heading {
+  font-size: var(--type-micro); letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--c-ink-3); margin: 0 0 16px; font-weight: 500;
+}
+.footer-x__col ul {
+  list-style: none; padding: 0; margin: 0;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.footer-x__col a {
+  display: inline-flex; align-items: center; gap: 6px;
+  color: var(--c-ink-2); font-size: var(--type-small);
+  transition: color .25s;
+}
+.footer-x__col a:hover { color: var(--c-ink); }
+.footer-x__col svg { opacity: 0.5; }
+.footer-x__bottom {
+  display: flex; justify-content: space-between; align-items: center;
+  gap: 18px; flex-wrap: wrap;
+  padding-top: 28px;
+  border-top: 1px solid var(--c-line-2);
+  font-size: var(--type-micro); color: var(--c-ink-3); letter-spacing: 0.04em;
+}
+.footer-x__stamps { display: flex; gap: 22px; flex-wrap: wrap; }
+@media (max-width: 760px) {
+  .footer-x__top { grid-template-columns: 1fr; gap: 36px; }
+}
+
+/* Legacy `.footer` retained for backward compatibility but unused now. */
+.footer { display: none; }
+
+/* ── Light theme (prefers-color-scheme: light) ────────────────────────────── */
+/* When the user's OS prefers light, swap to the Vercel-Mono-ish neutral palette
+   automatically.  The Tweaks panel selection still wins (palette stored in
+   localStorage); this block only fires when the JS-applied palette hasn't been
+   set yet at boot — implemented in app.jsx, this CSS just provides a
+   declarative fallback for pure-CSS renders. */
+@media (prefers-color-scheme: light) {
+  :root[data-os-theme="auto"] {
+    --c-bg:      #FAFAFA;
+    --c-bg-2:    #F3F4F8;
+    --c-ink:     #0A0A0A;
+    --c-ink-2:   rgba(10, 10, 10, 0.74);
+    --c-ink-3:   rgba(10, 10, 10, 0.52);
+    --c-line:    rgba(10, 10, 10, 0.10);
+    --c-line-2:  rgba(10, 10, 10, 0.06);
+    --c-glass:   rgba(255, 255, 255, 0.65);
+    --c-glass-2: rgba(255, 255, 255, 0.85);
+  }
+  :root[data-os-theme="auto"] body { color: var(--c-ink); }
+  :root[data-os-theme="auto"] .stage-bg {
+    background:
+      radial-gradient(55vw 55vw at 18% 12%, color-mix(in oklab, var(--c-a1) 12%, transparent), transparent 60%),
+      radial-gradient(50vw 50vw at 86% 18%, color-mix(in oklab, var(--c-a3) 12%, transparent), transparent 65%),
+      linear-gradient(180deg, var(--c-bg) 0%, var(--c-bg-2) 100%);
+  }
+  :root[data-os-theme="auto"] .nav { background: rgba(255, 255, 255, 0.6); }
+}
+
+/* ── Print styles ─────────────────────────────────────────────────────────── */
+@media print {
+  :root {
+    --c-bg: #ffffff; --c-bg-2: #ffffff;
+    --c-ink: #111111; --c-ink-2: #333333; --c-ink-3: #555555;
+    --c-line: #cccccc; --c-line-2: #e5e5e5;
+  }
+  body { background: #fff !important; color: #111 !important; }
+  .stage-bg, .cursor, .hero__canvas, .ticker, .tweaks-trigger, .twk-panel,
+  .read-progress, .lang-hint, .skip-link, .nav__lang, .hero__scroll {
+    display: none !important;
+  }
+  .nav {
+    position: static !important;
+    background: transparent !important;
+    border-bottom: 1px solid #ccc !important;
+    padding: 12px 24px !important;
+  }
+  .nav__menu { display: none; }
+  .hero {
+    min-height: auto !important;
+    padding: 24px 0 !important;
+    page-break-after: always;
+  }
+  .hero__title { color: #111 !important; }
+  .hero__title em { color: #111 !important; background: none !important;
+                    -webkit-text-fill-color: #111 !important; }
+  .section, .manifesto, .footer-x { padding: 24px 0 !important; }
+  .manifesto { height: auto !important; }
+  .manifesto__stage { position: static !important; height: auto !important; }
+  .manifesto__viewport { display: flex !important; flex-direction: column; gap: 32px; }
+  .manifesto__card { transform: none !important; opacity: 1 !important; filter: none !important;
+                     text-align: left !important; }
+  .manifesto__no, .gallery-group__year, .contact__big em, .pub-card__title em {
+    background: none !important;
+    -webkit-text-fill-color: currentColor !important;
+    color: #111 !important;
+  }
+  .glass {
+    background: #fff !important; border: 1px solid #ccc !important;
+    backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
+    box-shadow: none !important;
+  }
+  a { color: #0B2C5C !important; text-decoration: underline; }
+  a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.85em; color: #555;
+  }
+  .reveal { opacity: 1 !important; transform: none !important; }
+  .map-wrap, .access-map-card { page-break-inside: avoid; }
+  .theme--feature { grid-template-columns: 1fr !important; }
+  .theme__diagram { display: none !important; }
 }
 
 /* ── Reveal animations (scroll-driven) ────────────────────────────────────── */
