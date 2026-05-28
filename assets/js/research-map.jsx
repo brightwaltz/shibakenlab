@@ -1,12 +1,15 @@
 /* ───────────────────────────────────────────────────────────────────────────
    ResearchMap — D3 force graph of themes / keywords / papers / projects.
    Click a theme node to scroll to that research card; hover dims the rest.
+   Exposes window.__themeMapHighlight(themeId | null) so hovering a Research
+   card on the page can light up the matching theme + its neighborhood.
    ─────────────────────────────────────────────────────────────────────────── */
 
 function ResearchMap() {
   const wrap = React.useRef(null);
   const svgRef = React.useRef(null);
   const tipRef = React.useRef(null);
+  const apiRef = React.useRef({});
 
   React.useEffect(() => {
     const data = window.LAB_GRAPH;
@@ -157,6 +160,26 @@ function ResearchMap() {
       }
     });
 
+    // Public API — used by Research cards to highlight the map from outside.
+    const focusByThemeId = (themeId) => {
+      if (!themeId) {
+        nodeSel.classed("is-dim", false);
+        nodeSel.classed("is-focused", false);
+        nodeSel.classed("is-theme-focused", false);
+        linkSel.classed("is-dim", false);
+        return;
+      }
+      const ns = neighbors.get(themeId);
+      if (!ns) return;
+      nodeSel.classed("is-dim", (x) => !ns.has(x.id));
+      nodeSel.classed("is-focused", (x) => ns.has(x.id));
+      nodeSel.classed("is-theme-focused", (x) => x.id === themeId);
+      linkSel.classed("is-dim", (l) =>
+        !(l.source.id === themeId || l.target.id === themeId));
+    };
+    window.__themeMapHighlight = focusByThemeId;
+    apiRef.current.focus = focusByThemeId;
+
     // Resize
     const onResize = () => {
       const r = el.getBoundingClientRect();
@@ -167,7 +190,10 @@ function ResearchMap() {
     };
     const ro = new ResizeObserver(onResize); ro.observe(el);
 
-    return () => { sim.stop(); ro.disconnect(); };
+    return () => {
+      sim.stop(); ro.disconnect();
+      if (window.__themeMapHighlight === focusByThemeId) delete window.__themeMapHighlight;
+    };
   }, []);
 
   return (

@@ -5,6 +5,56 @@
    All read from window.LAB_*; language comes from a `lang` prop ("ja" | "en").
    ─────────────────────────────────────────────────────────────────────────── */
 
+/* ───────────────────────────────────────────────────────────────────────────
+   Misc UI primitives shared across sections.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+// MagneticButton — wraps an <a>/<button> so the cursor "pulls" it slightly
+//   on hover. Listens to pointer movement within a small radius around the
+//   button and translates the element on a damped lerp.
+function MagneticButton({ as = "a", className = "", strength = 0.3, children, ...rest }) {
+  const elRef = React.useRef(null);
+  React.useEffect(() => {
+    const el = elRef.current;
+    if (!el) return;
+    let raf;
+    let tx = 0, ty = 0, cx = 0, cy = 0;
+    const onMove = (e) => {
+      const r = el.getBoundingClientRect();
+      const dx = e.clientX - (r.left + r.width / 2);
+      const dy = e.clientY - (r.top  + r.height / 2);
+      const dist = Math.hypot(dx, dy);
+      const radius = Math.max(r.width, r.height) * 1.1;
+      if (dist > radius) { tx = 0; ty = 0; return; }
+      tx = dx * strength;
+      ty = dy * strength;
+    };
+    const onLeave = () => { tx = 0; ty = 0; };
+    const loop = () => {
+      cx += (tx - cx) * 0.18;
+      cy += (ty - cy) * 0.18;
+      el.style.transform = `translate(${cx.toFixed(2)}px, ${cy.toFixed(2)}px)`;
+      raf = requestAnimationFrame(loop);
+    };
+    el.addEventListener("pointermove", onMove);
+    el.addEventListener("pointerleave", onLeave);
+    loop();
+    return () => {
+      cancelAnimationFrame(raf);
+      el.removeEventListener("pointermove", onMove);
+      el.removeEventListener("pointerleave", onLeave);
+      el.style.transform = "";
+    };
+  }, [strength]);
+  const Tag = as;
+  return (
+    <Tag ref={elRef} className={`magnetic ${className}`} {...rest}>
+      <span className="magnetic__inner">{children}</span>
+    </Tag>
+  );
+}
+window.MagneticButton = MagneticButton;
+
 const t = (lang) => window.LAB_I18N[lang];
 
 // ── tiny inline icons (Lucide-ish, kept simple to avoid bloat) ──────────────
@@ -154,22 +204,93 @@ function About({ lang }) {
 window.About = About;
 
 // ─────────────────────────────────────────────────────────────────────────
-// Manifesto — three principles that name the lab's stance
+// Manifesto — three principles delivered as a sticky horizontal sequence
 // ─────────────────────────────────────────────────────────────────────────
 function Manifesto({ lang }) {
   const i = t(lang).sections.manifesto;
+  const wrapRef = React.useRef(null);
+  const [progress, setProgress] = React.useState(0);   // 0..(items.length-1)
+
+  React.useEffect(() => {
+    const wrap = wrapRef.current;
+    if (!wrap) return;
+    const items = i.items.length;
+    const onScroll = () => {
+      const rect = wrap.getBoundingClientRect();
+      const vp = window.innerHeight;
+      // Sticky stage is `vp` tall; total scroll length = items * vp + extra.
+      // We compute how far into the wrapper we are (0 at top, 1 at end of stage).
+      const total = wrap.offsetHeight - vp;
+      if (total <= 0) return;
+      const into = Math.min(total, Math.max(0, -rect.top));
+      const t = into / total;          // 0..1
+      // Domain is [0, items-1] so the last card lands at offset=0 (centered).
+      setProgress(t * (items - 1));
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, [i.items.length]);
+
+  const active = Math.min(i.items.length - 1, Math.floor(progress + 0.0001));
+
   return (
-    <section id="manifesto" className="manifesto">
+    <section id="manifesto" className="manifesto" ref={wrapRef}
+             style={{ "--m-len": i.items.length }}>
       <div className="manifesto__rule" aria-hidden="true"></div>
-      <div className="manifesto__kicker reveal">{i.kicker}</div>
-      <div className="manifesto__grid">
-        {i.items.map((it, idx) => (
-          <div key={it.no} className="manifesto__item reveal" data-d={idx + 1}>
-            <div className="manifesto__no">{it.no}</div>
-            <h3 className="manifesto__title">{it.title}</h3>
-            <p className="manifesto__body">{it.body}</p>
-          </div>
-        ))}
+
+      <div className="manifesto__stage">
+        <div className="manifesto__head">
+          <span className="manifesto__kicker">{i.kicker}</span>
+          <span className="manifesto__count">
+            <em>{String(Math.min(active + 1, i.items.length)).padStart(2, "0")}</em>
+            <span> / {String(i.items.length).padStart(2, "0")}</span>
+          </span>
+        </div>
+
+        <div className="manifesto__viewport">
+          {i.items.map((it, idx) => {
+            const offset = idx - progress;        // -2..+2 range
+            // Translate ~110% of card width so adjacent cards don't overlap
+            // when both are partially visible; fade with a soft cosine so
+            // there's always something readable on screen.
+            const tx = offset * 110;
+            const fade = Math.max(0, 1 - Math.abs(offset) * 0.85);
+            const blurAmt = Math.min(6, Math.abs(offset) * 5);
+            const cardStyle = {
+              transform: `translate3d(${tx}%, 0, 0)`,
+              opacity: fade,
+              filter: blurAmt > 0.1 ? `blur(${blurAmt}px)` : "none",
+              pointerEvents: Math.abs(offset) < 0.4 ? "auto" : "none",
+            };
+            return (
+              <article key={it.no} className="manifesto__card" style={cardStyle}>
+                <div className="manifesto__no">{it.no}</div>
+                <h3 className="manifesto__title">{it.title}</h3>
+                <p className="manifesto__body">{it.body}</p>
+              </article>
+            );
+          })}
+        </div>
+
+        <div className="manifesto__nav" aria-hidden="true">
+          {i.items.map((it, idx) => {
+            // Dot N fills when the scroll progress reaches card N.
+            const fill = Math.max(0, Math.min(1, progress + 1 - idx));
+            return (
+              <div key={it.no}
+                   className={`manifesto__dot ${idx === active ? "is-active" : ""}`}>
+                <div className="manifesto__dotfill"
+                     style={{ width: `${fill * 100}%` }}>
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </div>
     </section>
   );
@@ -210,6 +331,14 @@ window.KeywordTicker = KeywordTicker;
 // ─────────────────────────────────────────────────────────────────────────
 // Research themes
 // ─────────────────────────────────────────────────────────────────────────
+// Hover handler that drives both the card highlight and the Research Map.
+const onThemeHoverEnter = (id) => () => {
+  if (window.__themeMapHighlight) window.__themeMapHighlight(id);
+};
+const onThemeHoverLeave = () => {
+  if (window.__themeMapHighlight) window.__themeMapHighlight(null);
+};
+
 function ResearchThemes({ lang }) {
   const i = t(lang).sections.research;
   const themes = window.LAB_THEMES;
@@ -232,7 +361,9 @@ function ResearchThemes({ lang }) {
 
       <div className="themes">
         {/* Feature card — Personal AI gets a wider footprint + diagram */}
-        <article data-theme-id={feature.id} className="theme theme--feature glass reveal">
+        <article data-theme-id={feature.id} className="theme theme--feature glass reveal"
+                 onMouseEnter={onThemeHoverEnter(feature.id)}
+                 onMouseLeave={onThemeHoverLeave}>
           <div className="theme__feature-text">
             <div className="theme__no">{feature.no}</div>
             <div className="theme__icon"><Icon name={feature.icon} /></div>
@@ -248,7 +379,9 @@ function ResearchThemes({ lang }) {
 
         {/* Remaining themes — regular grid */}
         {rest.map((th, idx) => (
-          <article key={th.id} data-theme-id={th.id} className="theme glass reveal" data-d={(idx % 4) + 1}>
+          <article key={th.id} data-theme-id={th.id} className="theme glass reveal" data-d={(idx % 4) + 1}
+                   onMouseEnter={onThemeHoverEnter(th.id)}
+                   onMouseLeave={onThemeHoverLeave}>
             <div className="theme__no">{th.no}</div>
             <div className="theme__icon"><Icon name={th.icon} /></div>
             <h3 className="theme__title">{th[lang].title}</h3>
@@ -672,6 +805,8 @@ function Access({ lang }) {
           <p>{i.building}</p>
           <h4>Nearest station</h4>
           <p>{i.nearest}</p>
+          <h4>{lang === "ja" ? "代表電話" : "Phone"}</h4>
+          <p>042-739-8111</p>
         </div>
         <a
           className="access-map-card glass reveal"
@@ -797,13 +932,78 @@ window.Contact = Contact;
 
 function Footer({ lang }) {
   const f = t(lang).foot;
+  const i = t(lang).nav;
+  const lastUpdated = "2026-05-28";
+  const groups = [
+    {
+      heading: lang === "ja" ? "サイト内" : "Site",
+      links: [
+        { id: "about", label: i.about },
+        { id: "research", label: i.research },
+        { id: "map", label: i.map },
+        { id: "gallery", label: i.gallery },
+        { id: "publications", label: i.publications },
+        { id: "access", label: i.access },
+        { id: "news", label: i.news },
+        { id: "contact", label: lang === "ja" ? "コンタクト" : "Contact" },
+      ],
+    },
+    {
+      heading: lang === "ja" ? "外部リンク" : "External",
+      links: [
+        { href: "https://www.tamagawa.ac.jp/college_of_engineering/teachers/software/shibata.html", label: lang === "ja" ? "玉川大学 公式" : "Tamagawa University", external: true },
+        { href: "https://researchmap.jp/brightwaltz", label: "researchmap", external: true },
+        { href: "https://brightwaltz.github.io/portfolio/", label: "Portfolio", external: true },
+        { href: "https://brightwaltz.mystrikingly.com/", label: "Strikingly", external: true },
+      ],
+    },
+  ];
   return (
-    <footer className="footer">
-      <div>© 2026 Service Informatics Lab · {f.tama}</div>
-      <div style={{ display: "flex", gap: 18 }}>
-        <a href="https://www.tamagawa.ac.jp/college_of_engineering/teachers/software/shibata.html" target="_blank" rel="noopener noreferrer">{f.tama}</a>
-        <a href="https://github.com/brightwaltz/shibakenlab" target="_blank" rel="noopener noreferrer">{f.src}</a>
-        <span>{f.crafted}</span>
+    <footer className="footer-x">
+      <div className="footer-x__top">
+        <div className="footer-x__brand">
+          <h3 className="footer-x__title">
+            {lang === "ja"
+              ? <>サービス情報学研究室</>
+              : <>Service Informatics Lab</>}
+          </h3>
+          <p className="footer-x__sub">{f.tama}</p>
+          <a
+            className="footer-x__github"
+            href="https://github.com/brightwaltz/shibakenlab"
+            target="_blank" rel="noopener noreferrer"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"
+                 aria-hidden="true">
+              <path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.56v-2.1c-3.2.7-3.87-1.36-3.87-1.36-.52-1.33-1.28-1.68-1.28-1.68-1.05-.71.08-.7.08-.7 1.16.08 1.78 1.19 1.78 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.74.4-1.26.73-1.55-2.55-.29-5.23-1.27-5.23-5.66 0-1.25.45-2.27 1.18-3.07-.12-.29-.51-1.45.11-3.03 0 0 .97-.31 3.18 1.17.92-.26 1.91-.39 2.89-.39.98 0 1.97.13 2.89.39 2.2-1.48 3.17-1.17 3.17-1.17.63 1.58.24 2.74.12 3.03.74.8 1.18 1.82 1.18 3.07 0 4.4-2.69 5.37-5.25 5.65.41.36.78 1.07.78 2.16v3.2c0 .31.21.68.8.56C20.21 21.39 23.5 17.08 23.5 12 23.5 5.65 18.35.5 12 .5z"/>
+            </svg>
+            <span>{f.src}</span>
+          </a>
+        </div>
+        {groups.map((g) => (
+          <nav key={g.heading} className="footer-x__col" aria-label={g.heading}>
+            <h4 className="footer-x__heading">{g.heading}</h4>
+            <ul>
+              {g.links.map((l, idx) => (
+                <li key={idx}>
+                  {l.href
+                    ? <a href={l.href} target={l.external ? "_blank" : undefined}
+                         rel={l.external ? "noopener noreferrer" : undefined}>
+                        {l.label}{l.external && <Icon name="external" />}
+                      </a>
+                    : <a href={`#${l.id}`}>{l.label}</a>}
+                </li>
+              ))}
+            </ul>
+          </nav>
+        ))}
+      </div>
+      <div className="footer-x__bottom">
+        <div>© 2026 Service Informatics Lab · {f.tama}</div>
+        <div className="footer-x__stamps">
+          <span>{lang === "ja" ? "最終更新" : "Last updated"} · {lastUpdated}</span>
+          <span>{f.crafted}</span>
+        </div>
       </div>
     </footer>
   );
