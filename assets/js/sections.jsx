@@ -117,7 +117,7 @@ function About({ lang }) {
       </div>
 
       <div className="about-grid">
-        <div className="about-card glass reveal">
+        <div id="pi" className="about-card glass reveal">
           <div
             style={{
               width: "clamp(140px, 22vw, 200px)",
@@ -951,7 +951,7 @@ function Footer({ lang }) {
     {
       heading: lang === "ja" ? "外部リンク" : "External",
       links: [
-        { href: "https://www.tamagawa.ac.jp/college_of_engineering/teachers/software/shibata.html", label: lang === "ja" ? "玉川大学 公式" : "Tamagawa University", external: true },
+        { href: "https://www.tamagawa.ac.jp/college_of_engineering/teachers/detail/209shibata.html", label: lang === "ja" ? "玉川大学 公式" : "Tamagawa University", external: true },
         { href: "https://researchmap.jp/brightwaltz", label: "researchmap", external: true },
         { href: "https://brightwaltz.github.io/portfolio/", label: "Portfolio", external: true },
         { href: "https://brightwaltz.mystrikingly.com/", label: "Strikingly", external: true },

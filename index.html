@@ -37,28 +37,70 @@
     "@context": "https://schema.org",
     "@graph": [
       {
-        "@type": ["Organization", "ResearchOrganization"],
+        "@type": "CollegeOrUniversity",
+        "@id": "https://www.tamagawa.ac.jp/#university",
+        "name": "玉川大学",
+        "url": "https://www.tamagawa.ac.jp/"
+      },
+      {
+        "@type": "EducationalOrganization",
+        "@id": "https://www.tamagawa.ac.jp/college_of_engineering/#faculty",
+        "name": "玉川大学工学部",
+        "url": "https://www.tamagawa.ac.jp/college_of_engineering/",
+        "parentOrganization": {
+          "@id": "https://www.tamagawa.ac.jp/#university"
+        }
+      },
+      {
+        "@type": "EducationalOrganization",
+        "@id": "https://www.tamagawa.ac.jp/college_of_engineering/software/#department",
+        "name": "玉川大学工学部 ソフトウェアサイエンス学科",
+        "url": "https://www.tamagawa.ac.jp/college_of_engineering/software/",
+        "parentOrganization": {
+          "@id": "https://www.tamagawa.ac.jp/college_of_engineering/#faculty"
+        }
+      },
+      {
+        "@type": [
+          "Organization",
+          "ResearchOrganization"
+        ],
         "@id": "https://brightwaltz.github.io/shibakenlab/#org",
         "name": "サービス情報学研究室 (柴田研究室)",
-        "alternateName": ["Service Informatics Lab", "Shibata Lab"],
+        "alternateName": [
+          "Service Informatics Lab",
+          "Shibata Lab"
+        ],
         "url": "https://brightwaltz.github.io/shibakenlab/",
         "logo": "https://brightwaltz.github.io/shibakenlab/favicon.svg",
         "image": "https://brightwaltz.github.io/shibakenlab/assets/images/og-image.png",
-        "description": "あなたを理解し、暮らしに溶け込むAIを、研究する。Personal AI、Graph-Document、学習支援、Multimodal Sensing、Service Informatics & HCI に関する研究を行う、玉川大学 工学部 ソフトウェアサイエンス学科の研究室。",
+        "description": "あなたを理解し、暮らしに溶け込むAIを、研究する。Personal AI、Graph-Document、学習支援、Multimodal Sensing、XR、Service Informatics & HCI に関する研究を行う、玉川大学 工学部 ソフトウェアサイエンス学科の研究室。",
         "knowsAbout": [
+          "パーソナルAI",
+          "サービス情報学",
+          "小規模言語モデル",
+          "グラフ文書",
+          "学習支援",
+          "マルチモーダルセンシング",
+          "XR",
+          "パーソナルデータ",
+          "分散型パーソナルデータ管理",
+          "個人最適化型支援サービス",
+          "AIアプリケーション",
+          "LiDAR",
+          "ヒューマンコンピュータインタラクション",
           "Personal Data Store",
           "Personal AI",
           "Small Language Models",
           "Graph Document",
           "Recurrent Education",
           "Multimodal Sensing",
+          "XR",
           "Service Informatics",
           "Human-Computer Interaction"
         ],
         "parentOrganization": {
-          "@type": "CollegeOrUniversity",
-          "name": "玉川大学 工学部 ソフトウェアサイエンス学科",
-          "url": "https://www.tamagawa.ac.jp/college_of_engineering/software/"
+          "@id": "https://www.tamagawa.ac.jp/college_of_engineering/software/#department"
         },
         "address": {
           "@type": "PostalAddress",
@@ -68,7 +110,9 @@
           "postalCode": "194-8610",
           "addressCountry": "JP"
         },
-        "member": { "@id": "https://brightwaltz.github.io/shibakenlab/#pi" }
+        "member": {
+          "@id": "https://brightwaltz.github.io/shibakenlab/#pi"
+        }
       },
       {
         "@type": "Person",
@@ -76,15 +120,34 @@
         "name": "柴田 健一",
         "alternateName": "Kenichi Shibata",
         "jobTitle": "Lecturer",
+        "worksFor": {
+          "@id": "https://www.tamagawa.ac.jp/college_of_engineering/software/#department"
+        },
         "affiliation": [
-          { "@id": "https://brightwaltz.github.io/shibakenlab/#org" },
-          { "@type": "Organization", "name": "RIKEN Center for Advanced Intelligence Project (AIP)" }
+          {
+            "@id": "https://brightwaltz.github.io/shibakenlab/#org"
+          },
+          {
+            "@type": "Organization",
+            "name": "RIKEN Center for Advanced Intelligence Project (AIP)"
+          }
         ],
         "url": "https://researchmap.jp/brightwaltz",
         "sameAs": [
+          "https://www.tamagawa.ac.jp/college_of_engineering/teachers/detail/209shibata.html",
+          "https://unitama.tamagawa.ac.jp/kgResult/japanese/researchersHtml/R230367/R230367_Researcher.html",
           "https://researchmap.jp/brightwaltz",
           "https://brightwaltz.github.io/portfolio/",
           "https://brightwaltz.mystrikingly.com/"
+        ],
+        "knowsAbout": [
+          "パーソナルAI",
+          "サービス情報学",
+          "小規模言語モデル",
+          "グラフ文書",
+          "学習支援",
+          "マルチモーダルセンシング",
+          "XR"
         ]
       }
     ]
