@@ -232,7 +232,7 @@ window.LAB_BIO = {
   links: [
     { label: "researchmap", href: "https://researchmap.jp/brightwaltz" },
     { label: "Portfolio", href: "https://brightwaltz.github.io/portfolio/" },
-    { label: "大学公式 / Faculty page", href: "https://www.tamagawa.ac.jp/college_of_engineering/teachers/software/shibata.html" },
+    { label: "大学公式 / Faculty page", href: "https://www.tamagawa.ac.jp/college_of_engineering/teachers/detail/209shibata.html" },
     { label: "Strikingly", href: "https://brightwaltz.mystrikingly.com/" },
   ],
   // 第二の顔：音楽家 brightwaltz として活動 — ポートフォリオより
@@ -301,14 +301,14 @@ window.LAB_THEMES = [
     ja: {
       title: "Multimodal Sensing",
       sub: "現場に馴染む、軽い計測。",
-      body: "音・映像・行動データなど多視点観察から状態理解と評価を行う。LiDAR による在宅環境の 3 次元化、エンゲージメント評価、認知症ケアでの多職種連携支援。"
+      body: "音・映像・行動データなど多視点観察から状態理解と評価を行う。LiDAR や XR デバイスによる在宅環境の 3 次元化と空間センシング、エンゲージメント評価、認知症ケアでの多職種連携支援。"
     },
     en: {
       title: "Multimodal Sensing",
       sub: "Light-weight observation that fits the field.",
-      body: "Multi-perspective observation across audio, video and behavior. LiDAR-based 3-D in-home modeling, engagement evaluation, and multidisciplinary support for dementia care."
+      body: "Multi-perspective observation across audio, video and behavior. LiDAR- and XR-based 3-D in-home modeling and spatial sensing, engagement evaluation, and multidisciplinary support for dementia care."
     },
-    kw: ["LiDAR", "Engagement", "Aging Society", "Dementia"],
+    kw: ["LiDAR", "XR", "Engagement", "Aging Society", "Dementia"],
   },
   {
     id: "service",
