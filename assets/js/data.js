@@ -23,11 +23,28 @@ window.LAB_I18N = {
       eyebrow: "サービス情報学研究室 / Service Informatics Lab",
       title_a: "あなたを理解し、",
       title_b: "暮らしに溶け込むAIを、研究する。",
-      sub:
-        "パーソナルデータと小さな AI が、本人の手で扱える社会へ。\n玉川大学 工学部 ソフトウェアサイエンス学科・柴田研究室は、\n Personal AI、Graph-Document、学習支援の研究を進めています。",
+      sub: "パーソナルデータと小さな AI が、\n本人の手で扱える社会へ。",
       cta1: "研究テーマを見る",
       cta2: "コンタクト",
       scroll: "Scroll",
+      // ヒーロー図解 (hero-field.jsx) のラベル。説明文ではなく、図の部品名。
+      field: {
+        you: "あなた",
+        ai: "小さな AI",
+        ring: "本人の手のうち",
+        consent: "同意して渡す",
+        summary: "要約だけが出る",
+        learned: "理解した断片",
+        forget: "忘れる",
+        local: "この学習はあなたの端末にだけ残ります",
+        aria: "パーソナルデータと小さな AI の関係を示すインタラクティブ図解",
+        sr:
+          "中心にあなた本人、その周囲を囲む境界の内側に暮らしのデータ断片が漂います。" +
+          "小さな AI がポインタを追って断片に触れ、触れた断片の間にグラフ構造が残ります。" +
+          "教育・介護・地域のサービスを選ぶと境界に同意のゲートが開き、要約が一粒だけ外へ出て支援が返ります。" +
+          "学習内容はこの端末の中にだけ保存され、「忘れる」で消去できます。" +
+          "矢印キーで小さな AI を動かせます。",
+      },
     },
     sections: {
       about: { kicker: "01 — About", title: "主宰について" },
@@ -119,11 +136,27 @@ window.LAB_I18N = {
       eyebrow: "Service Informatics Lab / Tamagawa University",
       title_a: "We research AI that understands you",
       title_b: "and blends into everyday life.",
-      sub:
-        "Decentralized personal data and small, on-device AI returned to the person.\nShibata Lab at Tamagawa University researches PDS & Personal AI,\nGraph-Document for learning, and observational sensing in real-world contexts.",
+      sub: "Personal data and small AI, returned to the hands of the person.",
       cta1: "See research",
       cta2: "Get in touch",
       scroll: "Scroll",
+      field: {
+        you: "You",
+        ai: "Small AI",
+        ring: "within your hands",
+        consent: "share with consent",
+        summary: "summary only",
+        learned: "understood",
+        forget: "Forget",
+        local: "This learning stays on your device only",
+        aria: "Interactive diagram of personal data and a small AI",
+        sr:
+          "You sit at the centre; fragments of everyday data drift inside a boundary around you. " +
+          "A small AI follows the pointer, touches fragments, and the structure it finds stays as a graph. " +
+          "Choosing education, care or community opens a consent gate in the boundary: a single summary leaves, " +
+          "and support returns. What it learns is stored on this device only and can be erased with Forget. " +
+          "Arrow keys move the small AI.",
+      },
     },
     sections: {
       about: { kicker: "01 — About", title: "About the PI" },
@@ -803,6 +836,25 @@ window.LAB_NEWS = [
       "We launched the official site of the Service Informatics Lab. It centralizes our research themes, latest publications, student infographics, and access information. The site is open-source on GitHub.",
   },
 ];
+
+// ── Hero field (hero-field.jsx) ─────────────────────────────────────────────
+// 図解の語彙。カテゴリは暮らしのデータ種別、サービスは研究の実証フィールド。
+// hue は アクセント色ランプ (a1 → a2 → a3) 上の位置 0..1。
+// ang* は場の中心から見たサービスの方位（度）。desk / mob でレイアウトが変わる。
+window.LAB_FIELD = {
+  categories: [
+    { id: "learn", ja: "学び",     en: "Learning",     hue: 0.00 },
+    { id: "life",  ja: "暮らし",   en: "Daily life",   hue: 0.25 },
+    { id: "body",  ja: "からだ",   en: "Body",         hue: 0.50 },
+    { id: "talk",  ja: "会話",     en: "Conversation", hue: 0.75 },
+    { id: "plan",  ja: "予定",     en: "Plans",        hue: 1.00 },
+  ],
+  services: [
+    { id: "edu",       ja: "教育", en: "Education", angDesk: -58, angMob: 208 },
+    { id: "care",      ja: "介護", en: "Care",      angDesk:   0, angMob: 270 },
+    { id: "community", ja: "地域", en: "Community", angDesk:  58, angMob: 332 },
+  ],
+};
 
 // ── Palettes (used by Tweaks) ───────────────────────────────────────────────
 // Each palette stores: [primary, deep, accent1, accent2, accent3]

@@ -29,6 +29,7 @@ shibakenlab/                       # ← このリポジトリ。リポジトリ
 │  │  ├─ data.js                   # i18n, 業績, 研究テーマ, ニュース, インフォグラフィック
 │  │  ├─ tweaks-panel.jsx          # 右下「Tweaks」パネルの共通シェル
 │  │  ├─ hero.jsx                  # Three.js Hero（粒子/幾何/流体 の 3 モード）
+│  │  ├─ hero-field.jsx            # Hero「Personal Field」図解（Canvas 2D・既定モード）
 │  │  ├─ research-map.jsx          # D3 フォースグラフ
 │  │  ├─ sections.jsx              # About / Research / Gallery / Pubs / Member / Access / News / Contact
 │  │  └─ app.jsx                   # トップレベル：Nav・言語切替・Lenis・Tweaks・スクロール演出

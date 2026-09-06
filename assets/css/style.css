@@ -268,6 +268,121 @@ button { font: inherit; color: inherit; }
   0% { top: -20px; } 100% { top: 100%; }
 }
 
+/* ── Hero field — interactive diagram (hero-field.jsx) ─────────────────────── */
+/* Wide layout: copy holds the left column, the field lives to the right of it.
+   The ring must not sit under the headline, so the copy column is capped and
+   the display size steps down from the text-only hero. */
+.hero--field .hero__inner { max-width: min(46%, 660px); }
+.hero--field .hero__title { font-size: clamp(34px, 4.4vw, 64px); line-height: 1.02; }
+.hero--field .hero__sub   { max-width: 34ch; }
+.hero--field .hero__veil {
+  background:
+    linear-gradient(108deg,
+      color-mix(in oklab, var(--c-bg) 82%, transparent) 0%,
+      color-mix(in oklab, var(--c-bg) 34%, transparent) 40%,
+      transparent 60%),
+    linear-gradient(180deg, transparent 72%,
+      color-mix(in oklab, var(--c-bg) 55%, transparent) 100%);
+}
+
+.hfield { position: absolute; inset: 0; touch-action: pan-y; }
+.hfield__cvs { position: absolute; inset: 0; z-index: 0; display: block; }
+.hfield__ui  { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
+.hfield:focus-visible { outline: none; }
+.hfield:focus-visible .hfield__cvs {
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--c-a1) 55%, transparent);
+}
+/* Screen-reader-only walkthrough of the diagram. */
+.hfield__sr {
+  position: absolute; width: 1px; height: 1px; margin: -1px;
+  padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* Diagram labels — part names, not captions. */
+.hfield__tag {
+  position: absolute; transform: translate(-50%, 0);
+  font-size: var(--type-micro); letter-spacing: 0.14em;
+  color: var(--c-ink-3); white-space: nowrap; pointer-events: none;
+}
+.hfield__tag--ring { transform: translate(-50%, -50%); }
+.hfield__tag--ai {
+  left: 0; top: 0; opacity: 0; will-change: transform;
+  color: color-mix(in oklab, var(--c-a1) 72%, var(--c-ink));
+}
+
+/* Support services on the rim — the only clickable part of the field. */
+.hfield__svc {
+  position: absolute; transform: translate(-50%, 0);
+  pointer-events: auto; cursor: pointer;
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  padding: 5px 10px; border: 0; border-radius: 999px;
+  background: transparent; font: inherit; color: var(--c-ink-2);
+  transition: color 0.3s var(--ease-out), background 0.3s var(--ease-out);
+}
+.hfield__svc:hover, .hfield__svc:focus-visible {
+  color: var(--c-ink); background: var(--c-glass);
+}
+.hfield__svc[data-open="true"] { color: var(--c-ink); }
+.hfield__svc-name { font-size: var(--type-small); letter-spacing: 0.12em; }
+.hfield__svc-note {
+  font-size: var(--type-micro); letter-spacing: 0.08em; color: var(--c-ink-3);
+  opacity: 0; transition: opacity 0.3s var(--ease-out);
+}
+.hfield__svc:hover .hfield__svc-note,
+.hfield__svc:focus-visible .hfield__svc-note,
+.hfield__svc[data-open="true"] .hfield__svc-note { opacity: 1; }
+
+/* What the field has learned, and the way to erase it. */
+.hfield__mem {
+  position: absolute; right: var(--pad-x); bottom: 32px;
+  display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  justify-content: flex-end; pointer-events: none;
+}
+.hfield__meter {
+  display: inline-flex; align-items: baseline; gap: 8px;
+  font-size: var(--type-micro); letter-spacing: 0.12em; color: var(--c-ink-3);
+}
+.hfield__meter b {
+  font-weight: 500; color: var(--c-ink-2); font-variant-numeric: tabular-nums;
+}
+.hfield__forget {
+  pointer-events: auto; cursor: pointer;
+  font: inherit; font-size: var(--type-micro); letter-spacing: 0.12em;
+  color: var(--c-ink-3); background: var(--c-glass);
+  border: 1px solid var(--c-line); border-radius: 999px; padding: 5px 13px;
+  transition: color 0.3s var(--ease-out), border-color 0.3s var(--ease-out);
+}
+.hfield__forget:hover, .hfield__forget:focus-visible {
+  color: var(--c-ink); border-color: var(--c-ink-3);
+}
+.hfield__local {
+  flex-basis: 100%; text-align: right;
+  font-size: var(--type-micro); letter-spacing: 0.06em;
+  color: var(--c-ink-3); opacity: 0.6;
+}
+
+/* Narrow layout: copy on top, field below it. */
+@media (max-width: 1079px) {
+  .hero--field {
+    min-height: 112vh;
+    justify-content: flex-start;
+    padding: 100px var(--pad-x) 92px;
+  }
+  .hero--field .hero__inner { max-width: 100%; }
+  .hero--field .hero__title { font-size: clamp(32px, 6vw, 52px); }
+  .hero--field .hero__sub   { max-width: min(38ch, 100%); }
+  .hero--field .hero__veil {
+    background: linear-gradient(180deg,
+      color-mix(in oklab, var(--c-bg) 66%, transparent) 0%,
+      color-mix(in oklab, var(--c-bg) 12%, transparent) 44%,
+      transparent 68%);
+  }
+}
+@media (max-width: 760px) {
+  .hfield__mem { bottom: 22px; gap: 10px; }
+  .hfield__local { display: none; }
+}
+
 /* ── Section wrapper ──────────────────────────────────────────────────────── */
 .section {
   position: relative;
@@ -1165,7 +1280,7 @@ select.pub-tag option { background: #0e1230; color: #fff; }
     --c-line: #cccccc; --c-line-2: #e5e5e5;
   }
   body { background: #fff !important; color: #111 !important; }
-  .stage-bg, .cursor, .hero__canvas, .ticker, .tweaks-trigger, .twk-panel,
+  .stage-bg, .cursor, .hero__canvas, .hfield, .ticker, .tweaks-trigger, .twk-panel,
   .read-progress, .lang-hint, .skip-link, .nav__lang, .hero__scroll {
     display: none !important;
   }

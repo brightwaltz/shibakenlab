@@ -8,7 +8,7 @@ const palettes = window.LAB_PALETTES;
 
 const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
   "palette": "tama-night",
-  "heroMode": "particles",
+  "heroMode": "field",
   "cursor": true,
   "grain": true
 }/*EDITMODE-END*/;
@@ -32,8 +32,9 @@ function applyPalette(id) {
     r.setProperty("--c-bg",   "#050818");
     r.setProperty("--c-bg-2", "#08102b");
   }
-  // Repaint Three.js scene with fresh colors.
+  // Repaint the hero scene with fresh colors.
   if (window.__refreshHeroPalette) window.__refreshHeroPalette();
+  if (window.__heroFieldRefreshPalette) window.__heroFieldRefreshPalette();
 }
 
 // ── Nav ─────────────────────────────────────────────────────────────────────
@@ -105,12 +106,20 @@ function Nav({ lang, setLang }) {
 function HeroSection({ lang, mode }) {
   const h = I18N[lang].hero;
   const Hero = window.Hero;
+  const HeroField = window.HeroField;
   const MagneticButton = window.MagneticButton;
+  // "field" は Canvas 2D のインタラクティブ図解 (hero-field.jsx)。
+  // それ以外は従来の Three.js シーン。
+  const isField = mode === "field";
   return (
-    <section id="home" className="hero">
-      <div className="hero__canvas">
-        <Hero mode={mode} />
-      </div>
+    <section id="home" className={"hero" + (isField ? " hero--field" : "")}>
+      {isField ? (
+        <HeroField lang={lang} />
+      ) : (
+        <div className="hero__canvas">
+          <Hero mode={mode} />
+        </div>
+      )}
       <div className="hero__veil" />
       <div className="hero__inner">
         <div className="eyebrow reveal" data-d="0">{h.eyebrow}</div>
@@ -157,7 +166,7 @@ function LabTweaks({ palette, setPalette, heroMode, setHeroMode, cursor, setCurs
       <TweakRadio
         label="Mode"
         value={heroMode}
-        options={["particles", "geometry", "fluid"]}
+        options={["field", "particles", "geometry", "fluid"]}
         onChange={setHeroMode}
       />
       <TweakSection label="Atmosphere" />
