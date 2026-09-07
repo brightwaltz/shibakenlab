@@ -81,10 +81,10 @@ function HeroField({ lang = "ja" }) {
   const [peek, setPeek]     = React.useState(false);
   const [snap, setSnap]     = React.useState(null);
   const [guide, setGuide]   = React.useState(-1);   // 「仕組み」の現在ステップ。-1 = 閉
-  const STEPS = T.steps || [];
 
   const F = window.LAB_FIELD;
   const T = (window.LAB_I18N[lang] && window.LAB_I18N[lang].hero.field) || {};
+  const STEPS = T.steps || [];
   const txt = (o) => (o && (o[lang] || o.ja)) || "";
 
   React.useEffect(() => {
