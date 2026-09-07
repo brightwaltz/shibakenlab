@@ -395,10 +395,91 @@ button { font: inherit; color: inherit; }
   color: var(--c-ink-2);
 }
 
+/* Legend — the colour encoding repeats 300 times, so it earns a key.
+   Hovering a kind lifts only that kind on the canvas. */
+.hfield__legend {
+  position: absolute; transform: translate(-50%, 0);
+  display: flex; align-items: center; flex-wrap: wrap; justify-content: center;
+  gap: 4px 12px; padding: 4px 8px; border-radius: 999px;
+  pointer-events: auto; white-space: nowrap;
+  transition: background 0.3s var(--ease-out);
+}
+.hfield__legend.is-on { background: var(--c-glass); }
+.hfield__legend-k {
+  font-size: var(--type-micro); letter-spacing: 0.1em; color: var(--c-ink-3);
+  margin-right: 4px;
+}
+.hfield__legend-i {
+  display: inline-flex; align-items: center; gap: 6px;
+  font: inherit; font-size: var(--type-micro); letter-spacing: 0.08em;
+  color: var(--c-ink-2); background: none; border: 0; padding: 2px 4px;
+  border-radius: 999px; cursor: default;
+}
+.hfield__legend-i i {
+  width: 7px; height: 7px; border-radius: 50%; background: var(--dot);
+  box-shadow: 0 0 8px color-mix(in oklab, var(--dot) 70%, transparent);
+}
+.hfield__legend-i:hover, .hfield__legend-i:focus-visible { color: var(--c-ink); outline: none; }
+
+/* "How it works" — numbered markers on the parts, one sentence at a time. */
+.hfield__mark {
+  position: absolute; width: 18px; height: 18px; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 600; font-variant-numeric: tabular-nums;
+  color: var(--c-bg); background: var(--c-ink-3);
+  pointer-events: auto; cursor: pointer; will-change: transform;
+  transition: background 0.25s var(--ease-out), box-shadow 0.25s var(--ease-out);
+}
+.hfield__mark.is-on {
+  background: var(--c-a1);
+  box-shadow: 0 0 0 4px color-mix(in oklab, var(--c-a1) 30%, transparent),
+              0 0 18px color-mix(in oklab, var(--c-a1) 60%, transparent);
+}
+.hfield__legend .hfield__mark, .hfield__mem-row .hfield__mark {
+  position: static; flex: none;
+}
+.hfield__guide {
+  /* Bottom-left, under the copy column: clear of the legend under the ring,
+     the service labels, and the memory row on the right. It covers only the
+     scroll cue while open. */
+  position: absolute; left: var(--pad-x); bottom: 28px;
+  width: min(460px, calc(100% - 2 * var(--pad-x)));
+  padding: 14px 16px 12px;
+  background: color-mix(in oklab, var(--c-bg) 78%, transparent);
+  border: 1px solid var(--c-line); border-radius: var(--r-md);
+  -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px);
+  pointer-events: auto;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.hfield__guide-head {
+  display: flex; align-items: baseline; gap: 10px;
+  font-size: var(--type-micro); letter-spacing: 0.12em; color: var(--c-ink-3);
+}
+.hfield__guide-n { font-variant-numeric: tabular-nums; color: var(--c-a1); }
+.hfield__guide-t {
+  margin: 0; font-size: 14px; line-height: 1.7; color: var(--c-ink); text-wrap: pretty;
+}
+.hfield__guide-row { display: flex; align-items: center; gap: 8px; }
+.hfield__guide-x {
+  margin-left: auto; font: inherit; font-size: 16px; line-height: 1;
+  color: var(--c-ink-3); background: none; border: 0; cursor: pointer; padding: 4px 6px;
+}
+.hfield__guide-x:hover { color: var(--c-ink); }
+.hfield__pill--go { color: var(--c-ink); border-color: var(--c-ink-3); }
+.hfield__pill:disabled { opacity: 0.35; cursor: default; }
+.hfield__pill[aria-pressed="true"] { color: var(--c-ink); border-color: var(--c-ink-3); }
+.hfield__mem.is-on .hfield__mem-row { outline: 1px solid color-mix(in oklab, var(--c-a1) 45%, transparent); outline-offset: 6px; border-radius: 999px; }
+
+.hfield__store-why, .hfield__store-not {
+  margin: 8px 0 0; font-size: var(--type-micro); line-height: 1.6;
+  color: var(--c-ink-2); text-wrap: pretty;
+}
+.hfield__store-not { color: var(--c-ink-3); padding-top: 8px; border-top: 1px solid var(--c-line-2); }
+
 /* Narrow layout: copy on top, field below it. */
 @media (max-width: 1079px) {
   .hero--field {
-    min-height: 112vh;
+    min-height: 122vh;
     justify-content: flex-start;
     padding: 100px var(--pad-x) 92px;
   }
@@ -413,8 +494,10 @@ button { font: inherit; color: inherit; }
   }
 }
 @media (max-width: 760px) {
-  .hfield__mem { bottom: 16px; max-width: 82%; gap: 8px; }
+  .hfield__mem { bottom: 16px; max-width: 86%; gap: 8px; }
   .hfield__mem-row { flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
+  .hfield__legend { width: calc(100% - 2 * var(--pad-x)); white-space: normal; }
+  .hfield__guide { bottom: 84px; }
 }
 
 /* ── Section wrapper ──────────────────────────────────────────────────────── */

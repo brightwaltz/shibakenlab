@@ -42,6 +42,31 @@ window.LAB_I18N = {
         storeAll: "これが、このブラウザに保存されている全てです。",
         visits: "訪問回数",
         local: "サーバには何も送っていません。学習はこのブラウザの中だけです。",
+        // 保存パネルの説明。「何が・なぜ・何に使うか」「保存しないもの」
+        storeWhy:
+          "小さな AI が、あなたのカーソルの近くにあった断片の種類を数えたものです。" +
+          "数字は、その種類の近くにいた時間の目安（秒）。" +
+          "次に来たとき、どの種類の断片から理解を始めるかがこれで決まります。",
+        storeNot: "保存しないもの：カーソルの位置、見たページ、日時、あなたを特定する情報。",
+        legend: "粒の色 = 暮らしのデータの種類",
+        guide: "仕組み",
+        guideClose: "閉じる",
+        next: "次へ",
+        prev: "前へ",
+        // 同意フローの途中で粒に添える語
+        flowConsent: "同意",
+        flowSummary: "要約だけ",
+        flowSupport: "支援",
+        // 「仕組み」の案内。図の部品を順に指す
+        steps: [
+          { at: "core",   t: "中心はあなた。周りに漂う粒は、暮らしの中で生まれるデータの断片です。" },
+          { at: "legend", t: "粒の色は断片の種類。学び・暮らし・からだ・会話・予定の 5 つ。凡例に触れると、その種類だけが浮かびます。" },
+          { at: "ai",     t: "小さな AI はカーソルを追い、近くの断片に触れて、それが何かを理解していきます。" },
+          { at: "edge",   t: "理解した断片どうしは線でつながり、以後いっしょに動きます。これが消えずに残る知識です。" },
+          { at: "ring",   t: "この線があなたの決める境界。内側のデータは、あなたの許可なしには出ていきません。" },
+          { at: "svc",    t: "教育・介護・地域は外の支援サービス。押すと境界に同意のゲートが開き、要約だけを渡して支援が返ります。" },
+          { at: "store",  t: "学習の結果はこのブラウザにだけ保存。「保存されている内容」で中身を確認でき、「忘れる」で消せます。" },
+        ],
         aria: "パーソナルデータと小さな AI の関係を示すインタラクティブ図解",
         sr:
           "中心にあなた本人、その周囲を囲む「あなたが決める境界」の内側に暮らしのデータ断片が漂います。" +
@@ -160,6 +185,28 @@ window.LAB_I18N = {
         storeAll: "That is everything stored in this browser.",
         visits: "Visits",
         local: "Nothing is sent to a server. This learning lives in your browser.",
+        storeWhy:
+          "The small AI counted which kinds of fragments were near your pointer. " +
+          "Each number is roughly how long you stayed near that kind (seconds). " +
+          "On your next visit it decides which kind the AI starts understanding first.",
+        storeNot: "Not stored: pointer positions, pages viewed, dates, or anything that identifies you.",
+        legend: "dot colour = kind of everyday data",
+        guide: "How it works",
+        guideClose: "Close",
+        next: "Next",
+        prev: "Back",
+        flowConsent: "consent",
+        flowSummary: "summary only",
+        flowSupport: "support",
+        steps: [
+          { at: "core",   t: "You are at the centre. The drifting dots are fragments of data from everyday life." },
+          { at: "legend", t: "Colour is the kind of fragment: learning, daily life, body, conversation, plans. Hover the legend to lift one kind." },
+          { at: "ai",     t: "The small AI follows your pointer, touches nearby fragments, and works out what they are." },
+          { at: "edge",   t: "Fragments it understands link up and move together from then on — knowledge that stays." },
+          { at: "ring",   t: "This line is the boundary you set. Nothing inside leaves without your permission." },
+          { at: "svc",    t: "Education, care and community are outside services. Press one: a consent gate opens, only a summary goes out, and support comes back." },
+          { at: "store",  t: "What it learned is kept in this browser only. ‘What is stored’ shows it; Forget erases it." },
+        ],
         aria: "Interactive diagram of personal data and a small AI",
         sr:
           "You sit at the centre; fragments of everyday data drift inside the boundary you set. " +
@@ -852,7 +899,7 @@ window.LAB_NEWS = [
 // ── Hero field (hero-field.jsx) ─────────────────────────────────────────────
 // 図解の語彙。カテゴリは暮らしのデータ種別、サービスは研究の実証フィールド。
 // hue は アクセント色ランプ (a1 → a2 → a3) 上の位置 0..1。
-// ang* は場の中心から見たサービスの方位（度）。desk / mob でレイアウトが変わる。
+// angDesk は場の中心から見たサービスの方位（度）。狭幅ではリング下に一列に並ぶ。
 window.LAB_FIELD = {
   categories: [
     { id: "learn", ja: "学び",     en: "Learning",     hue: 0.00 },
@@ -861,10 +908,18 @@ window.LAB_FIELD = {
     { id: "talk",  ja: "会話",     en: "Conversation", hue: 0.75 },
     { id: "plan",  ja: "予定",     en: "Plans",        hue: 1.00 },
   ],
+  // cats = 要約に含まれる種類。支援が返ると、この種類の断片が明るくなる。
+  // does = 押したとき何が起きるか（hover で表示）。
   services: [
-    { id: "edu",       ja: "教育", en: "Education", angDesk: -58, angMob: 208 },
-    { id: "care",      ja: "介護", en: "Care",      angDesk:   0, angMob: 270 },
-    { id: "community", ja: "地域", en: "Community", angDesk:  58, angMob: 332 },
+    { id: "edu", ja: "教育", en: "Education", angDesk: -58, cats: ["learn", "plan"],
+      does: { ja: "学びと予定の要約から、次に学ぶことを提案する",
+              en: "suggests what to learn next from a summary of learning and plans" } },
+    { id: "care", ja: "介護", en: "Care", angDesk: 0, cats: ["body", "life"],
+      does: { ja: "からだと暮らしの要約から、見守りを調整する",
+              en: "adjusts care from a summary of body and daily life" } },
+    { id: "community", ja: "地域", en: "Community", angDesk: 58, cats: ["talk", "life"],
+      does: { ja: "会話と暮らしの要約から、地域の場を案内する",
+              en: "points to local places from a summary of conversation and daily life" } },
   ],
 };
 

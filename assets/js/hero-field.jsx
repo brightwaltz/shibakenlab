@@ -70,6 +70,8 @@ function HeroField({ lang = "ja" }) {
   const hostRef  = React.useRef(null);
   const cvsRef   = React.useRef(null);
   const aiRef    = React.useRef(null);   // 「小さな AI」ラベル（毎フレーム追従）
+  const aiMarkRef   = React.useRef(null);   // 案内マーカー（AI に追従）
+  const edgeMarkRef = React.useRef(null);   // 案内マーカー（いちばん濃い辺の中点）
   const meterRef = React.useRef(null);
   const apiRef   = React.useRef({});
 
@@ -78,6 +80,8 @@ function HeroField({ lang = "ja" }) {
   const [openId, setOpenId] = React.useState(null);
   const [peek, setPeek]     = React.useState(false);
   const [snap, setSnap]     = React.useState(null);
+  const [guide, setGuide]   = React.useState(-1);   // 「仕組み」の現在ステップ。-1 = 閉
+  const STEPS = T.steps || [];
 
   const F = window.LAB_FIELD;
   const T = (window.LAB_I18N[lang] && window.LAB_I18N[lang].hero.field) || {};
@@ -116,6 +120,8 @@ function HeroField({ lang = "ja" }) {
       sprites = pal.cat.map((c) => hfSprite(c, light));
       whiteSprite = hfSprite(light ? [24, 26, 38] : [255, 255, 255], light);
       spriteCache.clear();
+      // 凡例の点は DOM 側なので、同じ色を CSS 変数で渡す
+      pal.cat.forEach((c, i) => host.style.setProperty(`--hf-cat-${i}`, hfCss(c, 1)));
     };
     readPalette();
     window.__heroFieldRefreshPalette = readPalette;
@@ -157,7 +163,7 @@ function HeroField({ lang = "ja" }) {
       L.stacked = W < 1080;
       if (L.stacked) {
         L.cx = W * 0.5;
-        L.cy = H * 0.62;
+        L.cy = H * 0.60;
         L.R  = Math.min(W * 0.32, H * 0.15);
         // 狭幅では周縁に 3 ノードを置く余白がないので、リングの下に一列で並べる。
         // ゲートの向きは各ノードの方位から求まるので、図の意味は変わらない。
@@ -178,11 +184,15 @@ function HeroField({ lang = "ja" }) {
           svcPos[i].y = Math.min(H - 96, Math.max(96, L.cy + Math.sin(a) * dist));
         });
       }
-      const ra = (118 * Math.PI) / 180;
+      const ra = ((L.stacked ? 118 : 140) * Math.PI) / 180;
+      // 凡例はリングの真下。狭幅ではサービス行のさらに下。
+      const legendY = L.stacked ? svcPos[0].y + 64 : L.cy + L.R + 30;
       setLay({
-        core:  { x: L.cx, y: L.cy },
-        ring:  { x: L.cx + Math.cos(ra) * L.R * 1.08, y: L.cy + Math.sin(ra) * L.R * 1.08 },
-        svc:   svcPos.map((p) => ({ x: p.x, y: p.y })),
+        core:   { x: L.cx, y: L.cy },
+        ring:   { x: L.cx + Math.cos(ra) * L.R * 1.08, y: L.cy + Math.sin(ra) * L.R * 1.08 },
+        ringPt: { x: L.cx + Math.cos(ra) * L.R,        y: L.cy + Math.sin(ra) * L.R },
+        legend: { x: L.cx, y: legendY },
+        svc:    svcPos.map((p) => ({ x: p.x, y: p.y })),
         R: L.R,
       });
     };
@@ -208,7 +218,7 @@ function HeroField({ lang = "ja" }) {
           wobF: 0.28 + rng() * 0.75,
           ph:   rng() * HF_TAU,
           sz:   1.5 + rng() * 2.3,
-          w: 0, touch: 0, known: false, deg: 0, x: 0, y: 0,
+          w: 0, touch: 0, known: false, deg: 0, x: 0, y: 0, glow: 0,
         };
       }
       place(0);
@@ -294,6 +304,13 @@ function HeroField({ lang = "ja" }) {
     // ── agent（小さな AI） ──────────────────────────────────────────────────
     const ag = { x: 0, y: 0, tx: 0, ty: 0, idle: 99, auto: true, act: 0 };
 
+    // ── 強調 ────────────────────────────────────────────────────────────────
+    // 「仕組み」で指している部品と、凡例で触れている種類。描画だけが変わる。
+    let focus = null;        // "core" | "ai" | "edge" | "ring" | "svc" | null
+    let focusCat = -1;       // 0..4 or -1
+    const setFocus = (at) => { focus = at || null; };
+    const setFocusCat = (i) => { focusCat = typeof i === "number" ? i : -1; };
+
     // ── consent gate / share ────────────────────────────────────────────────
     let gate = null;   // { i, t, ang }
     const share = (id) => {
@@ -336,8 +353,9 @@ function HeroField({ lang = "ja" }) {
       } catch (e) { return { empty: true }; }
     };
 
-    apiRef.current = { share, forget, snapshot };
+    apiRef.current = { share, forget, snapshot, setFocus, setFocusCat };
     setHasMem(hadMemory);
+    if (!hadMemory) setGuide(0);
 
     // ── pointer / keyboard ──────────────────────────────────────────────────
     const hero = host.closest(".hero") || host;
@@ -400,8 +418,11 @@ function HeroField({ lang = "ja" }) {
       // ── 境界リング（同意ゲートで開く） ──
       const gateOpen = gate ? Math.min(1, gate.t / 0.45) * Math.min(1, (2.9 - gate.t) / 0.45) : 0;
       const gap = Math.max(0, gateOpen) * 0.24;
-      ctx.lineWidth = 1;
-      ctx.strokeStyle = light ? "rgba(10,10,10,0.26)" : "rgba(255,255,255,0.19)";
+      const fRing = focus === "ring";
+      ctx.lineWidth = fRing ? 1.8 : 1;
+      ctx.strokeStyle = light
+        ? `rgba(10,10,10,${fRing ? 0.6 : 0.26})`
+        : `rgba(255,255,255,${fRing ? 0.6 : 0.19})`;
       ctx.beginPath();
       if (gap > 0.002 && gate) {
         ctx.arc(L.cx, L.cy, R, gate.ang + gap, gate.ang - gap + HF_TAU);
@@ -441,7 +462,10 @@ function HeroField({ lang = "ja" }) {
         if (e.tgt === 0 && e.al < 0.012) { edges.delete(key); return; }
         const a = frags[e.a], b = frags[e.b];
         const c = hfMix(pal.cat[a.cat], pal.cat[b.cat], 0.5);
-        ctx.strokeStyle = hfCss(c, e.al * (light ? 0.62 : 0.46));
+        const dimE = focusCat >= 0 && a.cat !== focusCat && b.cat !== focusCat ? 0.25 : 1;
+        const boostE = focus === "edge" ? 2.0 : 1;
+        ctx.lineWidth = focus === "edge" ? 1.5 : 1;
+        ctx.strokeStyle = hfCss(c, Math.min(1, e.al * (light ? 0.62 : 0.46) * dimE * boostE));
         ctx.beginPath();
         ctx.moveTo(a.x, a.y);
         ctx.lineTo(b.x, b.y);
@@ -452,8 +476,10 @@ function HeroField({ lang = "ja" }) {
       if (!light) ctx.globalCompositeOperation = "lighter";
       for (let i = 0; i < frags.length; i++) {
         const f = frags[i];
-        const g = f.sz * (1 + f.w * 1.15) * (1 + pulse * 0.16) * 7.5;
-        ctx.globalAlpha = (k > 0.001 ? 1 - k : 1) * (0.34 + f.w * 0.62);
+        f.glow = f.glow > 0.01 ? f.glow * (1 - dt * 0.9) : 0;
+        const g = f.sz * (1 + f.w * 1.15 + f.glow * 0.9) * (1 + pulse * 0.16) * 7.5;
+        const dimF = focusCat >= 0 && f.cat !== focusCat ? 0.16 : 1;
+        ctx.globalAlpha = (k > 0.001 ? 1 - k : 1) * Math.min(1, (0.34 + f.w * 0.62 + f.glow * 0.5) * dimF);
         ctx.drawImage(sprites[f.cat], f.x - g / 2, f.y - g / 2, g, g);
       }
       ctx.globalAlpha = k > 0.001 ? 1 - k : 1;
@@ -465,16 +491,19 @@ function HeroField({ lang = "ja" }) {
         const on = gate && gate.i === i;
         // リング境界からノードへの導線
         const va = Math.atan2(p.y - L.cy, p.x - L.cx);
-        ctx.strokeStyle = light ? "rgba(10,10,10,0.12)" : "rgba(255,255,255,0.10)";
+        const fS = focus === "svc";
+        ctx.strokeStyle = light
+          ? `rgba(10,10,10,${fS ? 0.4 : 0.12})`
+          : `rgba(255,255,255,${fS ? 0.45 : 0.10})`;
         ctx.lineWidth = 1;
         ctx.beginPath();
         ctx.moveTo(L.cx + Math.cos(va) * (R + 4), L.cy + Math.sin(va) * (R + 4));
         ctx.lineTo(p.x - Math.cos(va) * 17, p.y - Math.sin(va) * 17);
         ctx.stroke();
         ctx.strokeStyle = light
-          ? `rgba(10,10,10,${on ? 0.5 : 0.22})`
-          : `rgba(255,255,255,${on ? 0.55 : 0.22})`;
-        ctx.lineWidth = 1;
+          ? `rgba(10,10,10,${on || fS ? 0.5 : 0.22})`
+          : `rgba(255,255,255,${on || fS ? 0.55 : 0.22})`;
+        ctx.lineWidth = fS ? 1.6 : 1;
         ctx.beginPath(); ctx.arc(p.x, p.y, 15, 0, HF_TAU); ctx.stroke();
         ctx.fillStyle = light ? "rgba(10,10,10,0.05)" : "rgba(255,255,255,0.04)";
         ctx.fill();
@@ -492,14 +521,17 @@ function HeroField({ lang = "ja" }) {
         const gy = L.cy + Math.sin(gate.ang) * R;
         const seg = (a, b, u) => [a[0] + (b[0] - a[0]) * u, a[1] + (b[1] - a[1]) * u];
         const ease = (u) => u * u * (3 - 2 * u);
-        let mote = null, col = pal.a1;
+        let mote = null, col = pal.a1, cap = "";
         if (gate.t > 0.35 && gate.t <= 1.05) {
           mote = seg([L.cx, L.cy], [gx, gy], ease((gate.t - 0.35) / 0.70));
+          cap = T.flowConsent;
         } else if (gate.t > 1.05 && gate.t <= 1.65) {
           mote = seg([gx, gy], [p.x, p.y], ease((gate.t - 1.05) / 0.60));
+          cap = T.flowSummary;
         } else if (gate.t > 1.85 && gate.t <= 2.75) {
           col = pal.a3;
           mote = seg([p.x, p.y], [L.cx, L.cy], ease((gate.t - 1.85) / 0.90));
+          cap = T.flowSupport;
         }
         if (mote) {
           if (!light) ctx.globalCompositeOperation = "lighter";
@@ -508,6 +540,14 @@ function HeroField({ lang = "ja" }) {
           ctx.fillStyle = light ? hfCss(col, 0.95) : "#fff";
           ctx.beginPath(); ctx.arc(mote[0], mote[1], 2.4, 0, HF_TAU); ctx.fill();
           if (!light) ctx.globalCompositeOperation = "source-over";
+          // 粒に何が起きているかを添える — 矢印にはラベルを
+          if (cap) {
+            ctx.font = "500 11px Inter, 'Noto Sans JP', sans-serif";
+            ctx.textBaseline = "middle";
+            ctx.textAlign = "left";
+            ctx.fillStyle = light ? "rgba(10,10,10,0.85)" : "rgba(236,238,246,0.92)";
+            ctx.fillText(cap, mote[0] + 11, mote[1] - 11);
+          }
         }
       }
 
@@ -525,7 +565,7 @@ function HeroField({ lang = "ja" }) {
         ctx.stroke();
       }
       if (!light) ctx.globalCompositeOperation = "lighter";
-      const halo = 46 + pulse * 16;
+      const halo = (focus === "core" ? 70 : 46) + pulse * 16;
       ctx.globalAlpha = (k > 0.001 ? 1 - k : 1) * (light ? 0.35 : 0.7);
       ctx.drawImage(whiteSprite, L.cx - halo / 2, L.cy - halo / 2, halo, halo);
       ctx.globalAlpha = k > 0.001 ? 1 - k : 1;
@@ -535,8 +575,11 @@ function HeroField({ lang = "ja" }) {
 
       // ── 小さな AI ──
       const reach = R * 0.20;
-      ctx.strokeStyle = light ? "rgba(10,10,10,0.12)" : "rgba(255,255,255,0.09)";
-      ctx.lineWidth = 1;
+      const fA = focus === "ai";
+      ctx.strokeStyle = light
+        ? `rgba(10,10,10,${fA ? 0.5 : 0.12})`
+        : `rgba(255,255,255,${fA ? 0.5 : 0.09})`;
+      ctx.lineWidth = fA ? 1.4 : 1;
       ctx.setLineDash([2, 5]);
       ctx.beginPath(); ctx.arc(ag.x, ag.y, reach, 0, HF_TAU); ctx.stroke();
       ctx.setLineDash([]);
@@ -553,6 +596,19 @@ function HeroField({ lang = "ja" }) {
       ctx.beginPath(); ctx.moveTo(L.cx, L.cy); ctx.lineTo(ag.x, ag.y); ctx.stroke();
 
       ctx.restore();
+
+      // 案内マーカー（AI・辺）は動く相手に追従させる
+      const am = aiMarkRef.current;
+      if (am) am.style.transform = `translate(${Math.round(ag.x - 26)}px, ${Math.round(ag.y - 26)}px)`;
+      const em = edgeMarkRef.current;
+      if (em) {
+        let best = null;
+        edges.forEach((e) => { if (!best || e.al > best.al) best = e; });
+        if (best) {
+          const a = frags[best.a], b = frags[best.b];
+          em.style.transform = `translate(${Math.round((a.x + b.x) / 2 - 9)}px, ${Math.round((a.y + b.y) / 2 - 9)}px)`;
+        }
+      }
 
       // AI ラベルを DOM 側で追従させる
       const al = aiRef.current;
@@ -638,10 +694,14 @@ function HeroField({ lang = "ja" }) {
       if (gate) {
         gate.t += dt;
         if (gate.t > 2.9) {
-          // 支援が返ったので、関連する断片が少し明るくなる
-          for (let n = 0; n < 6; n++) {
-            const j = knownList[(Math.random() * knownList.length) | 0];
-            if (j != null) frags[j].touch += 0.6;
+          // 支援が返る。そのサービスが扱う種類の断片が明るくなり、
+          // まだ理解していないものは理解に近づく。
+          const want = new Set((svcs[gate.i].cats || []).map((id) => cats.findIndex((c) => c.id === id)));
+          for (let i = 0; i < frags.length; i++) {
+            const f = frags[i];
+            if (!want.has(f.cat)) continue;
+            f.glow = 1;
+            if (!f.known) f.touch += 0.45;
           }
           gate = null;
           setOpenId(null);
@@ -723,7 +783,24 @@ function HeroField({ lang = "ja" }) {
     return () => clearInterval(id);
   }, [peek]);
 
+  // 案内のステップに応じて、図の該当部品を強調する
+  React.useEffect(() => {
+    const at = guide >= 0 && STEPS[guide] ? STEPS[guide].at : null;
+    if (apiRef.current.setFocus) apiRef.current.setFocus(at);
+    if (at === "store") setPeek(true);        // 最後の一歩は実物を見せて終わる
+  }, [guide]);
+
   const px = (v) => Math.round(v) + "px";
+  const step = guide >= 0 ? STEPS[guide] : null;
+  const isAt = (at) => step && step.at === at;
+  const mark = (at, style, ref) => (
+    <span key={at} ref={ref}
+          className={"hfield__mark" + (isAt(at) ? " is-on" : "")}
+          style={style} aria-hidden="true"
+          onClick={() => setGuide(STEPS.findIndex((x) => x.at === at))}>
+      {STEPS.findIndex((x) => x.at === at) + 1}
+    </span>
+  );
 
   return (
     <div className="hfield" ref={hostRef} tabIndex={0} role="group"
@@ -753,21 +830,78 @@ function HeroField({ lang = "ja" }) {
                       onClick={() => apiRef.current.share && apiRef.current.share(s.id)}>
                 <span className="hfield__svc-name">{txt(s)}</span>
                 <span className="hfield__svc-note">
-                  {openId === s.id ? T.summary : T.consent}
+                  {openId === s.id ? T.summary : (txt(s.does) || T.consent)}
                 </span>
               </button>
             ))}
+
+            {/* 凡例。触れるとその種類だけが浮かぶ */}
+            <div className={"hfield__legend" + (isAt("legend") ? " is-on" : "")}
+                 style={{ left: px(lay.legend.x), top: px(lay.legend.y) }}
+                 onMouseLeave={() => apiRef.current.setFocusCat && apiRef.current.setFocusCat(-1)}>
+              {guide >= 0 && mark("legend", null)}
+              <span className="hfield__legend-k">{T.legend}</span>
+              {F.categories.map((c, i) => (
+                <button key={c.id} type="button" className="hfield__legend-i"
+                        style={{ "--dot": `var(--hf-cat-${i})` }}
+                        onMouseEnter={() => apiRef.current.setFocusCat && apiRef.current.setFocusCat(i)}
+                        onFocus={() => apiRef.current.setFocusCat && apiRef.current.setFocusCat(i)}
+                        onBlur={() => apiRef.current.setFocusCat && apiRef.current.setFocusCat(-1)}>
+                  <i /> {txt(c)}
+                </button>
+              ))}
+            </div>
+
+            {/* 「仕組み」のマーカー。静止した部品は lay から、動く部品は毎フレーム */}
+            {guide >= 0 && (
+              <React.Fragment>
+                {mark("core", { left: px(lay.core.x - 30), top: px(lay.core.y - 30) })}
+                {mark("ring", { left: px(lay.ringPt.x - 9), top: px(lay.ringPt.y - 9) })}
+                {mark("svc",  { left: px(lay.svc[1].x - 30), top: px(lay.svc[1].y - 30) })}
+                {mark("ai",   { left: 0, top: 0 }, aiMarkRef)}
+                {mark("edge", { left: 0, top: 0 }, edgeMarkRef)}
+              </React.Fragment>
+            )}
           </React.Fragment>
         )}
 
-        <div className="hfield__mem">
+        {/* 「仕組み」— 図の部品を順に指して一文ずつ */}
+        {step && (
+          <div className="hfield__guide" role="dialog" aria-label={T.guide}>
+            <div className="hfield__guide-head">
+              <span className="hfield__guide-n">{guide + 1} / {STEPS.length}</span>
+              <span className="hfield__guide-k">{T.guide}</span>
+            </div>
+            <p className="hfield__guide-t">{step.t}</p>
+            <div className="hfield__guide-row">
+              <button type="button" className="hfield__pill" disabled={guide === 0}
+                      onClick={() => setGuide(guide - 1)}>{T.prev}</button>
+              {guide < STEPS.length - 1 ? (
+                <button type="button" className="hfield__pill hfield__pill--go"
+                        onClick={() => setGuide(guide + 1)}>{T.next}</button>
+              ) : (
+                <button type="button" className="hfield__pill hfield__pill--go"
+                        onClick={() => setGuide(-1)}>{T.guideClose}</button>
+              )}
+              <button type="button" className="hfield__guide-x" aria-label={T.guideClose}
+                      onClick={() => setGuide(-1)}>×</button>
+            </div>
+          </div>
+        )}
+
+        <div className={"hfield__mem" + (isAt("store") ? " is-on" : "")}>
           <div className="hfield__mem-row">
+            {guide >= 0 && mark("store", null)}
+            <button type="button" className="hfield__pill" aria-pressed={guide >= 0}
+                    onClick={() => { const open = guide < 0; setGuide(open ? 0 : -1); if (open) setPeek(false); }}>
+              {T.guide}
+            </button>
             <span className="hfield__meter">
               <span className="hfield__meter-k">{T.learned}</span>
               <b ref={meterRef}>0 / 0</b>
             </span>
             <button type="button" className="hfield__pill" aria-expanded={peek}
-                    onClick={() => setPeek(!peek)}>
+                    onClick={() => { setPeek(!peek); if (!peek) setGuide(-1); }}>
               {peek ? T.peekClose : T.peek}
             </button>
             {hasMem && (
@@ -783,6 +917,7 @@ function HeroField({ lang = "ja" }) {
           {peek && snap && (
             <div className="hfield__store" role="status">
               <div className="hfield__store-key">{HF_KEY}</div>
+              <p className="hfield__store-why">{T.storeWhy}</p>
               {snap.empty ? (
                 <p className="hfield__store-note">{T.storeEmpty}</p>
               ) : (
@@ -802,6 +937,7 @@ function HeroField({ lang = "ja" }) {
                   <p className="hfield__store-note">{T.storeAll}</p>
                 </React.Fragment>
               )}
+              <p className="hfield__store-not">{T.storeNot}</p>
             </div>
           )}
         </div>
