@@ -300,7 +300,8 @@ function HeroField({ lang = "ja" }) {
       frags.forEach((f, i) => byCat[f.cat].push(i));
       cats.forEach((c, ci) => {
         const att = attention[c.id] || 0;
-        const ratio = att / (att + 9);
+        // 何度も訪れても埋め尽くさない。図は「まだ学ぶ余地がある」状態に保つ。
+        const ratio = Math.min(0.42, att / (att + 45));
         const take = Math.min(byCat[ci].length, Math.round(byCat[ci].length * ratio));
         for (let k = 0; k < take; k++) learn(byCat[ci][k], true);
       });
@@ -314,7 +315,9 @@ function HeroField({ lang = "ja" }) {
     // 「仕組み」で指している部品と、凡例で触れている種類。描画だけが変わる。
     let focus = null;        // "core" | "ai" | "edge" | "ring" | "svc" | null
     let focusCat = -1;       // 0..4 or -1
+    let labelsOn = false;    // 図中のラベルを出すか（パネルと連動）
     const setFocus = (at) => { focus = at || null; };
+    const setLabels = (on) => { labelsOn = !!on; };
     const setFocusCat = (i) => { focusCat = typeof i === "number" ? i : -1; };
 
     // ── consent gate / share ────────────────────────────────────────────────
@@ -359,7 +362,7 @@ function HeroField({ lang = "ja" }) {
       } catch (e) { return { empty: true }; }
     };
 
-    apiRef.current = { share, forget, snapshot, setFocus, setFocusCat };
+    apiRef.current = { share, forget, snapshot, setFocus, setFocusCat, setLabels };
     setHasMem(hadMemory);
 
     // ── pointer / keyboard ──────────────────────────────────────────────────
@@ -479,12 +482,14 @@ function HeroField({ lang = "ja" }) {
 
       // ── 断片 ──
       if (!light) ctx.globalCompositeOperation = "lighter";
+      // 理解した粒が増えるほど 1 粒あたりは控えめに。塊が白飛びしない。
+      const load = 1 - 0.4 * (knownList.length / (frags.length || 1));
       for (let i = 0; i < frags.length; i++) {
         const f = frags[i];
         f.glow = f.glow > 0.01 ? f.glow * (1 - dt * 0.9) : 0;
         const g = f.sz * (1 + f.w * 1.15 + f.glow * 0.9) * (1 + pulse * 0.16) * 7.5;
         const dimF = focusCat >= 0 && f.cat !== focusCat ? 0.16 : 1;
-        ctx.globalAlpha = (k > 0.001 ? 1 - k : 1) * Math.min(1, (0.34 + f.w * 0.62 + f.glow * 0.5) * dimF);
+        ctx.globalAlpha = (k > 0.001 ? 1 - k : 1) * Math.min(1, (0.34 + f.w * 0.62 + f.glow * 0.5) * dimF * load);
         ctx.drawImage(sprites[f.cat], f.x - g / 2, f.y - g / 2, g, g);
       }
       ctx.globalAlpha = k > 0.001 ? 1 - k : 1;
@@ -619,7 +624,7 @@ function HeroField({ lang = "ja" }) {
       const al = aiRef.current;
       if (al) {
         al.style.transform = `translate(${Math.round(ag.x + 14)}px, ${Math.round(ag.y - 8)}px)`;
-        al.style.opacity = String((1 - k) * 0.9);
+        al.style.opacity = String(labelsOn ? (1 - k) * 0.9 : 0);
       }
     };
 
@@ -795,8 +800,17 @@ function HeroField({ lang = "ja" }) {
     if (panel && tab === "how" && STEPS[guide]) at = STEPS[guide].at;
     else if (panel && tab === "store") at = "store";
     if (apiRef.current.setFocus) apiRef.current.setFocus(at);
+    if (apiRef.current.setLabels) apiRef.current.setLabels(panel);
     if (!panel && apiRef.current.setFocusCat) apiRef.current.setFocusCat(-1);
   }, [panel, tab, guide]);
+
+  // 閉じる手段は × だけにしない。Esc でも閉じられるようにしておく。
+  React.useEffect(() => {
+    if (!panel) return;
+    const onKey = (e) => { if (e.key === "Escape") setPanel(false); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [panel]);
 
   const px = (v) => Math.round(v) + "px";
   const step = panel && tab === "how" ? STEPS[guide] : null;
@@ -817,7 +831,7 @@ function HeroField({ lang = "ja" }) {
 
       <p className="hfield__sr">{T.sr}</p>
 
-      <div className="hfield__ui">
+      <div className={"hfield__ui" + (panel ? " is-labelled" : "")}>
         {lay && (
           <React.Fragment>
             <span className="hfield__tag hfield__tag--core"
@@ -833,6 +847,7 @@ function HeroField({ lang = "ja" }) {
             {F && F.services.map((s, i) => (
               <button key={s.id} type="button"
                       className="hfield__svc"
+                      aria-label={txt(s)}
                       data-open={openId === s.id}
                       style={{ left: px(lay.svc[i].x), top: px(lay.svc[i].y + 26) }}
                       onClick={() => apiRef.current.share && apiRef.current.share(s.id)}>

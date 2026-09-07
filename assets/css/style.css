@@ -298,12 +298,16 @@ button { font: inherit; color: inherit; }
   padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
 }
 
-/* Diagram labels — part names, not captions. */
+/* Diagram labels — part names, not captions. They arrive with the
+   explanation: at rest the figure carries no text at all, so a visitor who
+   only wants to look is not asked to read anything. */
 .hfield__tag {
   position: absolute; transform: translate(-50%, 0);
   font-size: var(--type-micro); letter-spacing: 0.14em;
   color: var(--c-ink-3); white-space: nowrap; pointer-events: none;
+  opacity: 0; transition: opacity 0.45s var(--ease-out);
 }
+.hfield__ui.is-labelled .hfield__tag { opacity: 1; }
 .hfield__tag--ring { transform: translate(-50%, -50%); }
 .hfield__tag--ai {
   left: 0; top: 0; opacity: 0; will-change: transform;
@@ -323,7 +327,16 @@ button { font: inherit; color: inherit; }
   color: var(--c-ink); background: var(--c-glass);
 }
 .hfield__svc[data-open="true"] { color: var(--c-ink); }
-.hfield__svc-name { font-size: var(--type-small); letter-spacing: 0.12em; }
+/* A node keeps its name hidden until the panel is open — or until you point
+   at it, so the three rim nodes stay discoverable at rest. */
+.hfield__svc-name {
+  font-size: var(--type-small); letter-spacing: 0.12em;
+  opacity: 0; transition: opacity 0.45s var(--ease-out);
+}
+.hfield__ui.is-labelled .hfield__svc-name,
+.hfield__svc:hover .hfield__svc-name,
+.hfield__svc:focus-visible .hfield__svc-name,
+.hfield__svc[data-open="true"] .hfield__svc-name { opacity: 1; }
 .hfield__svc-note {
   font-size: var(--type-micro); letter-spacing: 0.08em; color: var(--c-ink-3);
   opacity: 0; transition: opacity 0.3s var(--ease-out);
@@ -365,7 +378,7 @@ button { font: inherit; color: inherit; }
      headline in half; a wide, short one lays its content out in columns and
      leaves the headline, the core and the small AI visible while you read. */
   position: absolute; left: var(--pad-x); right: var(--pad-x); bottom: 24px;
-  max-height: min(40vh, 290px); overflow-y: auto;
+  max-height: min(40vh, 290px);
   padding: 10px 16px 12px;
   background: color-mix(in oklab, var(--c-bg) 84%, transparent);
   border: 1px solid var(--c-line); border-radius: var(--r-md);
@@ -373,7 +386,8 @@ button { font: inherit; color: inherit; }
   pointer-events: auto;
   display: flex; flex-direction: column; gap: 10px;
 }
-.hfield__panel-top { display: flex; align-items: center; gap: 10px; }
+.hfield__panel-top { display: flex; align-items: center; gap: 10px; flex: none; }
+.hfield__legend { flex: none; }
 .hfield__tabs { display: flex; gap: 2px; flex-wrap: wrap; }
 .hfield__tab {
   font: inherit; font-size: var(--type-micro); letter-spacing: 0.1em;
@@ -388,11 +402,13 @@ button { font: inherit; color: inherit; }
   color: var(--c-ink-3); background: none; border: 0; cursor: pointer; padding: 4px 6px;
 }
 .hfield__panel-x:hover { color: var(--c-ink); }
-.hfield__pane { display: flex; flex-direction: column; gap: 8px; }
+/* Only the content scrolls — the tabs and the close button stay put, so the
+   panel can always be closed no matter how long the content runs. */
+.hfield__pane { display: flex; flex-direction: column; gap: 8px; overflow-y: auto; min-height: 0; }
 /* Two columns keep the drawer shallow on wide screens. */
 .hfield__pane--2 {
   display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
-  gap: 10px 28px; align-items: start;
+  gap: 10px 28px; align-items: start; overflow-y: auto; min-height: 0;
 }
 .hfield__pane--2 > div { display: flex; flex-direction: column; gap: 8px; }
 @media (max-width: 1079px) { .hfield__pane--2 { grid-template-columns: 1fr; } }
