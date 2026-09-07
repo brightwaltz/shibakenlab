@@ -332,12 +332,16 @@ button { font: inherit; color: inherit; }
 .hfield__svc:focus-visible .hfield__svc-note,
 .hfield__svc[data-open="true"] .hfield__svc-note { opacity: 1; }
 
-/* What the field has learned, and the way to erase it. */
+/* What the field has learned, where it is kept, and the way to erase it.
+   The claim "nothing is sent to a server" is only worth as much as the
+   visitor's ability to check it, so the panel prints what localStorage
+   actually holds — read back from storage, not from memory. */
 .hfield__mem {
   position: absolute; right: var(--pad-x); bottom: 32px;
-  display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
-  justify-content: flex-end; pointer-events: none;
+  display: flex; flex-direction: column; align-items: flex-end; gap: 9px;
+  max-width: min(46ch, 68%); pointer-events: none;
 }
+.hfield__mem-row { display: flex; align-items: center; gap: 12px; }
 .hfield__meter {
   display: inline-flex; align-items: baseline; gap: 8px;
   font-size: var(--type-micro); letter-spacing: 0.12em; color: var(--c-ink-3);
@@ -345,20 +349,50 @@ button { font: inherit; color: inherit; }
 .hfield__meter b {
   font-weight: 500; color: var(--c-ink-2); font-variant-numeric: tabular-nums;
 }
-.hfield__forget {
-  pointer-events: auto; cursor: pointer;
+.hfield__pill {
+  pointer-events: auto; cursor: pointer; white-space: nowrap;
   font: inherit; font-size: var(--type-micro); letter-spacing: 0.12em;
   color: var(--c-ink-3); background: var(--c-glass);
   border: 1px solid var(--c-line); border-radius: 999px; padding: 5px 13px;
   transition: color 0.3s var(--ease-out), border-color 0.3s var(--ease-out);
 }
-.hfield__forget:hover, .hfield__forget:focus-visible {
+.hfield__pill:hover, .hfield__pill:focus-visible {
   color: var(--c-ink); border-color: var(--c-ink-3);
 }
+.hfield__pill[aria-expanded="true"] { color: var(--c-ink); border-color: var(--c-ink-3); }
+/* Erasing is quiet until you reach for it. */
+.hfield__pill--act:hover, .hfield__pill--act:focus-visible {
+  border-color: color-mix(in oklab, var(--c-a3) 60%, var(--c-line));
+}
 .hfield__local {
-  flex-basis: 100%; text-align: right;
-  font-size: var(--type-micro); letter-spacing: 0.06em;
-  color: var(--c-ink-3); opacity: 0.6;
+  margin: 0; text-align: right; text-wrap: pretty;
+  font-size: var(--type-micro); line-height: 1.6; letter-spacing: 0.04em;
+  color: var(--c-ink-2);
+}
+.hfield__store {
+  pointer-events: auto; user-select: text;
+  width: 100%; padding: 12px 14px;
+  background: var(--c-glass); border: 1px solid var(--c-line);
+  border-radius: var(--r-md);
+  -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px);
+}
+.hfield__store-key {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: var(--type-micro); color: var(--c-ink-3); letter-spacing: 0;
+  padding-bottom: 8px; border-bottom: 1px solid var(--c-line-2);
+}
+.hfield__store-list {
+  margin: 8px 0 0; display: flex; flex-direction: column; gap: 3px;
+  font-size: var(--type-micro);
+}
+.hfield__store-list > div { display: flex; justify-content: space-between; gap: 16px; }
+.hfield__store-list dt { color: var(--c-ink-3); letter-spacing: 0.08em; }
+.hfield__store-list dd {
+  margin: 0; color: var(--c-ink); font-variant-numeric: tabular-nums;
+}
+.hfield__store-note {
+  margin: 9px 0 0; font-size: var(--type-micro); line-height: 1.55;
+  color: var(--c-ink-2);
 }
 
 /* Narrow layout: copy on top, field below it. */
@@ -379,8 +413,8 @@ button { font: inherit; color: inherit; }
   }
 }
 @media (max-width: 760px) {
-  .hfield__mem { bottom: 22px; gap: 10px; }
-  .hfield__local { display: none; }
+  .hfield__mem { bottom: 16px; max-width: 82%; gap: 8px; }
+  .hfield__mem-row { flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
 }
 
 /* ── Section wrapper ──────────────────────────────────────────────────────── */

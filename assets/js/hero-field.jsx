@@ -3,7 +3,7 @@
    研究の主張を、文章ではなく機構として見せるヒーロー図解。
 
      中心の白い核        = あなた（本人）
-     境界のリング        = 本人の手の届く範囲。生データは決して外へ出ない
+     境界のリング        = あなたが決める境界。許さない限り何も越えない
      内側を漂う粒        = 暮らしのデータ断片（学び / 暮らし / からだ / 会話 / 予定）
      あなたに従う光点    = 小さな AI（SLM）。カーソル＝あなたの関心を追う
      粒の間に張られる辺  = Graph-Document。触れた断片の間に構造が残り、消えない
@@ -11,9 +11,10 @@
      クリック時のゲート  = 同意。開いた隙間から「要約 1 粒」だけが出て、支援が返る
      脈動                = 3 拍子（ワルツ）。1 拍目が強い — brightwaltz の署名
 
-   学習結果は訪問者の端末 (localStorage) にのみ残り、サーバへは何も送らない。
-   「忘れる」で消去できる。残るのは絵ではなく“学んだプロファイル”で、次回は
-   そこから構造が生え直す。
+   学習結果は訪問者のブラウザ (localStorage) にのみ残り、サーバへは何も送らない。
+   残るのは絵ではなく“学んだプロファイル”で、次回はそこから構造が生え直す。
+   「保存されている内容」は localStorage の実物を読んで表示する（in-memory の値
+   ではなく、本当に保存されているものを見せる）。「忘れる」で消去できる。
 
    Public API:
      <HeroField lang="ja" />
@@ -75,6 +76,8 @@ function HeroField({ lang = "ja" }) {
   const [lay, setLay]       = React.useState(null);
   const [hasMem, setHasMem] = React.useState(false);
   const [openId, setOpenId] = React.useState(null);
+  const [peek, setPeek]     = React.useState(false);
+  const [snap, setSnap]     = React.useState(null);
 
   const F = window.LAB_FIELD;
   const T = (window.LAB_I18N[lang] && window.LAB_I18N[lang].hero.field) || {};
@@ -154,11 +157,11 @@ function HeroField({ lang = "ja" }) {
       L.stacked = W < 1080;
       if (L.stacked) {
         L.cx = W * 0.5;
-        L.cy = H * 0.66;
+        L.cy = H * 0.62;
         L.R  = Math.min(W * 0.32, H * 0.15);
         // 狭幅では周縁に 3 ノードを置く余白がないので、リングの下に一列で並べる。
         // ゲートの向きは各ノードの方位から求まるので、図の意味は変わらない。
-        const y = Math.min(H - 96, L.cy + L.R + 62);
+        const y = Math.min(H - 96, L.cy + L.R + 52);
         [0.22, 0.5, 0.78].forEach((fx, i) => {
           svcPos[i].x = W * fx;
           svcPos[i].y = y;
@@ -314,7 +317,26 @@ function HeroField({ lang = "ja" }) {
       setHasMem(false);
     };
 
-    apiRef.current = { share, forget };
+    // 「保存されている内容」用。in-memory の profile ではなく localStorage の
+    // 実物を読む — 訪問者が DevTools で突き合わせても一致する。
+    const snapshot = () => {
+      let raw = null;
+      try { raw = localStorage.getItem(HF_KEY); } catch (e) {}
+      if (!raw) return { empty: true };
+      try {
+        const p = JSON.parse(raw);
+        return {
+          empty: false,
+          visits: p.visits || 0,
+          bytes: raw.length,
+          rows: cats
+            .map((c) => ({ c, v: (p.cats && p.cats[c.id]) || 0 }))
+            .filter((r) => r.v >= 0.05),
+        };
+      } catch (e) { return { empty: true }; }
+    };
+
+    apiRef.current = { share, forget, snapshot };
     setHasMem(hadMemory);
 
     // ── pointer / keyboard ──────────────────────────────────────────────────
@@ -693,6 +715,14 @@ function HeroField({ lang = "ja" }) {
     };
   }, []);
 
+  React.useEffect(() => {
+    if (!peek) return;
+    const read = () => setSnap(apiRef.current.snapshot ? apiRef.current.snapshot() : null);
+    read();
+    const id = setInterval(read, 1000);
+    return () => clearInterval(id);
+  }, [peek]);
+
   const px = (v) => Math.round(v) + "px";
 
   return (
@@ -731,17 +761,49 @@ function HeroField({ lang = "ja" }) {
         )}
 
         <div className="hfield__mem">
-          <span className="hfield__meter">
-            <span className="hfield__meter-k">{T.learned}</span>
-            <b ref={meterRef}>0 / 0</b>
-          </span>
-          {hasMem && (
-            <button type="button" className="hfield__forget"
-                    onClick={() => apiRef.current.forget && apiRef.current.forget()}>
-              {T.forget}
+          <div className="hfield__mem-row">
+            <span className="hfield__meter">
+              <span className="hfield__meter-k">{T.learned}</span>
+              <b ref={meterRef}>0 / 0</b>
+            </span>
+            <button type="button" className="hfield__pill" aria-expanded={peek}
+                    onClick={() => setPeek(!peek)}>
+              {peek ? T.peekClose : T.peek}
             </button>
+            {hasMem && (
+              <button type="button" className="hfield__pill hfield__pill--act"
+                      onClick={() => apiRef.current.forget && apiRef.current.forget()}>
+                {T.forget}
+              </button>
+            )}
+          </div>
+
+          <p className="hfield__local">{T.local}</p>
+
+          {peek && snap && (
+            <div className="hfield__store" role="status">
+              <div className="hfield__store-key">{HF_KEY}</div>
+              {snap.empty ? (
+                <p className="hfield__store-note">{T.storeEmpty}</p>
+              ) : (
+                <React.Fragment>
+                  <dl className="hfield__store-list">
+                    {snap.rows.map((r) => (
+                      <div key={r.c.id}>
+                        <dt>{txt(r.c)}</dt>
+                        <dd>{r.v.toFixed(1)}</dd>
+                      </div>
+                    ))}
+                    <div>
+                      <dt>{T.visits}</dt>
+                      <dd>{snap.visits}</dd>
+                    </div>
+                  </dl>
+                  <p className="hfield__store-note">{T.storeAll}</p>
+                </React.Fragment>
+              )}
+            </div>
           )}
-          <span className="hfield__local">{T.local}</span>
         </div>
       </div>
     </div>

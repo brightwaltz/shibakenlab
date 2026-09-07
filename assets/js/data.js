@@ -31,18 +31,24 @@ window.LAB_I18N = {
       field: {
         you: "あなた",
         ai: "小さな AI",
-        ring: "本人の手のうち",
+        ring: "あなたが決める境界",
         consent: "同意して渡す",
         summary: "要約だけが出る",
         learned: "理解した断片",
         forget: "忘れる",
-        local: "この学習はあなたの端末にだけ残ります",
+        peek: "保存されている内容",
+        peekClose: "閉じる",
+        storeEmpty: "まだ何も保存していません。",
+        storeAll: "これが、このブラウザに保存されている全てです。",
+        visits: "訪問回数",
+        local: "サーバには何も送っていません。学習はこのブラウザの中だけです。",
         aria: "パーソナルデータと小さな AI の関係を示すインタラクティブ図解",
         sr:
-          "中心にあなた本人、その周囲を囲む境界の内側に暮らしのデータ断片が漂います。" +
+          "中心にあなた本人、その周囲を囲む「あなたが決める境界」の内側に暮らしのデータ断片が漂います。" +
           "小さな AI がポインタを追って断片に触れ、触れた断片の間にグラフ構造が残ります。" +
           "教育・介護・地域のサービスを選ぶと境界に同意のゲートが開き、要約が一粒だけ外へ出て支援が返ります。" +
-          "学習内容はこの端末の中にだけ保存され、「忘れる」で消去できます。" +
+          "学習内容はサーバへは送られず、このブラウザの中にだけ保存されます。" +
+          "「保存されている内容」で実際に保存されているものを表示でき、「忘れる」で消去できます。" +
           "矢印キーで小さな AI を動かせます。",
       },
     },
@@ -143,18 +149,24 @@ window.LAB_I18N = {
       field: {
         you: "You",
         ai: "Small AI",
-        ring: "within your hands",
+        ring: "the boundary you set",
         consent: "share with consent",
         summary: "summary only",
         learned: "understood",
         forget: "Forget",
-        local: "This learning stays on your device only",
+        peek: "What is stored",
+        peekClose: "Close",
+        storeEmpty: "Nothing is stored yet.",
+        storeAll: "That is everything stored in this browser.",
+        visits: "Visits",
+        local: "Nothing is sent to a server. This learning lives in your browser.",
         aria: "Interactive diagram of personal data and a small AI",
         sr:
-          "You sit at the centre; fragments of everyday data drift inside a boundary around you. " +
+          "You sit at the centre; fragments of everyday data drift inside the boundary you set. " +
           "A small AI follows the pointer, touches fragments, and the structure it finds stays as a graph. " +
           "Choosing education, care or community opens a consent gate in the boundary: a single summary leaves, " +
-          "and support returns. What it learns is stored on this device only and can be erased with Forget. " +
+          "and support returns. Nothing is sent to a server — what it learns is stored in this browser alone. " +
+          "\u2018What is stored\u2019 shows exactly what is held, and Forget erases it. " +
           "Arrow keys move the small AI.",
       },
     },
