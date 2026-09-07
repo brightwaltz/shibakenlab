@@ -332,87 +332,89 @@ button { font: inherit; color: inherit; }
 .hfield__svc:focus-visible .hfield__svc-note,
 .hfield__svc[data-open="true"] .hfield__svc-note { opacity: 1; }
 
-/* What the field has learned, where it is kept, and the way to erase it.
-   The claim "nothing is sent to a server" is only worth as much as the
-   visitor's ability to check it, so the panel prints what localStorage
-   actually holds — read back from storage, not from memory. */
-.hfield__mem {
-  position: absolute; right: var(--pad-x); bottom: 32px;
-  display: flex; flex-direction: column; align-items: flex-end; gap: 9px;
-  max-width: min(46ch, 68%); pointer-events: none;
-}
-.hfield__mem-row { display: flex; align-items: center; gap: 12px; }
-.hfield__meter {
-  display: inline-flex; align-items: baseline; gap: 8px;
-  font-size: var(--type-micro); letter-spacing: 0.12em; color: var(--c-ink-3);
-}
-.hfield__meter b {
-  font-weight: 500; color: var(--c-ink-2); font-variant-numeric: tabular-nums;
+/* At rest the field carries one control: a quiet way in. Everything the
+   diagram has to say lives behind it, so a visitor who only wants to look
+   can scroll past without reading anything. */
+.hfield__about {
+  position: absolute; transform: translate(-50%, 0);
+  display: flex; pointer-events: none;
 }
 .hfield__pill {
   pointer-events: auto; cursor: pointer; white-space: nowrap;
   font: inherit; font-size: var(--type-micro); letter-spacing: 0.12em;
   color: var(--c-ink-3); background: var(--c-glass);
-  border: 1px solid var(--c-line); border-radius: 999px; padding: 5px 13px;
+  border: 1px solid var(--c-line); border-radius: 999px; padding: 6px 14px;
+  text-decoration: none;
   transition: color 0.3s var(--ease-out), border-color 0.3s var(--ease-out);
 }
 .hfield__pill:hover, .hfield__pill:focus-visible {
   color: var(--c-ink); border-color: var(--c-ink-3);
 }
-.hfield__pill[aria-expanded="true"] { color: var(--c-ink); border-color: var(--c-ink-3); }
+.hfield__pill--go { color: var(--c-ink); border-color: var(--c-ink-3); }
+.hfield__pill:disabled { opacity: 0.32; cursor: default; }
+.hfield__pill--about[aria-pressed="true"] { color: var(--c-ink); border-color: var(--c-ink-3); }
 /* Erasing is quiet until you reach for it. */
 .hfield__pill--act:hover, .hfield__pill--act:focus-visible {
   border-color: color-mix(in oklab, var(--c-a3) 60%, var(--c-line));
 }
-.hfield__local {
-  margin: 0; text-align: right; text-wrap: pretty;
-  font-size: var(--type-micro); line-height: 1.6; letter-spacing: 0.04em;
-  color: var(--c-ink-2);
+
+/* The one panel. Sits at the foot of the field so it never covers the core,
+   the small AI, or the service nodes the guide points at. */
+.hfield__panel {
+  /* A shallow drawer along the foot of the hero. Tall panels cut the
+     headline in half; a wide, short one lays its content out in columns and
+     leaves the headline, the core and the small AI visible while you read. */
+  position: absolute; left: var(--pad-x); right: var(--pad-x); bottom: 24px;
+  max-height: min(40vh, 290px); overflow-y: auto;
+  padding: 10px 16px 12px;
+  background: color-mix(in oklab, var(--c-bg) 84%, transparent);
+  border: 1px solid var(--c-line); border-radius: var(--r-md);
+  -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px);
+  pointer-events: auto;
+  display: flex; flex-direction: column; gap: 10px;
 }
-.hfield__store {
-  pointer-events: auto; user-select: text;
-  width: 100%; padding: 12px 14px;
-  background: var(--c-glass); border: 1px solid var(--c-line);
-  border-radius: var(--r-md);
-  -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px);
+.hfield__panel-top { display: flex; align-items: center; gap: 10px; }
+.hfield__tabs { display: flex; gap: 2px; flex-wrap: wrap; }
+.hfield__tab {
+  font: inherit; font-size: var(--type-micro); letter-spacing: 0.1em;
+  color: var(--c-ink-3); background: none; border: 0; cursor: pointer;
+  padding: 5px 10px; border-radius: 999px;
+  transition: color 0.25s var(--ease-out), background 0.25s var(--ease-out);
 }
-.hfield__store-key {
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: var(--type-micro); color: var(--c-ink-3); letter-spacing: 0;
-  padding-bottom: 8px; border-bottom: 1px solid var(--c-line-2);
+.hfield__tab:hover { color: var(--c-ink-2); }
+.hfield__tab[aria-selected="true"] { color: var(--c-ink); background: var(--c-glass-2); }
+.hfield__panel-x {
+  margin-left: auto; font: inherit; font-size: 17px; line-height: 1;
+  color: var(--c-ink-3); background: none; border: 0; cursor: pointer; padding: 4px 6px;
 }
-.hfield__store-list {
-  margin: 8px 0 0; display: flex; flex-direction: column; gap: 3px;
-  font-size: var(--type-micro);
+.hfield__panel-x:hover { color: var(--c-ink); }
+.hfield__pane { display: flex; flex-direction: column; gap: 8px; }
+/* Two columns keep the drawer shallow on wide screens. */
+.hfield__pane--2 {
+  display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  gap: 10px 28px; align-items: start;
 }
-.hfield__store-list > div { display: flex; justify-content: space-between; gap: 16px; }
-.hfield__store-list dt { color: var(--c-ink-3); letter-spacing: 0.08em; }
-.hfield__store-list dd {
-  margin: 0; color: var(--c-ink); font-variant-numeric: tabular-nums;
-}
-.hfield__store-note {
-  margin: 9px 0 0; font-size: var(--type-micro); line-height: 1.55;
-  color: var(--c-ink-2);
-}
+.hfield__pane--2 > div { display: flex; flex-direction: column; gap: 8px; }
+@media (max-width: 1079px) { .hfield__pane--2 { grid-template-columns: 1fr; } }
+.hfield__row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 
 /* Legend — the colour encoding repeats 300 times, so it earns a key.
    Hovering a kind lifts only that kind on the canvas. */
 .hfield__legend {
-  position: absolute; transform: translate(-50%, 0);
-  display: flex; align-items: center; flex-wrap: wrap; justify-content: center;
-  gap: 4px 12px; padding: 4px 8px; border-radius: 999px;
-  pointer-events: auto; white-space: nowrap;
+  display: flex; align-items: center; flex-wrap: wrap; gap: 4px 10px;
+  padding: 8px 0; border-top: 1px solid var(--c-line-2);
+  border-bottom: 1px solid var(--c-line-2);
   transition: background 0.3s var(--ease-out);
 }
 .hfield__legend.is-on { background: var(--c-glass); }
 .hfield__legend-k {
   font-size: var(--type-micro); letter-spacing: 0.1em; color: var(--c-ink-3);
-  margin-right: 4px;
+  margin-right: 2px;
 }
 .hfield__legend-i {
   display: inline-flex; align-items: center; gap: 6px;
   font: inherit; font-size: var(--type-micro); letter-spacing: 0.08em;
-  color: var(--c-ink-2); background: none; border: 0; padding: 2px 4px;
+  color: var(--c-ink-2); background: none; border: 0; padding: 2px 6px;
   border-radius: 999px; cursor: default;
 }
 .hfield__legend-i i {
@@ -435,56 +437,77 @@ button { font: inherit; color: inherit; }
   box-shadow: 0 0 0 4px color-mix(in oklab, var(--c-a1) 30%, transparent),
               0 0 18px color-mix(in oklab, var(--c-a1) 60%, transparent);
 }
-.hfield__legend .hfield__mark, .hfield__mem-row .hfield__mark {
-  position: static; flex: none;
+.hfield__step {
+  margin: 0; font-size: 14px; line-height: 1.75; color: var(--c-ink);
+  text-wrap: pretty; max-width: 62ch;
 }
-.hfield__guide {
-  /* Bottom-left, under the copy column: clear of the legend under the ring,
-     the service labels, and the memory row on the right. It covers only the
-     scroll cue while open. */
-  position: absolute; left: var(--pad-x); bottom: 28px;
-  width: min(460px, calc(100% - 2 * var(--pad-x)));
-  padding: 14px 16px 12px;
-  background: color-mix(in oklab, var(--c-bg) 78%, transparent);
-  border: 1px solid var(--c-line); border-radius: var(--r-md);
-  -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px);
-  pointer-events: auto;
-  display: flex; flex-direction: column; gap: 8px;
+.hfield__step-n {
+  display: inline-block; margin-right: 10px;
+  font-size: var(--type-micro); letter-spacing: 0.12em;
+  color: var(--c-a1); font-variant-numeric: tabular-nums;
 }
-.hfield__guide-head {
-  display: flex; align-items: baseline; gap: 10px;
+
+/* What is stored — the claim is only worth the visitor's ability to check it,
+   so the panel prints what localStorage actually holds. */
+.hfield__local {
+  margin: 0; font-size: 13px; line-height: 1.6; color: var(--c-ink);
+}
+.hfield__meter {
+  display: inline-flex; align-items: baseline; gap: 8px;
   font-size: var(--type-micro); letter-spacing: 0.12em; color: var(--c-ink-3);
 }
-.hfield__guide-n { font-variant-numeric: tabular-nums; color: var(--c-a1); }
-.hfield__guide-t {
-  margin: 0; font-size: 14px; line-height: 1.7; color: var(--c-ink); text-wrap: pretty;
+.hfield__meter b {
+  font-weight: 500; color: var(--c-ink-2); font-variant-numeric: tabular-nums;
 }
-.hfield__guide-row { display: flex; align-items: center; gap: 8px; }
-.hfield__guide-x {
-  margin-left: auto; font: inherit; font-size: 16px; line-height: 1;
-  color: var(--c-ink-3); background: none; border: 0; cursor: pointer; padding: 4px 6px;
+.hfield__store {
+  user-select: text; padding: 10px 12px;
+  background: var(--c-glass); border: 1px solid var(--c-line);
+  border-radius: var(--r-sm);
 }
-.hfield__guide-x:hover { color: var(--c-ink); }
-.hfield__pill--go { color: var(--c-ink); border-color: var(--c-ink-3); }
-.hfield__pill:disabled { opacity: 0.35; cursor: default; }
-.hfield__pill[aria-pressed="true"] { color: var(--c-ink); border-color: var(--c-ink-3); }
-.hfield__mem.is-on .hfield__mem-row { outline: 1px solid color-mix(in oklab, var(--c-a1) 45%, transparent); outline-offset: 6px; border-radius: 999px; }
+.hfield__store-key {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: var(--type-micro); color: var(--c-ink-3); letter-spacing: 0;
+  padding-bottom: 8px; border-bottom: 1px solid var(--c-line-2);
+}
+.hfield__store-list {
+  margin: 8px 0 0; display: grid; gap: 3px 20px;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  font-size: var(--type-micro);
+}
+.hfield__store-list > div { display: flex; justify-content: space-between; gap: 16px; }
+.hfield__store-list dt { color: var(--c-ink-3); letter-spacing: 0.08em; }
+.hfield__store-list dd { margin: 0; color: var(--c-ink); font-variant-numeric: tabular-nums; }
+.hfield__store-why, .hfield__store-not, .hfield__store-note {
+  margin: 0; font-size: var(--type-micro); line-height: 1.65;
+  color: var(--c-ink-2); text-wrap: pretty; max-width: 66ch;
+}
+.hfield__store-note { margin-top: 9px; }
+.hfield__store-not { color: var(--c-ink-3); }
 
-.hfield__store-why, .hfield__store-not {
-  margin: 8px 0 0; font-size: var(--type-micro); line-height: 1.6;
+/* The research — what each part of the picture is actually studying. */
+.hfield__res {
+  margin: 0; display: grid; gap: 10px 24px;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+}
+.hfield__res dt {
+  font-size: var(--type-micro); letter-spacing: 0.08em; color: var(--c-a1);
+  margin-bottom: 3px;
+}
+.hfield__res dd {
+  margin: 0; font-size: var(--type-micro); line-height: 1.65;
   color: var(--c-ink-2); text-wrap: pretty;
 }
-.hfield__store-not { color: var(--c-ink-3); padding-top: 8px; border-top: 1px solid var(--c-line-2); }
+.hfield__res-note { font-size: var(--type-micro); color: var(--c-ink-3); }
 
 /* Narrow layout: copy on top, field below it. */
 @media (max-width: 1079px) {
   .hero--field {
-    min-height: 122vh;
+    min-height: 100vh;
     justify-content: flex-start;
-    padding: 100px var(--pad-x) 92px;
+    padding: 92px var(--pad-x) 24px;
   }
   .hero--field .hero__inner { max-width: 100%; }
-  .hero--field .hero__title { font-size: clamp(32px, 6vw, 52px); }
+  .hero--field .hero__title { font-size: clamp(30px, 5.6vw, 48px); }
   .hero--field .hero__sub   { max-width: min(38ch, 100%); }
   .hero--field .hero__veil {
     background: linear-gradient(180deg,
@@ -493,11 +516,8 @@ button { font: inherit; color: inherit; }
       transparent 68%);
   }
 }
-@media (max-width: 760px) {
-  .hfield__mem { bottom: 16px; max-width: 86%; gap: 8px; }
-  .hfield__mem-row { flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
-  .hfield__legend { width: calc(100% - 2 * var(--pad-x)); white-space: normal; }
-  .hfield__guide { bottom: 84px; }
+@media (max-width: 1079px) {
+  .hfield__panel { bottom: 18px; max-height: 58vh; }
 }
 
 /* ── Section wrapper ──────────────────────────────────────────────────────── */

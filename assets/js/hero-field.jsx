@@ -78,9 +78,11 @@ function HeroField({ lang = "ja" }) {
   const [lay, setLay]       = React.useState(null);
   const [hasMem, setHasMem] = React.useState(false);
   const [openId, setOpenId] = React.useState(null);
-  const [peek, setPeek]     = React.useState(false);
   const [snap, setSnap]     = React.useState(null);
-  const [guide, setGuide]   = React.useState(-1);   // 「仕組み」の現在ステップ。-1 = 閉
+  // 説明はすべてこの 1 枚に。初見では閉じたまま — まず図だけを見てもらう。
+  const [panel, setPanel]   = React.useState(false);
+  const [tab, setTab]       = React.useState("how");
+  const [guide, setGuide]   = React.useState(0);    // 「仕組み」タブ内のステップ
 
   const F = window.LAB_FIELD;
   const T = (window.LAB_I18N[lang] && window.LAB_I18N[lang].hero.field) || {};
@@ -164,10 +166,10 @@ function HeroField({ lang = "ja" }) {
       if (L.stacked) {
         L.cx = W * 0.5;
         L.cy = H * 0.60;
-        L.R  = Math.min(W * 0.32, H * 0.15);
+        L.R  = Math.min(W * 0.30, H * 0.135);
         // 狭幅では周縁に 3 ノードを置く余白がないので、リングの下に一列で並べる。
         // ゲートの向きは各ノードの方位から求まるので、図の意味は変わらない。
-        const y = Math.min(H - 96, L.cy + L.R + 52);
+        const y = Math.min(H - 118, L.cy + L.R + 46);
         [0.22, 0.5, 0.78].forEach((fx, i) => {
           svcPos[i].x = W * fx;
           svcPos[i].y = y;
@@ -185,14 +187,18 @@ function HeroField({ lang = "ja" }) {
         });
       }
       const ra = ((L.stacked ? 118 : 140) * Math.PI) / 180;
-      // 凡例はリングの真下。狭幅ではサービス行のさらに下。
-      const legendY = L.stacked ? svcPos[0].y + 64 : L.cy + L.R + 30;
+      // 「粒の色」のマーカーは、リング内の粒が密なあたりを指す
+      const la = (L.stacked ? -60 : -120) * Math.PI / 180;
       setLay({
+        stacked: L.stacked,
         core:   { x: L.cx, y: L.cy },
         ring:   { x: L.cx + Math.cos(ra) * L.R * 1.08, y: L.cy + Math.sin(ra) * L.R * 1.08 },
         ringPt: { x: L.cx + Math.cos(ra) * L.R,        y: L.cy + Math.sin(ra) * L.R },
-        legend: { x: L.cx, y: legendY },
+        legend: { x: L.cx + Math.cos(la) * L.R * 0.66, y: L.cy + Math.sin(la) * L.R * 0.66 },
         svc:    svcPos.map((p) => ({ x: p.x, y: p.y })),
+        // 「この図について」は図の真下に置く。ヒーロー右下は Tweaks の場所。
+        about:  { x: L.cx,
+                  y: Math.min(H - 48, L.stacked ? svcPos[0].y + 60 : L.cy + L.R + 48) },
         R: L.R,
       });
     };
@@ -355,7 +361,6 @@ function HeroField({ lang = "ja" }) {
 
     apiRef.current = { share, forget, snapshot, setFocus, setFocusCat };
     setHasMem(hadMemory);
-    if (!hadMemory) setGuide(0);
 
     // ── pointer / keyboard ──────────────────────────────────────────────────
     const hero = host.closest(".hero") || host;
@@ -776,23 +781,26 @@ function HeroField({ lang = "ja" }) {
   }, []);
 
   React.useEffect(() => {
-    if (!peek) return;
+    if (!panel || tab !== "store") return;
     const read = () => setSnap(apiRef.current.snapshot ? apiRef.current.snapshot() : null);
     read();
     const id = setInterval(read, 1000);
     return () => clearInterval(id);
-  }, [peek]);
+  }, [panel, tab]);
 
   // 案内のステップに応じて、図の該当部品を強調する
+  // 開いているタブ・ステップに応じて、図の該当部品を強調する
   React.useEffect(() => {
-    const at = guide >= 0 && STEPS[guide] ? STEPS[guide].at : null;
+    let at = null;
+    if (panel && tab === "how" && STEPS[guide]) at = STEPS[guide].at;
+    else if (panel && tab === "store") at = "store";
     if (apiRef.current.setFocus) apiRef.current.setFocus(at);
-    if (at === "store") setPeek(true);        // 最後の一歩は実物を見せて終わる
-  }, [guide]);
+    if (!panel && apiRef.current.setFocusCat) apiRef.current.setFocusCat(-1);
+  }, [panel, tab, guide]);
 
   const px = (v) => Math.round(v) + "px";
-  const step = guide >= 0 ? STEPS[guide] : null;
-  const isAt = (at) => step && step.at === at;
+  const step = panel && tab === "how" ? STEPS[guide] : null;
+  const isAt = (at) => !!step && step.at === at;
   const mark = (at, style, ref) => (
     <span key={at} ref={ref}
           className={"hfield__mark" + (isAt(at) ? " is-on" : "")}
@@ -835,11 +843,41 @@ function HeroField({ lang = "ja" }) {
               </button>
             ))}
 
-            {/* 凡例。触れるとその種類だけが浮かぶ */}
+            {/* 「仕組み」のマーカー。静止した部品は lay から、動く部品は毎フレーム */}
+            {panel && tab === "how" && (
+              <React.Fragment>
+                {mark("core", { left: px(lay.core.x - 30), top: px(lay.core.y - 30) })}
+                {mark("legend", { left: px(lay.legend.x - 9), top: px(lay.legend.y - 9) })}
+                {mark("ring", { left: px(lay.ringPt.x - 9), top: px(lay.ringPt.y - 9) })}
+                {mark("svc",  { left: px(lay.svc[1].x - 30), top: px(lay.svc[1].y - 30) })}
+                {mark("ai",   { left: 0, top: 0 }, aiMarkRef)}
+                {mark("edge", { left: 0, top: 0 }, edgeMarkRef)}
+              </React.Fragment>
+            )}
+          </React.Fragment>
+        )}
+
+        {/* この図について — 説明はすべてここ。閉じているのが既定の姿。 */}
+        {panel && (
+          <div className="hfield__panel" role="dialog" aria-label={T.about}>
+            <div className="hfield__panel-top">
+              <div className="hfield__tabs" role="tablist">
+                {[["how", T.tabHow], ["store", T.tabStore], ["research", T.tabResearch]].map(
+                  ([id, label]) => (
+                    <button key={id} type="button" role="tab" className="hfield__tab"
+                            aria-selected={tab === id} onClick={() => setTab(id)}>
+                      {label}
+                    </button>
+                  )
+                )}
+              </div>
+              <button type="button" className="hfield__panel-x"
+                      aria-label={T.guideClose} onClick={() => setPanel(false)}>×</button>
+            </div>
+
+            {/* 図の色の見方。どのタブでも図と一緒に読めるよう常に出す。 */}
             <div className={"hfield__legend" + (isAt("legend") ? " is-on" : "")}
-                 style={{ left: px(lay.legend.x), top: px(lay.legend.y) }}
                  onMouseLeave={() => apiRef.current.setFocusCat && apiRef.current.setFocusCat(-1)}>
-              {guide >= 0 && mark("legend", null)}
               <span className="hfield__legend-k">{T.legend}</span>
               {F.categories.map((c, i) => (
                 <button key={c.id} type="button" className="hfield__legend-i"
@@ -852,94 +890,93 @@ function HeroField({ lang = "ja" }) {
               ))}
             </div>
 
-            {/* 「仕組み」のマーカー。静止した部品は lay から、動く部品は毎フレーム */}
-            {guide >= 0 && (
-              <React.Fragment>
-                {mark("core", { left: px(lay.core.x - 30), top: px(lay.core.y - 30) })}
-                {mark("ring", { left: px(lay.ringPt.x - 9), top: px(lay.ringPt.y - 9) })}
-                {mark("svc",  { left: px(lay.svc[1].x - 30), top: px(lay.svc[1].y - 30) })}
-                {mark("ai",   { left: 0, top: 0 }, aiMarkRef)}
-                {mark("edge", { left: 0, top: 0 }, edgeMarkRef)}
-              </React.Fragment>
+            {tab === "how" && step && (
+              <div className="hfield__pane">
+                <p className="hfield__step">
+                  <span className="hfield__step-n">{guide + 1} / {STEPS.length}</span>
+                  {step.t}
+                </p>
+                <div className="hfield__row">
+                  <button type="button" className="hfield__pill" disabled={guide === 0}
+                          onClick={() => setGuide(guide - 1)}>{T.prev}</button>
+                  <button type="button" className="hfield__pill hfield__pill--go"
+                          disabled={guide === STEPS.length - 1}
+                          onClick={() => setGuide(guide + 1)}>{T.next}</button>
+                </div>
+              </div>
             )}
-          </React.Fragment>
-        )}
 
-        {/* 「仕組み」— 図の部品を順に指して一文ずつ */}
-        {step && (
-          <div className="hfield__guide" role="dialog" aria-label={T.guide}>
-            <div className="hfield__guide-head">
-              <span className="hfield__guide-n">{guide + 1} / {STEPS.length}</span>
-              <span className="hfield__guide-k">{T.guide}</span>
-            </div>
-            <p className="hfield__guide-t">{step.t}</p>
-            <div className="hfield__guide-row">
-              <button type="button" className="hfield__pill" disabled={guide === 0}
-                      onClick={() => setGuide(guide - 1)}>{T.prev}</button>
-              {guide < STEPS.length - 1 ? (
-                <button type="button" className="hfield__pill hfield__pill--go"
-                        onClick={() => setGuide(guide + 1)}>{T.next}</button>
-              ) : (
-                <button type="button" className="hfield__pill hfield__pill--go"
-                        onClick={() => setGuide(-1)}>{T.guideClose}</button>
-              )}
-              <button type="button" className="hfield__guide-x" aria-label={T.guideClose}
-                      onClick={() => setGuide(-1)}>×</button>
-            </div>
-          </div>
-        )}
-
-        <div className={"hfield__mem" + (isAt("store") ? " is-on" : "")}>
-          <div className="hfield__mem-row">
-            {guide >= 0 && mark("store", null)}
-            <button type="button" className="hfield__pill" aria-pressed={guide >= 0}
-                    onClick={() => { const open = guide < 0; setGuide(open ? 0 : -1); if (open) setPeek(false); }}>
-              {T.guide}
-            </button>
-            <span className="hfield__meter">
-              <span className="hfield__meter-k">{T.learned}</span>
-              <b ref={meterRef}>0 / 0</b>
-            </span>
-            <button type="button" className="hfield__pill" aria-expanded={peek}
-                    onClick={() => { setPeek(!peek); if (!peek) setGuide(-1); }}>
-              {peek ? T.peekClose : T.peek}
-            </button>
-            {hasMem && (
-              <button type="button" className="hfield__pill hfield__pill--act"
-                      onClick={() => apiRef.current.forget && apiRef.current.forget()}>
-                {T.forget}
-              </button>
+            {tab === "store" && (
+              <div className="hfield__pane hfield__pane--2">
+                <div>
+                  <p className="hfield__local">{T.local}</p>
+                  <p className="hfield__store-why">{T.storeWhy}</p>
+                  <p className="hfield__store-not">{T.storeNot}</p>
+                </div>
+                <div>
+                <div className="hfield__store">
+                  <div className="hfield__store-key">{HF_KEY}</div>
+                  {!snap || snap.empty ? (
+                    <p className="hfield__store-note">{T.storeEmpty}</p>
+                  ) : (
+                    <React.Fragment>
+                      <dl className="hfield__store-list">
+                        {snap.rows.map((r) => (
+                          <div key={r.c.id}>
+                            <dt>{txt(r.c)}</dt>
+                            <dd>{r.v.toFixed(1)}</dd>
+                          </div>
+                        ))}
+                        <div><dt>{T.visits}</dt><dd>{snap.visits}</dd></div>
+                      </dl>
+                      <p className="hfield__store-note">{T.storeAll}</p>
+                    </React.Fragment>
+                  )}
+                </div>
+                <div className="hfield__row">
+                  <span className="hfield__meter">
+                    <span className="hfield__meter-k">{T.learned}</span>
+                    <b ref={meterRef}>0 / 0</b>
+                  </span>
+                  {hasMem && (
+                    <button type="button" className="hfield__pill hfield__pill--act"
+                            onClick={() => apiRef.current.forget && apiRef.current.forget()}>
+                      {T.forget}
+                    </button>
+                  )}
+                </div>
+                </div>
+              </div>
             )}
-          </div>
 
-          <p className="hfield__local">{T.local}</p>
-
-          {peek && snap && (
-            <div className="hfield__store" role="status">
-              <div className="hfield__store-key">{HF_KEY}</div>
-              <p className="hfield__store-why">{T.storeWhy}</p>
-              {snap.empty ? (
-                <p className="hfield__store-note">{T.storeEmpty}</p>
-              ) : (
-                <React.Fragment>
-                  <dl className="hfield__store-list">
-                    {snap.rows.map((r) => (
-                      <div key={r.c.id}>
-                        <dt>{txt(r.c)}</dt>
-                        <dd>{r.v.toFixed(1)}</dd>
-                      </div>
-                    ))}
-                    <div>
-                      <dt>{T.visits}</dt>
-                      <dd>{snap.visits}</dd>
+            {tab === "research" && (
+              <div className="hfield__pane">
+                <dl className="hfield__res">
+                  {(T.research || []).map((r) => (
+                    <div key={r.k}>
+                      <dt>{r.k}</dt>
+                      <dd>{r.t}</dd>
                     </div>
-                  </dl>
-                  <p className="hfield__store-note">{T.storeAll}</p>
-                </React.Fragment>
-              )}
-              <p className="hfield__store-not">{T.storeNot}</p>
-            </div>
-          )}
+                  ))}
+                </dl>
+                <div className="hfield__row">
+                  <span className="hfield__res-note">{T.researchNote}</span>
+                  <a className="hfield__pill hfield__pill--go" href="#research">{T.researchCta}</a>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* 静止時に出ているのはこのボタンだけ。開いている間はパネルの × に任せる。 */}
+        <div className="hfield__about"
+             style={lay && !panel ? { left: px(lay.about.x), top: px(lay.about.y) }
+                                  : { display: "none" }}>
+          <button type="button" className="hfield__pill hfield__pill--about"
+                  aria-pressed={panel} aria-expanded={panel}
+                  onClick={() => setPanel(!panel)}>
+            {T.about}
+          </button>
         </div>
       </div>
     </div>
