@@ -809,6 +809,17 @@ function HeroField({ lang = "ja" }) {
     return () => window.removeEventListener("keydown", onKey);
   }, [panel]);
 
+  // パネルは画面下端に固定されているので、図が視界から外れたら自分で閉じる。
+  React.useEffect(() => {
+    const host = hostRef.current;
+    if (!panel || !host) return;
+    const io = new IntersectionObserver((es) => {
+      if (!es[0].isIntersecting) setPanel(false);
+    }, { threshold: 0.15 });
+    io.observe(host);
+    return () => io.disconnect();
+  }, [panel]);
+
   const px = (v) => Math.round(v) + "px";
   const step = panel && tab === "how" ? STEPS[guide] : null;
   const isAt = (at) => !!step && step.at === at;

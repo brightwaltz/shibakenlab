@@ -366,11 +366,14 @@ button { font: inherit; color: inherit; }
 /* The one panel. Sits at the foot of the field so it never covers the core,
    the small AI, or the service nodes the guide points at. */
 .hfield__panel {
-  /* A shallow drawer along the foot of the hero. Tall panels cut the
-     headline in half; a wide, short one lays its content out in columns and
-     leaves the headline, the core and the small AI visible while you read. */
-  position: absolute; left: var(--pad-x); right: var(--pad-x); bottom: 24px;
-  max-height: max(200px, min(46vh, 320px));
+  /* A shallow drawer along the foot of the SCREEN, not of the hero. Anchored
+     to the hero it fell below the fold whenever the hero ran taller than the
+     viewport, and `.hero { overflow: hidden }` cut the buttons off. Fixed to
+     the viewport it is always fully visible; it closes itself once the figure
+     scrolls away. `overflow: hidden` guarantees nothing paints outside it. */
+  position: fixed; left: var(--pad-x); right: var(--pad-x); bottom: 62px;
+  z-index: 40;
+  max-height: max(190px, min(42vh, 320px)); overflow: hidden;
   padding: 10px 16px 12px;
   background: color-mix(in oklab, var(--c-bg) 84%, transparent);
   border: 1px solid var(--c-line); border-radius: var(--r-md);
@@ -531,7 +534,7 @@ button { font: inherit; color: inherit; }
   }
 }
 @media (max-width: 1079px) {
-  .hfield__panel { bottom: 18px; max-height: 58vh; }
+  .hfield__panel { bottom: 58px; max-height: min(52vh, 420px); }
 }
 
 /* ── Section wrapper ──────────────────────────────────────────────────────── */
