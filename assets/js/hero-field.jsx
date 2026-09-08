@@ -315,9 +315,7 @@ function HeroField({ lang = "ja" }) {
     // 「仕組み」で指している部品と、凡例で触れている種類。描画だけが変わる。
     let focus = null;        // "core" | "ai" | "edge" | "ring" | "svc" | null
     let focusCat = -1;       // 0..4 or -1
-    let labelsOn = false;    // 図中のラベルを出すか（パネルと連動）
     const setFocus = (at) => { focus = at || null; };
-    const setLabels = (on) => { labelsOn = !!on; };
     const setFocusCat = (i) => { focusCat = typeof i === "number" ? i : -1; };
 
     // ── consent gate / share ────────────────────────────────────────────────
@@ -362,7 +360,7 @@ function HeroField({ lang = "ja" }) {
       } catch (e) { return { empty: true }; }
     };
 
-    apiRef.current = { share, forget, snapshot, setFocus, setFocusCat, setLabels };
+    apiRef.current = { share, forget, snapshot, setFocus, setFocusCat };
     setHasMem(hadMemory);
 
     // ── pointer / keyboard ──────────────────────────────────────────────────
@@ -624,7 +622,7 @@ function HeroField({ lang = "ja" }) {
       const al = aiRef.current;
       if (al) {
         al.style.transform = `translate(${Math.round(ag.x + 14)}px, ${Math.round(ag.y - 8)}px)`;
-        al.style.opacity = String(labelsOn ? (1 - k) * 0.9 : 0);
+        al.style.opacity = String((1 - k) * 0.9);
       }
     };
 
@@ -800,7 +798,6 @@ function HeroField({ lang = "ja" }) {
     if (panel && tab === "how" && STEPS[guide]) at = STEPS[guide].at;
     else if (panel && tab === "store") at = "store";
     if (apiRef.current.setFocus) apiRef.current.setFocus(at);
-    if (apiRef.current.setLabels) apiRef.current.setLabels(panel);
     if (!panel && apiRef.current.setFocusCat) apiRef.current.setFocusCat(-1);
   }, [panel, tab, guide]);
 
@@ -838,7 +835,7 @@ function HeroField({ lang = "ja" }) {
                   style={{ left: px(lay.core.x), top: px(lay.core.y + 22) }}>
               {T.you}
             </span>
-            <span className="hfield__tag hfield__tag--ring"
+            <span className="hfield__tag hfield__tag--ring hfield__tag--only"
                   style={{ left: px(lay.ring.x), top: px(lay.ring.y) }}>
               {T.ring}
             </span>
@@ -906,22 +903,25 @@ function HeroField({ lang = "ja" }) {
             </div>
 
             {tab === "how" && step && (
-              <div className="hfield__pane">
-                <p className="hfield__step">
-                  <span className="hfield__step-n">{guide + 1} / {STEPS.length}</span>
-                  {step.t}
-                </p>
-                <div className="hfield__row">
+              <React.Fragment>
+                <div className="hfield__pane">
+                  <p className="hfield__step">
+                    <span className="hfield__step-n">{guide + 1} / {STEPS.length}</span>
+                    {step.t}
+                  </p>
+                </div>
+                <div className="hfield__foot">
                   <button type="button" className="hfield__pill" disabled={guide === 0}
                           onClick={() => setGuide(guide - 1)}>{T.prev}</button>
                   <button type="button" className="hfield__pill hfield__pill--go"
                           disabled={guide === STEPS.length - 1}
                           onClick={() => setGuide(guide + 1)}>{T.next}</button>
                 </div>
-              </div>
+              </React.Fragment>
             )}
 
             {tab === "store" && (
+              <React.Fragment>
               <div className="hfield__pane hfield__pane--2">
                 <div>
                   <p className="hfield__local">{T.local}</p>
@@ -948,37 +948,40 @@ function HeroField({ lang = "ja" }) {
                     </React.Fragment>
                   )}
                 </div>
-                <div className="hfield__row">
-                  <span className="hfield__meter">
-                    <span className="hfield__meter-k">{T.learned}</span>
-                    <b ref={meterRef}>0 / 0</b>
-                  </span>
-                  {hasMem && (
-                    <button type="button" className="hfield__pill hfield__pill--act"
-                            onClick={() => apiRef.current.forget && apiRef.current.forget()}>
-                      {T.forget}
-                    </button>
-                  )}
-                </div>
                 </div>
               </div>
+              <div className="hfield__foot">
+                <span className="hfield__meter">
+                  <span className="hfield__meter-k">{T.learned}</span>
+                  <b ref={meterRef}>0 / 0</b>
+                </span>
+                {hasMem && (
+                  <button type="button" className="hfield__pill hfield__pill--act"
+                          onClick={() => apiRef.current.forget && apiRef.current.forget()}>
+                    {T.forget}
+                  </button>
+                )}
+              </div>
+              </React.Fragment>
             )}
 
             {tab === "research" && (
-              <div className="hfield__pane">
-                <dl className="hfield__res">
-                  {(T.research || []).map((r) => (
-                    <div key={r.k}>
-                      <dt>{r.k}</dt>
-                      <dd>{r.t}</dd>
-                    </div>
-                  ))}
-                </dl>
-                <div className="hfield__row">
+              <React.Fragment>
+                <div className="hfield__pane">
+                  <dl className="hfield__res">
+                    {(T.research || []).map((r) => (
+                      <div key={r.k}>
+                        <dt>{r.k}</dt>
+                        <dd>{r.t}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                </div>
+                <div className="hfield__foot">
                   <span className="hfield__res-note">{T.researchNote}</span>
                   <a className="hfield__pill hfield__pill--go" href="#research">{T.researchCta}</a>
                 </div>
-              </div>
+              </React.Fragment>
             )}
           </div>
         )}
