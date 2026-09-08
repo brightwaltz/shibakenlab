@@ -327,16 +327,9 @@ button { font: inherit; color: inherit; }
   color: var(--c-ink); background: var(--c-glass);
 }
 .hfield__svc[data-open="true"] { color: var(--c-ink); }
-/* A node keeps its name hidden until the panel is open — or until you point
-   at it, so the three rim nodes stay discoverable at rest. */
-.hfield__svc-name {
-  font-size: var(--type-small); letter-spacing: 0.12em;
-  opacity: 0; transition: opacity 0.45s var(--ease-out);
-}
-.hfield__ui.is-labelled .hfield__svc-name,
-.hfield__svc:hover .hfield__svc-name,
-.hfield__svc:focus-visible .hfield__svc-name,
-.hfield__svc[data-open="true"] .hfield__svc-name { opacity: 1; }
+/* The three rim nodes keep their names at rest — they are the one part of the
+   figure a visitor can act on, so they say what they are. */
+.hfield__svc-name { font-size: var(--type-small); letter-spacing: 0.12em; }
 .hfield__svc-note {
   font-size: var(--type-micro); letter-spacing: 0.08em; color: var(--c-ink-3);
   opacity: 0; transition: opacity 0.3s var(--ease-out);
