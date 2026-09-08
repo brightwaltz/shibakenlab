@@ -9,8 +9,9 @@
 ## サイトの位置づけ
 
 - フレームワークは使わず **HTML + 素の CSS + JSX（ブラウザ Babel）** で構成。
-- 主宰本人が Claude と GitHub だけで継続的に更新できるよう、編集ポイントは **`assets/js/data.js` と `assets/css/style.css`** に集約。
+- 主宰本人が Claude と GitHub だけで継続的に更新できるよう、編集ポイントは **`assets/js/data.js` と `assets/css/style.css`** に集約。文言はコードではなく `data.js` にあります。
 - ビルド不要。`python -m http.server` で即プレビュー可能。
+- トップのヒーローは、研究の主張を動く機構として見せる **Personal Field**（Canvas 2D）。後述の「[ヒーロー図解](#ヒーロー図解-personal-field)」を参照。
 
 ---
 
@@ -26,13 +27,13 @@ shibakenlab/                       # ← このリポジトリ。リポジトリ
 │  ├─ css/
 │  │  └─ style.css                 # 全スタイル（CSS Custom Properties でテーマ切替）
 │  ├─ js/
-│  │  ├─ data.js                   # i18n, 業績, 研究テーマ, ニュース, インフォグラフィック
+│  │  ├─ data.js                   # i18n, 業績, 研究テーマ, ニュース, インフォグラフィック, 図解の語彙
 │  │  ├─ tweaks-panel.jsx          # 右下「Tweaks」パネルの共通シェル
 │  │  ├─ hero.jsx                  # Three.js Hero（粒子/幾何/流体 の 3 モード）
 │  │  ├─ hero-field.jsx            # Hero「Personal Field」図解（Canvas 2D・既定モード）
 │  │  ├─ research-map.jsx          # D3 フォースグラフ
 │  │  ├─ sections.jsx              # About / Research / Gallery / Pubs / Member / Access / News / Contact
-│  │  └─ app.jsx                   # トップレベル：Nav・言語切替・Lenis・Tweaks・スクロール演出
+│  │  └─ app.jsx                   # トップレベル：Nav・言語切替・Tweaks・スクロール演出
 │  └─ images/
 │     └─ infographics/
 │        └─ 01-llm-learning-planner.png   # 卒研インフォグラフィック（NotebookLM 出力）
@@ -76,6 +77,49 @@ python3 -m http.server 8000
 - `README.md` / `.github/` / `.claude/` — 運用ドキュメントと開発ツール設定。
 
 加えて、ワークフローは `sitemap.xml` の `<lastmod>` をデプロイ時の日付に自動で書き換えてからアップロードします。
+
+---
+
+## ヒーロー図解 (Personal Field)
+
+トップの第一画面は `assets/js/hero-field.jsx`（Canvas 2D、ライブラリ非依存）。
+研究の主張を文章ではなく**動く機構**として置いています。
+
+| 図の部品 | 意味 |
+| --- | --- |
+| 中心の白い核「あなた」 | 本人 |
+| 境界のリング「あなたが決める境界」 | 許可なしには何も越えない。分散 PDS の範囲 |
+| 内側を漂う粒 | 暮らしのデータ断片。色は 5 種別（学び / 暮らし / からだ / 会話 / 予定） |
+| 追従する光点「小さな AI」 | SLM。カーソル＝関心を追い、触れた断片を理解する |
+| 断片の間に残る線 | Graph-Document。理解した断片は繋がり、以後いっしょに動く |
+| 周縁の 3 ノード | 支援サービス（教育 / 介護 / 地域）。押すと同意ゲートが開き、**要約 1 粒だけ**が外へ出て支援が返る |
+| 脈動 | 3 拍子（ワルツ）。1 拍目が強い |
+
+### 訪問者のデータの扱い
+
+- 学習するのは **カテゴリ別の関心の重みだけ**。カーソル座標・閲覧ページ・日時・個人を特定する情報は保存しません。
+- 保存先は訪問者のブラウザの `localStorage`、キーは **`lab-field-profile`**。**サーバへは何も送りません**。
+- 保存するのは絵ではなくプロファイル。再訪時はそこから構造が生え直します（何度来ても埋め尽くさないよう上限つき）。
+- 「この図について → 保存されているもの」で実際に保存されている中身を表示でき、「忘れる」で消去できます。
+
+### 文言・語彙の編集
+
+コードではなく `assets/js/data.js` を編集します。
+
+- `window.LAB_FIELD.categories` — 粒の 5 種別。`hue` は アクセント色ランプ（a1 → a2 → a3）上の位置 0..1。
+- `window.LAB_FIELD.services` — 周縁の 3 サービス。`angDesk` は方位（度）、`cats` は要約に含む種別、`does` は hover 時の一文。
+- `window.LAB_I18N.{ja,en}.hero.field` — 図中のラベル、「この図について」パネルのタブ名、7 段階の案内 `steps`、保存の説明、`research`（研究との関係）。
+
+### 表示の切り替え
+
+右下 **Tweaks** の Hero モードで `field`（既定）/ `particles` / `geometry` / `fluid` を切り替えられます。
+`field` 以外は従来の Three.js シーン（`assets/js/hero.jsx`）で、削除していません。
+既定値は `assets/js/app.jsx` の `TWEAK_DEFAULTS.heroMode`。
+
+### 変更するときの注意
+
+- **必ずブラウザで実際にマウントさせて確認してください。** ブラウザ側の Babel は `const` を `var` に落とすため、宣言順の誤りが TDZ エラーにならず `undefined` として走り、React 18 はルートごと巻き戻して**ページ全体が真っ白**になります。構文チェックだけでは捕まりません。
+- 「この図について」パネルは画面下端に `position: fixed` で置いています。ヒーローの下端に絶対配置すると、ヒーローが画面より高いときにボタンが画面外に出て押せなくなります。
 
 ---
 
@@ -152,7 +196,9 @@ CSS Custom Properties で全てコントロールしています（`assets/css/s
 | `--c-a3` | アクセント3（パープル） | `#8B5CF6` |
 | `--c-bg / --c-bg-2` | ステージ背景の上下 | `#050818 / #08102b` |
 
-ユーザーは右下の **Tweaks** パネルから 4 つのパレット（Tamagawa Night / Linear Cool / Vercel Mono / Ember Glow）を切り替え、Hero の 3D モード（粒子 / 幾何 / 流体）も即時に試せます。気に入った組み合わせは Tweaks の値が `assets/js/app.jsx` の `TWEAK_DEFAULTS` ブロックに自動保存されます。
+ユーザーは右下の **Tweaks** パネルから 4 つのパレット（Tamagawa Night / Linear Cool / Vercel Mono / Ember Glow）を切り替え、Hero モード（`field` / 粒子 / 幾何 / 流体）も即時に試せます。気に入った組み合わせは Tweaks の値が `assets/js/app.jsx` の `TWEAK_DEFAULTS` ブロックに自動保存されます。
+
+図解の粒の色は、このアクセント 3 色のランプ上から取っています（`LAB_FIELD.categories` の `hue`）。パレットを変えれば図解の配色も追従します。
 
 ---
 
@@ -213,7 +259,15 @@ CSS Custom Properties で全てコントロールしています（`assets/css/s
 
 ### E. 配色 / アクセントカラーを変更したい / 試したい
 
-> `Tweaks` パネルの「Palette」を `Linear Cool` に切り替えた状態の見栄えをスクリーンショットで確認したいです。気に入ったら、`assets/js/app.jsx` の `TWEAK_DEFAULTS.palette` を `linear-cool` に固定してください。Hero の 3D モードもあわせて切り替えてみたいので、`heroMode` も `geometry` 版・`fluid` 版で比較できるよう、見比べ用の静止画を 3 枚お願いします。
+> `Tweaks` パネルの「Palette」を `Linear Cool` に切り替えた状態の見栄えをスクリーンショットで確認したいです。気に入ったら、`assets/js/app.jsx` の `TWEAK_DEFAULTS.palette` を `linear-cool` に固定してください。Hero モードもあわせて比較したいので、`field`（既定）・`geometry`・`fluid` の見比べ用の静止画を 3 枚お願いします。
+
+### F. ヒーロー図解の文言を直したいとき
+
+> `assets/js/data.js` の `window.LAB_I18N.ja.hero.field` を編集してください。英語（`en` 側）も同じ意味になるよう揃えてください。変更後は、ローカルサーバを立ててブラウザで実際に描画されること（`#root` にマウントされ、コンソールエラーが無いこと）まで確認してからコミットしてください。
+> ```
+> 直したいラベル: 例）「あなたが決める境界」→ …
+> 直したい案内文: 例）steps の 3 番目 → …
+> ```
 
 ---
 
@@ -231,7 +285,7 @@ CSS Custom Properties で全てコントロールしています（`assets/css/s
 ## ライセンス / クレジット
 
 - コンテンツ著作権: 柴田研究室 / 玉川大学
-- フレームワーク: React 18, Three.js, D3.js（CDN ロード）
+- フレームワーク: React 18, Three.js, D3.js（CDN ロード）。ヒーロー図解は素の Canvas 2D で、外部ライブラリを使っていません。
 - フォント: Inter, Noto Sans JP（Google Fonts）
 
 不明点や追加要望は、リポジトリの Issue または主宰までご連絡ください。

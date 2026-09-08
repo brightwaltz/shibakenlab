@@ -915,6 +915,42 @@ window.LAB_INFOGRAPHICS = [
 // Add a new entry by copying the shape; the most recent goes first.
 window.LAB_NEWS = [
   {
+    slug: "2026-09-08-field-guide",
+    date: "2026-09-08",
+    tags: ["site", "personal-ai", "consent"],
+    titleJa: "トップの図解に「この図について」を追加しました",
+    titleEn: "The hero diagram can now explain itself.",
+    bodyJa:
+      "図だけでは伝わりにくかった部分を、押したときだけ開く 1 枚のパネルにまとめました。" +
+      "「仕組み」は図の部品を 7 段階で順に指し、「保存されているもの」は端末に実際に保存されている中身をその場で表示します。" +
+      "「研究との関係」では、図の各部分が Personal AI・同意設計・Graph-Document・現場での実証のどれに対応するかを示しています。" +
+      "静止時は何も開かず、関心のある方だけが読み進められる作りです。",
+    bodyEn:
+      "What the picture alone could not say now lives in a single panel that opens only when you ask for it. " +
+      "\u2018How it works\u2019 walks through the parts in seven steps; \u2018What is stored\u2019 prints what is actually held on your device; " +
+      "and \u2018The research\u2019 maps each part of the figure onto Personal AI, consent design, Graph-Document, and our fieldwork. " +
+      "Nothing is open at rest, so you can simply look and scroll on.",
+  },
+  {
+    slug: "2026-09-06-personal-field",
+    date: "2026-09-06",
+    tags: ["site", "pds", "personal-ai"],
+    titleJa: "トップページを、触って確かめられる図解に刷新しました",
+    titleEn: "A new home page you can touch and check.",
+    bodyJa:
+      "研究の主張を文章で説明する代わりに、動く機構そのものをトップに置きました。" +
+      "中心にあなた、それを囲む「あなたが決める境界」、内側を漂う暮らしのデータ断片、" +
+      "カーソルに寄り添って断片を理解していく小さな AI、理解した断片の間に残る線。" +
+      "周縁の教育・介護・地域を選ぶと境界に同意のゲートが開き、要約が一粒だけ外へ出て支援が返ります。" +
+      "学習内容はサーバへは送られず、閲覧しているブラウザの中にだけ保存され、「忘れる」でいつでも消去できます。",
+    bodyEn:
+      "Instead of describing what the lab argues, the home page now runs it. " +
+      "You sit at the centre, inside a boundary you set; fragments of everyday data drift within it; " +
+      "a small AI follows your pointer, understands fragments, and leaves a graph behind. " +
+      "Choosing education, care or community opens a consent gate: a single summary leaves, and support returns. " +
+      "Nothing is sent to a server \u2014 what it learns is stored in your browser alone, and Forget erases it.",
+  },
+  {
     slug: "2026-05-27-launch",
     date: "2026-05-27",
     tags: ["site", "lab"],
