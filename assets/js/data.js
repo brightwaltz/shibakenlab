@@ -146,6 +146,36 @@ window.LAB_I18N = {
         visit: "訪問の前にコンタクトからご一報ください。",
       },
       news: { kicker: "07 — News", title: "更新情報" },
+      // 外部 AI に、この研究室について尋ねてもらうための文言。
+      // 送信先は普通のリンク。API も鍵も使わない（llms.txt を読ませる方式）。
+      askai: {
+        btn: "AI に聞く",
+        title: "この研究室について AI に聞く",
+        lead: "お使いの AI に、この研究室の公開情報を読ませて質問できます。",
+        intentLabel: "どの立場で聞きますか",
+        intents: [
+          {
+            id: "know",
+            label: "研究室のことを知りたい",
+            ask: "この研究室が何を研究し、何を大事にしているのかを、初めて知る人にも分かるようにまとめてください。",
+          },
+          {
+            id: "collab",
+            label: "共同研究・取材を検討している",
+            ask: "どんな共同研究や取材に応じられそうか、専門領域と進行中のプロジェクトから具体的に挙げてください。連絡の取り方も教えてください。",
+          },
+          {
+            id: "student",
+            label: "配属を考えている学生として",
+            ask: "この研究室で学べること、取り組める卒業研究の例、あると良い素養を、学部生に向けて説明してください。",
+          },
+        ],
+        freeLabel: "自由に質問を書く（任意）",
+        freePlaceholder: "例：LiDAR を使った在宅環境の研究について詳しく",
+        send: "送る先",
+        note: "外部の AI サービスが新しいタブで開きます。回答は AI によるもので、正確とは限りません。",
+        close: "閉じる",
+      },
       contact: {
         kicker: "08 — Contact",
         title: "共同研究・取材・進学相談",
@@ -301,6 +331,34 @@ window.LAB_I18N = {
         visit: "Please contact ahead before visiting.",
       },
       news: { kicker: "07 — News", title: "News" },
+      askai: {
+        btn: "Ask an AI",
+        title: "Ask an AI about this lab",
+        lead: "Send the lab's public information to your AI of choice and ask it anything.",
+        intentLabel: "Where are you coming from?",
+        intents: [
+          {
+            id: "know",
+            label: "I want to know about the lab",
+            ask: "Summarize what this lab researches and what it seems to care about, for someone encountering it for the first time.",
+          },
+          {
+            id: "collab",
+            label: "I'm considering collaboration or an interview",
+            ask: "From their expertise and current projects, suggest concretely what kind of joint research or interview they could take on, and how to get in touch.",
+          },
+          {
+            id: "student",
+            label: "I'm a student thinking of joining",
+            ask: "Explain what a student can learn here, examples of graduation research they could pursue, and what background helps.",
+          },
+        ],
+        freeLabel: "Add your own question (optional)",
+        freePlaceholder: "e.g. tell me more about the LiDAR in-home sensing work",
+        send: "Send to",
+        note: "Opens an external AI service in a new tab. Answers come from the AI and may be wrong.",
+        close: "Close",
+      },
       contact: {
         kicker: "08 — Contact",
         title: "Collaborate, interview, or apply",
@@ -962,6 +1020,26 @@ window.LAB_NEWS = [
       "We launched the official site of the Service Informatics Lab. It centralizes our research themes, latest publications, student infographics, and access information. The site is open-source on GitHub.",
   },
 ];
+
+// ── Ask an AI (ask-ai.jsx) ──────────────────────────────────────────────────
+// llms.txt を読ませたうえで質問を投げる、ただのリンク集。サーバも API 鍵も不要。
+// providers の tpl 内の {q} が、URL エンコード済みプロンプトに置き換わる。
+window.LAB_ASKAI = {
+  llms: "https://brightwaltz.github.io/shibakenlab/llms.txt",
+  site: "https://brightwaltz.github.io/shibakenlab/",
+  sources: [
+    { label: "researchmap", href: "https://researchmap.jp/brightwaltz" },
+    { label: "玉川大学 教員ページ", href: "https://www.tamagawa.ac.jp/college_of_engineering/teachers/detail/209shibata.html" },
+    { label: "GitHub", href: "https://github.com/brightwaltz/shibakenlab" },
+    { label: "Portfolio", href: "https://brightwaltz.github.io/portfolio/" },
+  ],
+  providers: [
+    { id: "chatgpt",    label: "ChatGPT",    tpl: "https://chatgpt.com/?q={q}&hints=search" },
+    { id: "claude",     label: "Claude",     tpl: "https://claude.ai/new?q={q}" },
+    { id: "gemini",     label: "Gemini",     tpl: "https://www.google.com/search?udm=50&q={q}", note: "Google AI モード" },
+    { id: "perplexity", label: "Perplexity", tpl: "https://www.perplexity.ai/search?q={q}" },
+  ],
+};
 
 // ── Hero field (hero-field.jsx) ─────────────────────────────────────────────
 // 図解の語彙。カテゴリは暮らしのデータ種別、サービスは研究の実証フィールド。

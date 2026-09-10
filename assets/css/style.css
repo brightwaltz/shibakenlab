@@ -1290,6 +1290,133 @@ select.pub-tag option { background: #0e1230; color: #fff; }
   50%      { transform: scale(1.08); }
 }
 
+/* ── Ask an AI ────────────────────────────────────────────────────────────────
+   A floating way to hand this site to whichever AI the visitor already uses.
+   It stacks above the Tweaks trigger, which owns the very corner. */
+.askai {
+  position: fixed; right: 18px; bottom: 66px; z-index: 2147483643;
+  opacity: 0; transform: translateY(8px); pointer-events: none;
+  transition: opacity 0.5s var(--ease-out), transform 0.5s var(--ease-out);
+}
+.askai[data-shown="true"] { opacity: 1; transform: none; pointer-events: auto; }
+
+.askai__btn {
+  appearance: none; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 14px; border-radius: 999px;
+  border: 1px solid var(--c-line); background: rgba(5, 8, 24, 0.7);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+          backdrop-filter: blur(16px) saturate(160%);
+  color: var(--c-ink); font: inherit;
+  font-size: var(--type-micro); letter-spacing: 0.12em;
+  transition: transform 0.3s var(--ease-out), background 0.3s var(--ease-out),
+              border-color 0.3s var(--ease-out);
+}
+.askai__btn:hover, .askai__btn:focus-visible {
+  transform: translateY(-2px);
+  background: rgba(5, 8, 24, 0.9);
+  border-color: color-mix(in oklab, var(--c-a1) 45%, var(--c-line));
+}
+.askai__btn svg { color: var(--c-a1); flex: none; }
+
+.askai__panel {
+  position: absolute; right: 0; bottom: 52px;
+  width: min(400px, calc(100vw - 36px));
+  max-height: min(72vh, 560px); overflow-y: auto;
+  display: flex; flex-direction: column; gap: 12px;
+  padding: 16px; border-radius: var(--r-md);
+  border: 1px solid var(--c-line);
+  background: color-mix(in oklab, var(--c-bg) 88%, transparent);
+  -webkit-backdrop-filter: blur(22px) saturate(160%);
+          backdrop-filter: blur(22px) saturate(160%);
+  box-shadow: 0 30px 70px -30px rgba(0, 0, 0, 0.8);
+  outline: none;
+}
+.askai__head { display: flex; align-items: baseline; gap: 10px; }
+.askai__title {
+  margin: 0; font-size: 15px; font-weight: 600; color: var(--c-ink);
+  letter-spacing: 0.02em;
+}
+.askai__x {
+  margin-left: auto; font: inherit; font-size: 17px; line-height: 1;
+  color: var(--c-ink-3); background: none; border: 0; cursor: pointer;
+  padding: 2px 4px;
+}
+.askai__x:hover { color: var(--c-ink); }
+.askai__lead {
+  margin: 0; font-size: var(--type-micro); line-height: 1.6; color: var(--c-ink-2);
+  text-wrap: pretty;
+}
+
+.askai__intents {
+  margin: 0; padding: 0; border: 0;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.askai__intents legend {
+  padding: 0 0 6px; font-size: var(--type-micro); letter-spacing: 0.12em;
+  color: var(--c-ink-3);
+}
+.askai__intent {
+  text-align: left; cursor: pointer; font: inherit; font-size: 13px;
+  padding: 8px 12px; border-radius: var(--r-sm);
+  border: 1px solid var(--c-line); background: var(--c-glass);
+  color: var(--c-ink-2);
+  transition: color 0.25s var(--ease-out), border-color 0.25s var(--ease-out),
+              background 0.25s var(--ease-out);
+}
+.askai__intent:hover { color: var(--c-ink); }
+.askai__intent[aria-pressed="true"] {
+  color: var(--c-ink);
+  border-color: color-mix(in oklab, var(--c-a1) 55%, transparent);
+  background: color-mix(in oklab, var(--c-a1) 12%, transparent);
+}
+
+.askai__free { display: flex; flex-direction: column; gap: 6px; }
+.askai__free span {
+  font-size: var(--type-micro); letter-spacing: 0.12em; color: var(--c-ink-3);
+}
+.askai__free input {
+  font: inherit; font-size: 13px; color: var(--c-ink);
+  padding: 9px 12px; border-radius: var(--r-sm);
+  border: 1px solid var(--c-line); background: rgba(0, 0, 0, 0.25);
+}
+.askai__free input::placeholder { color: var(--c-ink-3); }
+.askai__free input:focus-visible {
+  outline: none; border-color: color-mix(in oklab, var(--c-a1) 55%, transparent);
+}
+
+.askai__send { display: flex; flex-direction: column; gap: 7px; }
+.askai__send-k {
+  font-size: var(--type-micro); letter-spacing: 0.12em; color: var(--c-ink-3);
+}
+/* Four names on one line at the panel's width — tightened so Perplexity,
+   the longest, does not fall to a row of its own. */
+.askai__providers { display: flex; flex-wrap: wrap; gap: 6px; }
+.askai__provider {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 7px 10px; border-radius: 999px;
+  border: 1px solid var(--c-line); background: var(--c-glass);
+  color: var(--c-ink); font-size: var(--type-micro); letter-spacing: 0.06em;
+  text-decoration: none;
+  transition: border-color 0.25s var(--ease-out), background 0.25s var(--ease-out);
+}
+.askai__provider:hover, .askai__provider:focus-visible {
+  border-color: color-mix(in oklab, var(--c-a1) 55%, transparent);
+  background: var(--c-glass-2);
+}
+.askai__provider svg { color: var(--c-ink-3); flex: none; }
+
+.askai__note {
+  margin: 0; padding-top: 10px; border-top: 1px solid var(--c-line-2);
+  font-size: var(--type-micro); line-height: 1.55; color: var(--c-ink-3);
+  text-wrap: pretty;
+}
+
+@media (max-width: 760px) {
+  .askai { right: 12px; bottom: 62px; }
+  .askai__panel { right: -6px; width: calc(100vw - 24px); }
+}
+
 /* ── Language-hint pill ───────────────────────────────────────────────────── */
 .lang-hint {
   position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%);
@@ -1434,7 +1561,7 @@ select.pub-tag option { background: #0e1230; color: #fff; }
     --c-line: #cccccc; --c-line-2: #e5e5e5;
   }
   body { background: #fff !important; color: #111 !important; }
-  .stage-bg, .cursor, .hero__canvas, .hfield, .ticker, .tweaks-trigger, .twk-panel,
+  .stage-bg, .cursor, .hero__canvas, .hfield, .ticker, .tweaks-trigger, .twk-panel, .askai,
   .read-progress, .lang-hint, .skip-link, .nav__lang, .hero__scroll {
     display: none !important;
   }

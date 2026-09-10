@@ -24,6 +24,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Generate llms.txt from site data
+        run: node scripts/build-llms.mjs
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
         with:
@@ -43,6 +46,7 @@ jobs:
             --exclude='screenshots' \
             --exclude='uploads' \
             --exclude='README.md' \
+            --exclude='scripts' \
             ./ _site/
 
       - name: Stamp sitemap lastmod with today's date (UTC)

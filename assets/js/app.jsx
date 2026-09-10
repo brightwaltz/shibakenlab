@@ -390,6 +390,7 @@ function App() {
       <Contact lang={lang} />
       <Footer lang={lang} />
       <LangHint lang={lang} />
+      <window.AskAI lang={lang} />
       <LabTweaks
         palette={tw.palette}
         setPalette={(v) => setTweak("palette", v)}

@@ -21,7 +21,10 @@
 shibakenlab/                       # ← このリポジトリ。リポジトリ直下が公開ルート
 ├─ index.html                      # 1 ページ完結のホームページ（全セクション）
 ├─ README.md                       # この運用マニュアル
+├─ llms.txt                        # AI 向けのサイト要約（自動生成。手で編集しない）
 ├─ robots.txt / sitemap.xml        # SEO 用
+├─ scripts/
+│  └─ build-llms.mjs               # data.js から llms.txt を生成（デプロイ時にも実行）
 ├─ .github/workflows/deploy.yml    # GitHub Pages への自動デプロイ
 ├─ assets/
 │  ├─ css/
@@ -31,6 +34,7 @@ shibakenlab/                       # ← このリポジトリ。リポジトリ
 │  │  ├─ tweaks-panel.jsx          # 右下「Tweaks」パネルの共通シェル
 │  │  ├─ hero.jsx                  # Three.js Hero（粒子/幾何/流体 の 3 モード）
 │  │  ├─ hero-field.jsx            # Hero「Personal Field」図解（Canvas 2D・既定モード）
+│  │  ├─ ask-ai.jsx                # 「AI に聞く」— 外部 AI へのリンク集
 │  │  ├─ research-map.jsx          # D3 フォースグラフ
 │  │  ├─ sections.jsx              # About / Research / Gallery / Pubs / Member / Access / News / Contact
 │  │  └─ app.jsx                   # トップレベル：Nav・言語切替・Tweaks・スクロール演出
@@ -74,9 +78,12 @@ python3 -m http.server 8000
 - `research_infographic/` — NotebookLM 出力の原寸 PNG（合計 60MB 強）。実際に表示するのは `assets/images/infographics/` 配下に置いた最適化版。
 - `screenshots/` — 開発時の動作確認画像。
 - `uploads/` — 一時アップロード置き場。
-- `README.md` / `.github/` / `.claude/` — 運用ドキュメントと開発ツール設定。
+- `README.md` / `.github/` / `.claude/` / `scripts/` — 運用ドキュメントと開発ツール設定、ビルドスクリプト。
 
-加えて、ワークフローは `sitemap.xml` の `<lastmod>` をデプロイ時の日付に自動で書き換えてからアップロードします。
+加えて、ワークフローは次の 2 つを自動で行ってからアップロードします。
+
+- `scripts/build-llms.mjs` を実行して `llms.txt` を生成（コミットし忘れても本番の内容がずれない）
+- `sitemap.xml` の `<lastmod>` をデプロイ時の日付に書き換え
 
 ---
 
@@ -183,6 +190,56 @@ window.LAB_NEWS = [
 
 ---
 
+## 「AI に聞く」と llms.txt
+
+訪問者が普段使っている AI（ChatGPT / Claude / Gemini / Perplexity）に、この研究室の
+公開情報を読ませて質問してもらう仕組みです。**サーバも API キーも使いません。**
+GitHub Pages のような静的ホスティングでそのまま動き、費用もかかりません。
+
+やっていることは 2 つだけです。
+
+1. サイトが **`/llms.txt`**（研究室の要約を機械可読にした 1 ファイル）を公開する
+2. 「AI に聞く」のボタンは、プロンプトを URL に埋めた **ただのリンク**
+
+```
+ChatGPT     https://chatgpt.com/?q={prompt}&hints=search
+Claude      https://claude.ai/new?q={prompt}
+Gemini      https://www.google.com/search?udm=50&q={prompt}   ← Google AI モード
+Perplexity  https://www.perplexity.ai/search?q={prompt}
+```
+
+プロンプトは「まず `llms.txt` を読んでから答えてください」で始まります。AI 側が
+自分で取りに行けるので、こちらは本文を送りつける必要がありません。
+
+### llms.txt は自動生成
+
+`llms.txt` は **手で編集しないでください。** `assets/js/data.js` から生成しています。
+
+```bash
+node scripts/build-llms.mjs      # llms.txt を書き出す
+```
+
+内容（研究テーマ・進行中のプロジェクト・卒研インフォグラフィック・更新情報・アクセス・
+外部リンク）はすべて `data.js` が出どころなので、サイト本体を更新すれば要約も追随します。
+デプロイ時にも同じスクリプトが走るため、生成物のコミットを忘れても本番はずれません。
+
+### 文言・送り先の編集
+
+- `window.LAB_I18N.{ja,en}.sections.askai` — ボタン名、3 つの入口（`intents`）、注意書き
+- `window.LAB_ASKAI.sources` — プロンプトに添える外部ソース（researchmap / 大学公式教員ページ /
+  GitHub / Portfolio）
+- `window.LAB_ASKAI.providers` — 送り先。`tpl` の `{q}` が URL エンコード済みプロンプトに置換されます
+
+### 設計上の注意
+
+- 訪問者の入力はどこにも保存しません。開いた先の AI サービスに渡るだけです。
+- URL 長は日本語 1 文字あたり約 9 バイトに膨らみます。現状は約 2,500 文字で、
+  4 サービスとも問題なく開きます（Google は 1 万文字超まで受け付けることを実測で確認）。
+  `intents` の文面を大幅に長くするときは、この点だけ気にしてください。
+- ボタンは右下に浮かび、Tweaks トリガの真上に積みます。スクロール 40px で現れます。
+
+---
+
 ## デザイントークン（色・余白）
 
 CSS Custom Properties で全てコントロールしています（`assets/css/style.css` 冒頭）：
@@ -260,6 +317,16 @@ CSS Custom Properties で全てコントロールしています（`assets/css/s
 ### E. 配色 / アクセントカラーを変更したい / 試したい
 
 > `Tweaks` パネルの「Palette」を `Linear Cool` に切り替えた状態の見栄えをスクリーンショットで確認したいです。気に入ったら、`assets/js/app.jsx` の `TWEAK_DEFAULTS.palette` を `linear-cool` に固定してください。Hero モードもあわせて比較したいので、`field`（既定）・`geometry`・`fluid` の見比べ用の静止画を 3 枚お願いします。
+
+### G. 「AI に聞く」の入口や文言を直したいとき
+
+> `assets/js/data.js` の `window.LAB_I18N.ja.sections.askai`（英語は `en` 側）を編集してください。
+> `llms.txt` は自動生成なので直接触らず、必要なら `scripts/build-llms.mjs` を直してから
+> `node scripts/build-llms.mjs` を実行してください。
+> ```
+> 直したい入口: 例）「配属を考えている学生として」→ …
+> 送り先の追加/削除: 例）Copilot を足す（URL テンプレートも）
+> ```
 
 ### F. ヒーロー図解の文言を直したいとき
 

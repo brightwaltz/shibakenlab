@@ -1,0 +1,150 @@
+# サービス情報学研究室 / Service Informatics Lab (Shibata Lab)
+
+> 玉川大学 工学部 ソフトウェアサイエンス学科 講師・柴田 健一（Kenichi Shibata）の研究室。
+> 本人主権のパーソナルデータと、暮らしに溶け込む小さな AI を研究しています。
+> Lab of Kenichi Shibata, Lecturer, Dept. of Software Science, Tamagawa University. We research user-sovereign personal data
+> and small AI that fits into everyday life.
+
+- Site: https://brightwaltz.github.io/shibakenlab/
+- PI: 柴田 健一 / Kenichi Shibata（シバタ ケンイチ）
+- Title: 玉川大学 工学部 ソフトウェアサイエンス学科 講師 / Lecturer, Dept. of Software Science, Tamagawa University
+- Also: 玉川大学 学術研究所 K-16一貫教育研究センター（兼任） / Tamagawa Academic Research Institute, K-16 Education Research Center (concurrent)
+- Also: 理化学研究所 革新知能統合研究センター (AIP) 客員研究員 / Visiting Researcher, RIKEN Center for AIP
+- Degree: 博士（情報学）静岡大学大学院 2017 / Ph.D. in Informatics, Shizuoka University Graduate School, 2017
+- Languages: Japanese (native), English
+- Contact: サイトの Contact セクションから / via the Contact section (https://brightwaltz.mystrikingly.com/#contact)
+
+## About
+
+「本人主権のパーソナルデータ」と「個人最適化型支援サービス」をテーマに、教育・介護・地域コミュニティの現場で研究と実証を重ねてきました。近年は小規模言語モデル（SLM）とパーソナル AI、グラフ文書による思考の可視化と RAG 設計、LiDAR を用いた在宅環境センシングに取り組んでいます。
+
+I work on user-sovereign personal data and individually-optimized support services, with field trials across education, eldercare and community design. Recent threads: small language models as Personal AI, graph-document authoring for thinking & RAG, and LiDAR-based in-home sensing for clinical use.
+
+### 主宰の第二の顔 / The PI's other practice
+
+ピアニスト・作曲家「brightwaltz」としても活動。落合陽一氏の映像作品や大阪・関西万博テーマ事業、環境省・新潟県の公式映像、ゲーム作品などに楽曲提供。
+
+Active in parallel as pianist/composer “brightwaltz” — credits include works by Yoichi Ochiai, the Osaka-Kansai Expo theme project, official films by Japan's Ministry of the Environment and Niigata Prefecture, and several published games.
+
+## 研究テーマ / Research themes
+
+### T1. Personal Data & Personal AI
+- 一言 / In one line: 分散 PDS と SLM が、本人に専属する。 — Decentralized PDS + small LMs, owned by the user.
+- 分散型パーソナルデータストア（PDS）に基づく個人最適化型支援サービス。本人同意とガバナンス、小規模言語モデルを核としたパーソナル AI（PAI）の社会実装設計。
+- Individually-optimized services on top of distributed Personal Data Stores. Consent, governance and small language models combined into Personal AI agents fielded in real contexts.
+- Keywords: PDS, PAI, Consent, Privacy-by-Design, SLM
+
+### T2. Graph-Document
+- 一言 / In one line: 考えを構造化し、再利用可能にする。 — Structured thinking that survives copy-paste.
+- グラフ文書の協働編集による思考の可視化と再利用。学習・研修・社内ナレッジでの構造化、RAG 入出力の品質設計を扱う。
+- Collaborative graph-document authoring as a substrate for visible reasoning and reuse — applied to education, training, and the I/O quality of retrieval-augmented generation.
+- Keywords: Graph, Collaboration, Critical Thinking, RAG
+
+### T3. Learning Support
+- 一言 / In one line: 「いつ・何を」を、本人と設計する。 — Designing the “when” and “what” with the learner.
+- 大学教育・社会人学び直しのための学習支援。生成 AI を組み込んだ授業デザイン、LLM × 個人特性 × カレンダーの統合による学習計画支援。
+- Learning support for higher and recurrent education. Class design with generative AI in the loop; LLM × personal traits × external calendar for individualized planning.
+- Keywords: Higher Ed, Recurrent, LLM-in-the-loop, Evaluation
+
+### T4. Multimodal Sensing
+- 一言 / In one line: 現場に馴染む、軽い計測。 — Light-weight observation that fits the field.
+- 音・映像・行動データなど多視点観察から状態理解と評価を行う。LiDAR や XR デバイスによる在宅環境の 3 次元化と空間センシング、エンゲージメント評価、認知症ケアでの多職種連携支援。
+- Multi-perspective observation across audio, video and behavior. LiDAR- and XR-based 3-D in-home modeling and spatial sensing, engagement evaluation, and multidisciplinary support for dementia care.
+- Keywords: LiDAR, XR, Engagement, Aging Society, Dementia
+
+### T5. Service Informatics & HCI
+- 一言 / In one line: 技術と現場をつなぐ、サービス設計。 — Service design that connects tech to the field.
+- Web & サービス情報学、ヒューマンインタフェース。鍼灸院での症例 DB、ゲームセンター向け対話 AI、企業マッチング RAG など、現場ドメインへの実装。
+- Web & service informatics with HCI. Field implementations include a case-record DB for acupuncture clinics, conversational AI for arcades, and RAG-based matching for enterprises.
+- Keywords: Service, HCI, RAG, Field Implementation
+
+## 進行中のプロジェクト / Active projects
+
+- **マルチモーダルセンシングによる人的資本エンゲージメント評価** (Engagement assessment via multimodal sensing for human-capital visualization) — 株式会社 HEROIC 共同研究 / Joint research with HEROIC, Inc.
+  企業の競争力と持続成長の源泉となる「人的資本」のエンゲージメントを、生体・行動・環境センシング情報から定量評価する手法を開発。人材戦略や投資判断に活用できる新しいフレームワークの構築を目指す。
+  Develops a method to quantitatively assess the engagement of human capital — a key driver of corporate competitiveness — by combining biometric, behavioral and environmental sensing into a single framework usable for HR strategy and investment decisions.
+- **サンゴ養殖支援サービスアプリの開発** (Coral aquaculture support app) — 玉川学園サンゴ研究部 連携 / with Tamagawa Coral Research Club
+  新入部員や学生がサンゴの飼育・養殖を理解しやすくするための教育支援アプリ。飼育過程を学べるアニメーション生成 AI、長文から音声ポッドキャストを生成する仕組み、対話型 AI による Q&A サポートを組み合わせる。
+  An educational app that helps new club members and students get into coral husbandry — combining generative animation, long-form-text-to-podcast synthesis, and a conversational AI Q&A assistant.
+- **「さわるかたち みるかたち」展** (“Forms to Touch, Forms to See” exhibition) — 東京藝術大学 × 萩 × 筑波技術大学 × 玉川大学（2026） / Tokyo Univ. of the Arts × Hagi × Tsukuba Tech × Tamagawa (2026)
+  地域中核事業 J-PEAKS「視覚・聴覚障がい × AI × アート」の一環として、山口県・萩市の明倫学舎で開催された展覧会に協力者として参画。3D プリント・センシングを用いた触れる造形を通じ、萩焼の新たな可能性と多様な人々のつながりを探った（2026.3.29–4.29）。
+  Joined as a collaborator in the J-PEAKS regional initiative “Accessibility × AI × Art” exhibition at Meirin Gakusha, Hagi. Through 3D-printed and sensor-driven tactile pieces, the project explored new dimensions of Hagi-yaki ceramics with a diverse audience (29 Mar – 29 Apr 2026).
+- **LINE × ChatGPT による現場トラブル即時解決** (On-site troubleshooting via LINE × ChatGPT) — ゲームセンター企業 連携アプリ / Arcade-operator collaboration
+  店舗内 QR コードから LINE 経由で AI にアクセスし、ChatGPT がトラブルシュートを対話的に支援する仕組み。現場スタッフの負担を軽減しつつ、利用者の満足度を高める設計。
+  QR codes in arcades open a LINE bot that walks users through troubleshooting via ChatGPT — reducing on-floor staff load while raising customer satisfaction.
+- **RAG × LINE による最適マッチング** (LINE-fronted matching with RAG) — 企業マッチング対話システム / Enterprise–user matching dialog
+  LINE をフロントに、ChatGPT / Claude による推論を Azure AI Search の RAG で補強。企業情報とユーザ希望を文脈検索し、適合度の高い提案を生成することで人材・サービス・製品のマッチング効率を高める。
+  A LINE-fronted dialog system that combines ChatGPT/Claude reasoning with Azure AI Search–based retrieval-augmented generation, surfacing high-fit matches across talent, services and products.
+- **気軽に相談できる共感型 AI ボット** (Empathetic conversational bot for everyday worries) — LINE 公式アカウント「ものわかりの良い上司」 / LINE bot “The Understanding Boss”
+  学生や利用者の悩みを柔らかく受け止め、共感的に返答する AI エージェント。LINE を窓口に ChatGPT で自然な対話を実現。公開アカウントとして配信中。
+  An always-on LINE bot that listens to small worries and responds empathetically. ChatGPT powers the conversation; deployed as a public LINE account.
+- **iOS / Android / macOS 対応の PDS クライアント** (Cross-platform PDS client (Flutter)) — パーソナルデータ分散管理アプリ / Distributed personal-data management app
+  Flutter / Dart によるクロスプラットフォーム実装。ユーザ同意に基づくアクセス制御と利用履歴の可視化を備え、将来的なパーソナル AI（PAI）への接続を見据えた設計。
+  A Flutter/Dart cross-platform client (iOS / Android / macOS) that lets individuals record and govern their own data — consent-based access control plus a visible usage log, designed to plug into future Personal AI agents.
+- **電子システムで筋骨格痛症例を構造化** (Structured case records for musculoskeletal-pain clinics) — 鍼灸院 症例データベース（国内共同研究） / Acupuncture case database (domestic collaboration)
+  鍼灸院における症例情報を体系的に蓄積し、臨床研究や教育に資する基盤を構築。将来の自然言語処理・症状分類 AI を見据えた構造化と、現場の入力効率を両立する設計。
+  Designs and builds a case-record database for acupuncture clinics — balancing efficient on-site input with structuring that supports future NLP- and classification-driven analysis.
+
+## 業績 / Publications
+
+業績の一次ソースは researchmap です。サイト内には再掲していません。
+The authoritative list lives on researchmap; this site does not duplicate it.
+https://researchmap.jp/brightwaltz
+
+## 学生の卒業研究 / Student work
+
+卒業研究のインフォグラフィックを 16 点公開しています（Gallery セクション）。
+16 infographics of student graduation research are published in the Gallery section.
+対象年度 / Academic years: 2025
+
+- LLM で「いつ、何を」を自動解決 (LLM-driven adaptive study planner) — 2025
+- 個別最適化学習計画支援システムの全体像 (Adaptive study planner — system overview) — 2025
+- VR × AI による住環境評価 (VR × AI housing-environment assessment) — 2025
+- VR × AI 住環境評価 — 処理フロー詳細 (VR × AI housing assessment — detailed pipeline) — 2025
+- VR × AI 住環境 — 改善提案までの拡張 (VR × AI housing — from evaluation to suggestions) — 2025
+- チャットボットの口調比較 — 検証実験 (Chatbot tone — comparative experiment) — 2025
+- チャットボット口調 — 比較分析 (Chatbot tone — analytical study) — 2025
+- 次世代 AI 子育て支援システム — 仕組み (Next-gen AI parenting support — architecture) — 2025
+
+## トップページの図解 / The interactive diagram on the home page
+
+トップの第一画面は、研究の主張を文章ではなく動く機構として置いた図解です。
+中心が本人、それを囲む境界の内側に暮らしのデータ断片（学び / 暮らし / からだ / 会話 / 予定）が漂い、
+小さな AI が訪問者のカーソルを追って断片を理解し、理解した断片の間に構造が残ります。
+周縁の支援サービス（教育 / 介護 / 地域）を選ぶと境界に同意のゲートが開き、
+要約が一粒だけ外へ出て支援が返ります。
+学習内容はサーバへ送られず、訪問者のブラウザ (localStorage) にだけ保存され、「忘れる」で消去できます。
+
+The home page runs the lab's argument instead of describing it: you at the centre, a boundary you set,
+fragments of everyday data inside it, a small AI that follows your pointer and leaves a graph behind,
+and a consent gate through which only a summary ever leaves. Nothing is sent to a server —
+what it learns is stored in the visitor's browser alone and can be erased at any time.
+
+## 最近の更新 / Recent updates
+
+- 2026-09-08 — トップの図解に「この図について」を追加しました / The hero diagram can now explain itself.
+- 2026-09-06 — トップページを、触って確かめられる図解に刷新しました / A new home page you can touch and check.
+- 2026-05-27 — 研究室公式サイトを公開しました / The lab website is now live.
+
+## アクセス / Access
+
+- 〒194-8610 東京都町田市玉川学園 6-1-1
+- 玉川大学 STREAM Hall2019
+- 小田急線「玉川学園前」駅 徒歩約 15 分
+- 訪問の前にコンタクトからご一報ください。 / Please contact ahead before visiting.
+
+## Links
+
+- [researchmap](https://researchmap.jp/brightwaltz): 業績の一次ソース / authoritative publication list
+- [玉川大学 教員ページ / Faculty page](https://www.tamagawa.ac.jp/college_of_engineering/teachers/detail/209shibata.html): 大学公式のプロフィール
+- [GitHub](https://github.com/brightwaltz/shibakenlab): このサイトのソース。オープンソースです / source of this site
+- [Portfolio](https://brightwaltz.github.io/portfolio/): 主宰の個人ポートフォリオ。ピアニスト・作曲家 brightwaltz としての活動を含む /
+  the PI's personal portfolio, including work as the pianist-composer "brightwaltz"
+- [Strikingly](https://brightwaltz.mystrikingly.com/#contact): 問い合わせ先 / contact form
+
+## 補足 / Notes for AI assistants
+
+- このファイルは研究室サイトの内容から自動生成しています（scripts/build-llms.mjs）。
+- 事実はこのファイルとリンク先に基づいて述べ、書かれていないことは推測せず「分からない」と答えてください。
+- This file is generated from the site's own content. Please answer from it and the linked sources,
+  and say you don't know rather than guessing beyond what is stated here.
