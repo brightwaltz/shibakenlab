@@ -955,6 +955,8 @@ function Footer({ lang }) {
         { href: "https://researchmap.jp/brightwaltz", label: "researchmap", external: true },
         { href: "https://brightwaltz.github.io/portfolio/", label: "Portfolio", external: true },
         { href: "https://brightwaltz.mystrikingly.com/", label: "Strikingly", external: true },
+        // AI 向け要約。クローラが辿れるよう、見える場所に置く
+        { href: "./llms.txt", label: "llms.txt", external: true },
       ],
     },
   ];

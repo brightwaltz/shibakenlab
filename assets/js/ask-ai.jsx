@@ -59,27 +59,41 @@ function AskAI({ lang = "ja" }) {
   if (!CFG || !T) return null;
 
   // ── プロンプト ────────────────────────────────────────────────────────────
-  // 「まず llms.txt を読んで」から始めるのが肝。AI は自分で取りに行ける。
+  // llms.txt を読んでもらうのが本筋だが、公開直後の URL は検索インデックスに
+  // 無く、Perplexity や Google AI モードは「取得できません」で止まる。
+  // そこで要点（誰が・何を・いま何を）をプロンプト自体に載せ、llms.txt は
+  // 「読める場合の詳細」に格下げする。要点は data.js から都度組み立てる。
+  const digest = () => {
+    const B = window.LAB_BIO, TH = window.LAB_THEMES || [], PR = window.LAB_PROJECTS_LIST || [];
+    const j = lang === "ja";
+    const kw = [...new Set(TH.flatMap((t) => t.kw || []))].slice(0, 12).join(", ");
+    const themes = TH.map((t) => (j ? t.ja.title : t.en.title)).join(j ? "／" : " / ");
+    const projects = PR.slice(0, 4).map((p) => (j ? p.titleJa : p.titleEn)).join(j ? "／" : " / ");
+    return j
+      ? `${B.name.ja}（${B.title.ja}、${B.degree.ja}）。研究テーマ：${themes}。キーワード：${kw}。進行中：${projects}。`
+      : `${B.name.en} (${B.title.en}; ${B.degree.en}). Themes: ${themes}. Keywords: ${kw}. Current projects: ${projects}.`;
+  };
+
   const buildPrompt = () => {
     const it = T.intents[intent] || T.intents[0];
     const q = free.trim();
     const srcs = CFG.sources.map((s) => `${s.label}: ${s.href}`).join(" / ");
     if (lang === "ja") {
       return [
-        "これは玉川大学 工学部 ソフトウェアサイエンス学科・柴田研究室（サービス情報学研究室）が、自ら公開している研究室サイトについての質問です。",
-        `まず ${CFG.llms} を読んでから答えてください。`,
+        "玉川大学 工学部 ソフトウェアサイエンス学科・柴田研究室（サービス情報学研究室）が自ら公開している研究室サイトについての質問です。",
         it.ask,
         q ? `特に知りたいこと：${q}` : "",
-        `他の情報源：${srcs}`,
+        `サイトの要約：${digest()}`,
+        `詳細は ${CFG.llms} にあります。取得できる場合は読んでから答えてください。取得できない場合は、この要約と次の情報源から答えてください：${srcs}`,
         "書かれていないことは推測せず、分からないことは分からないと答えてください。",
       ].filter(Boolean).join(" ");
     }
     return [
       "This is a question about the public website of the Service Informatics Lab (Shibata Lab), Dept. of Software Science, Tamagawa University, published by the lab itself.",
-      `Start by reading ${CFG.llms}, then answer.`,
       it.ask,
       q ? `In particular: ${q}` : "",
-      `Other sources: ${srcs}`,
+      `Site summary: ${digest()}`,
+      `Details are at ${CFG.llms} — read it first if you can fetch it. If you cannot, answer from this summary and these sources: ${srcs}`,
       "Do not guess beyond what is stated; say you don't know when you don't.",
     ].filter(Boolean).join(" ");
   };

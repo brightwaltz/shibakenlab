@@ -8,4 +8,10 @@
     <xhtml:link xmlns:xhtml="http://www.w3.org/1999/xhtml" rel="alternate" hreflang="ja" href="https://brightwaltz.github.io/shibakenlab/"/>
     <xhtml:link xmlns:xhtml="http://www.w3.org/1999/xhtml" rel="alternate" hreflang="en" href="https://brightwaltz.github.io/shibakenlab/?lang=en"/>
   </url>
+  <url>
+    <loc>https://brightwaltz.github.io/shibakenlab/llms.txt</loc>
+    <lastmod>2026-09-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
 </urlset>
