@@ -1295,10 +1295,12 @@ select.pub-tag option { background: #0e1230; color: #fff; }
    It stacks above the Tweaks trigger, which owns the very corner. */
 .askai {
   position: fixed; right: 18px; bottom: 66px; z-index: 2147483643;
-  opacity: 0; transform: translateY(8px); pointer-events: none;
-  transition: opacity 0.5s var(--ease-out), transform 0.5s var(--ease-out);
+  animation: askaiIn 0.6s var(--ease-out) both;
 }
-.askai[data-shown="true"] { opacity: 1; transform: none; pointer-events: auto; }
+@keyframes askaiIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
+}
 
 .askai__btn {
   appearance: none; cursor: pointer;

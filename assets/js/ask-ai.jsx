@@ -17,20 +17,11 @@ function AskAI({ lang = "ja" }) {
   const CFG = window.LAB_ASKAI;
   const T = (window.LAB_I18N[lang] && window.LAB_I18N[lang].sections.askai) || null;
 
-  const [shown, setShown] = React.useState(false);  // スクロールで現れる
   const [open, setOpen]   = React.useState(false);
   const [intent, setIntent] = React.useState(0);
   const [free, setFree]   = React.useState("");
   const panelRef = React.useRef(null);
   const btnRef   = React.useRef(null);
-
-  // ヒーローを少し離れてから出す。第一画面は図に集中してもらう。
-  React.useEffect(() => {
-    const onScroll = () => { if (window.scrollY > 40) setShown(true); };
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
 
   // 開いている間だけ: Esc と外側クリックで閉じる
   React.useEffect(() => {
@@ -101,7 +92,7 @@ function AskAI({ lang = "ja" }) {
   const href = (tpl) => tpl.replace("{q}", encodeURIComponent(buildPrompt()));
 
   return (
-    <div className="askai" data-shown={shown}>
+    <div className="askai">
       {open && (
         <div className="askai__panel" role="dialog" aria-label={T.title}
              ref={panelRef} tabIndex={-1}>
