@@ -419,9 +419,9 @@ window.LAB_BIO = {
   // 第二の顔：音楽家 brightwaltz として活動 — ポートフォリオより
   altLife: {
     ja:
-      "ピアニスト・作曲家「brightwaltz」としても活動。落合陽一氏の映像作品や大阪・関西万博テーマ事業、環境省・新潟県の公式映像、ゲーム作品などに楽曲提供。",
+      "ピアニスト・作曲家「brightwaltz」としても活動。落合陽一氏の映像作品や環境省・新潟県の公式映像、ゲーム作品などに楽曲を提供。2026 年はナカダリオ監督のイマーシブ作品『Nox』で音楽を担当し、同作は第 83 回ヴェネチア国際映画祭 Venice Immersive Competition に正式選出されたほか、ロッテルダム国際映画祭 CineMart Lightroom、高雄国際映画祭 XR コンペティション部門にも選ばれました。",
     en:
-      "Active in parallel as pianist/composer “brightwaltz” — credits include works by Yoichi Ochiai, the Osaka-Kansai Expo theme project, official films by Japan's Ministry of the Environment and Niigata Prefecture, and several published games.",
+      "Active in parallel as pianist/composer “brightwaltz” — credits include works by Yoichi Ochiai, official films by Japan's Ministry of the Environment and Niigata Prefecture, and several published games. In 2026, brightwaltz composed the music for Rio Nakada's immersive XR work “Nox”, an official selection of the Venice Immersive Competition at the 83rd Venice International Film Festival, also selected for IFFR CineMart Lightroom and the XR Competition of the Kaohsiung Film Festival.",
   },
 };
 
