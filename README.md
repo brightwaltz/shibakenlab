@@ -4,6 +4,8 @@
 本番は GitHub Pages 上で `https://brightwaltz.github.io/shibakenlab/` として配信されます。
 `main` ブランチへの push をトリガーに GitHub Actions が自動デプロイします。
 
+このリポジトリは Claude Code（Anthropic）を使って作っています。
+
 ---
 
 ## サイトの位置づけ
