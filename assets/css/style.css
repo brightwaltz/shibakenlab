@@ -5,6 +5,8 @@
    ─────────────────────────────────────────────────────────────────────────── */
 
 :root {
+  /* 暗い配色だけで作っている。OS のライトモードには切り替えない。 */
+  color-scheme: dark;
   /* default palette — Tamagawa Night */
   --c-primary: #0B2C5C;
   --c-deep:    #061838;
@@ -209,10 +211,12 @@ button { font: inherit; color: inherit; }
   background: var(--grad-accent);
   -webkit-background-clip: text; background-clip: text; color: transparent;
 }
-/* Keep CJK title line atomic — never break inside the second em-wrapped phrase */
+/* Never break inside a CJK word: line breaks only at the <wbr> phrase
+   boundaries given in data.js (title_b). overflow-wrap: anywhere is the last
+   resort so the line can never run off a narrow screen. */
 .hero__title em {
   word-break: keep-all;
-  overflow-wrap: normal;
+  overflow-wrap: anywhere;
 }
 .hero__sub {
   max-width: 64ch;
@@ -1526,34 +1530,6 @@ select.pub-tag option { background: #0e1230; color: #fff; }
 
 /* Legacy `.footer` retained for backward compatibility but unused now. */
 .footer { display: none; }
-
-/* ── Light theme (prefers-color-scheme: light) ────────────────────────────── */
-/* When the user's OS prefers light, swap to the Vercel-Mono-ish neutral palette
-   automatically.  The Tweaks panel selection still wins (palette stored in
-   localStorage); this block only fires when the JS-applied palette hasn't been
-   set yet at boot — implemented in app.jsx, this CSS just provides a
-   declarative fallback for pure-CSS renders. */
-@media (prefers-color-scheme: light) {
-  :root[data-os-theme="auto"] {
-    --c-bg:      #FAFAFA;
-    --c-bg-2:    #F3F4F8;
-    --c-ink:     #0A0A0A;
-    --c-ink-2:   rgba(10, 10, 10, 0.74);
-    --c-ink-3:   rgba(10, 10, 10, 0.52);
-    --c-line:    rgba(10, 10, 10, 0.10);
-    --c-line-2:  rgba(10, 10, 10, 0.06);
-    --c-glass:   rgba(255, 255, 255, 0.65);
-    --c-glass-2: rgba(255, 255, 255, 0.85);
-  }
-  :root[data-os-theme="auto"] body { color: var(--c-ink); }
-  :root[data-os-theme="auto"] .stage-bg {
-    background:
-      radial-gradient(55vw 55vw at 18% 12%, color-mix(in oklab, var(--c-a1) 12%, transparent), transparent 60%),
-      radial-gradient(50vw 50vw at 86% 18%, color-mix(in oklab, var(--c-a3) 12%, transparent), transparent 65%),
-      linear-gradient(180deg, var(--c-bg) 0%, var(--c-bg-2) 100%);
-  }
-  :root[data-os-theme="auto"] .nav { background: rgba(255, 255, 255, 0.6); }
-}
 
 /* ── Print styles ─────────────────────────────────────────────────────────── */
 @media print {
