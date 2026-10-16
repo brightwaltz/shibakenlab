@@ -103,6 +103,14 @@ function Nav({ lang, setLang }) {
 }
 
 // ── HeroSection ─────────────────────────────────────────────────────────────
+// 見出しの句。配列なら句の境目にだけ改行の候補 (<wbr>) を置く。文字列はそのまま。
+function phrases(text) {
+  if (!Array.isArray(text)) return text;
+  return text.map((p, i) => (
+    <React.Fragment key={i}>{i > 0 && <wbr />}{p}</React.Fragment>
+  ));
+}
+
 function HeroSection({ lang, mode }) {
   const h = I18N[lang].hero;
   const Hero = window.Hero;
@@ -124,7 +132,7 @@ function HeroSection({ lang, mode }) {
       <div className="hero__inner">
         <div className="eyebrow reveal" data-d="0">{h.eyebrow}</div>
         <h1 className="hero__title reveal" data-d="1">
-          {h.title_a}<br/><em>{h.title_b}</em>
+          {h.title_a}<br/><em>{phrases(h.title_b)}</em>
         </h1>
         <p className="hero__sub reveal" data-d="2">{h.sub}</p>
         <div className="hero__ctas reveal" data-d="3">
@@ -216,13 +224,6 @@ function App() {
   // Apply palette + grain + cursor settings from tweaks
   React.useEffect(() => {
     applyPalette(tw.palette);
-    // Tell CSS whether to honor prefers-color-scheme.  Only when the user
-    // has the default ("tama-night") palette do we let the OS preference take
-    // over via the @media block in style.css.
-    document.documentElement.setAttribute(
-      "data-os-theme",
-      tw.palette === "tama-night" ? "auto" : "user"
-    );
   }, [tw.palette]);
   React.useEffect(() => {
     document.body.style.setProperty("--grain-on", tw.grain ? "1" : "0");
