@@ -15,7 +15,6 @@ const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
 
 // 右下の Tweaks ボタンは、URL に ?tweaks を付けたときだけ出す（訪問者には見せない開発用の道具）。
 const SHOW_TWEAKS = new URLSearchParams(window.location.search).has("tweaks");
-if (SHOW_TWEAKS) document.documentElement.classList.add("has-tweaks");
 
 // Apply a palette to the document root (CSS custom properties).
 function applyPalette(id) {

@@ -550,7 +550,7 @@ function HeroField({ lang = "ja" }) {
           if (!light) ctx.globalCompositeOperation = "source-over";
           // 粒に何が起きているかを添える — 矢印にはラベルを
           if (cap) {
-            ctx.font = "500 11px Inter, 'Noto Sans JP', sans-serif";
+            ctx.font = "500 11px Geist, 'Noto Sans JP', sans-serif";
             ctx.textBaseline = "middle";
             ctx.textAlign = "left";
             ctx.fillStyle = light ? "rgba(10,10,10,0.85)" : "rgba(236,238,246,0.92)";
