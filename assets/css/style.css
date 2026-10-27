@@ -194,7 +194,7 @@ button { font: inherit; color: inherit; }
   }
   .nav__panel[data-open="true"] a { opacity: 1; transform: none; }
   /* メニューを開いている間は「AI に聞く」を隠す */
-  .menu-open .askai { opacity: 0; pointer-events: none; }
+  .menu-open .askai { visibility: hidden; }  /* 出現アニメーションが opacity を固定するので visibility で隠す */
 }
 
 /* ── Hero ─────────────────────────────────────────────────────────────────── */
