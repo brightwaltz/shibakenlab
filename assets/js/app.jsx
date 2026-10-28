@@ -13,6 +13,9 @@ const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
   "grain": true
 }/*EDITMODE-END*/;
 
+// 右下の Tweaks ボタンは、URL に ?tweaks を付けたときだけ出す（訪問者には見せない開発用の道具）。
+const SHOW_TWEAKS = new URLSearchParams(window.location.search).has("tweaks");
+
 // Apply a palette to the document root (CSS custom properties).
 function applyPalette(id) {
   const p = palettes.find((x) => x.id === id) || palettes[0];
@@ -64,19 +67,38 @@ function BrandMark() {
   );
 }
 
+const NAV_IDS = ["about", "research", "map", "gallery", "publications", "access", "news", "contact"];
+
 function Nav({ lang, setLang }) {
   const i = I18N[lang].nav;
   const [atTop, setAtTop] = React.useState(true);
+  const [open, setOpen] = React.useState(false);
   React.useEffect(() => {
     const onScroll = () => setAtTop(window.scrollY < 24);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+  // スマホのメニュー：開いている間は背面をスクロールさせない。Esc と画面幅の拡大で閉じる
+  React.useEffect(() => {
+    document.body.style.overflow = open ? "hidden" : "";
+    document.documentElement.classList.toggle("menu-open", open);
+    if (!open) return;
+    const onKey = (e) => { if (e.key === "Escape") setOpen(false); };
+    const wide = window.matchMedia("(min-width: 881px)");
+    const onWide = (m) => { if (m.matches) setOpen(false); };
+    window.addEventListener("keydown", onKey);
+    wide.addEventListener("change", onWide);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      wide.removeEventListener("change", onWide);
+    };
+  }, [open]);
   const link = (id, label) => (
     <a href={`#${id}`} key={id}>{label}</a>
   );
   return (
+    <>
     <header className="nav" data-at-top={atTop}>
       <a href="#home" className="nav__brand">
         <BrandMark />
@@ -98,7 +120,25 @@ function Nav({ lang, setLang }) {
         <button aria-pressed={lang === "en"} onClick={() => setLang("en")}
                 title="Switch to English (press L)">EN</button>
       </div>
+      <button type="button" className="nav__burger"
+              aria-expanded={open} aria-controls="nav-panel"
+              aria-label={open
+                ? (lang === "ja" ? "メニューを閉じる" : "Close menu")
+                : (lang === "ja" ? "メニューを開く" : "Open menu")}
+              onClick={() => setOpen(!open)}>
+        <span></span><span></span>
+      </button>
     </header>
+    {/* ヘッダーの外に置く（ヘッダーの backdrop-filter の中だと全画面にならないため） */}
+    <div id="nav-panel" className="nav__panel" data-open={open}
+         onClick={(e) => { if (e.target.closest("a")) setOpen(false); }}>
+      <nav aria-label={lang === "ja" ? "ページ内の目次" : "On this page"}>
+        {NAV_IDS.map((id, idx) => (
+          <a href={`#${id}`} key={id} style={{ "--i": idx }}>{i[id]}</a>
+        ))}
+      </nav>
+    </div>
+    </>
   );
 }
 
@@ -402,7 +442,7 @@ function App() {
         grain={tw.grain}
         setGrain={(v) => setTweak("grain", v)}
       />
-      <TweaksTrigger />
+      {SHOW_TWEAKS && <TweaksTrigger />}
     </>
   );
 }

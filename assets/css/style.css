@@ -38,7 +38,7 @@
   --type-h3:      clamp(20px, 2.4vw, 28px);
   --type-body:    clamp(15px, 1.05vw, 17px);
   --type-small:   13px;
-  --type-micro:   11.5px;
+  --type-micro:   12px;
 
   --pad-x: clamp(20px, 5vw, 96px);
 
@@ -57,7 +57,7 @@ html {
   text-rendering: optimizeLegibility;
 }
 body {
-  font-family: "Inter", "Noto Sans JP", -apple-system, BlinkMacSystemFont,
+  font-family: "Geist", "Noto Sans JP", -apple-system, BlinkMacSystemFont,
                "Hiragino Kaku Gothic ProN", "ヒラギノ角ゴ ProN W3",
                Meiryo, sans-serif;
   font-feature-settings: "ss01", "cv11", "palt";
@@ -150,18 +150,51 @@ button { font: inherit; color: inherit; }
 }
 
 .nav__burger { display: none; }
+.nav__panel { display: none; }
 @media (max-width: 880px) {
-  .nav { padding: 12px 16px; }
+  .nav { padding: 12px 16px; gap: 10px; }
   .nav__brand span:last-child { display: none; }
-  .nav__menu {
-    gap: 14px; font-size: 11.5px; flex: 1;
-    overflow-x: auto; scrollbar-width: none;
-    justify-content: flex-end;
-    padding-right: 4px;
-    mask-image: linear-gradient(90deg, transparent, #000 18px, #000 calc(100% - 18px), transparent);
+  .nav__menu { display: none; }
+  .nav__lang { margin-left: auto; }
+  .nav__burger {
+    display: inline-block; position: relative; flex: none;
+    width: 40px; height: 40px; border-radius: 999px;
+    appearance: none; border: 1px solid var(--c-line);
+    background: var(--c-glass); cursor: pointer;
   }
-  .nav__menu::-webkit-scrollbar { display: none; }
-  .nav__menu a { white-space: nowrap; }
+  .nav__burger span {
+    position: absolute; left: 12px; right: 12px; top: 50%; height: 1.5px; margin-top: -0.75px;
+    border-radius: 2px; background: var(--c-ink);
+    transition: transform 0.5s var(--ease-out);
+  }
+  .nav__burger span:first-child { transform: translateY(-4px); }
+  .nav__burger span:last-child  { transform: translateY(4px); }
+  .nav__burger[aria-expanded="true"] span:first-child { transform: rotate(45deg); }
+  .nav__burger[aria-expanded="true"] span:last-child  { transform: rotate(-45deg); }
+
+  .nav__panel {
+    display: block; position: fixed; inset: 0; z-index: 49;
+    padding: 88px 24px 40px; overflow-y: auto;
+    background: rgba(5, 8, 24, 0.94);
+    -webkit-backdrop-filter: blur(24px); backdrop-filter: blur(24px);
+    opacity: 0; visibility: hidden;
+    transition: opacity 0.3s var(--ease-out), visibility 0s linear 0.3s;
+  }
+  .nav__panel[data-open="true"] {
+    opacity: 1; visibility: visible;
+    transition: opacity 0.3s var(--ease-out), visibility 0s;
+  }
+  .nav__panel a {
+    display: block; padding: 14px 0;
+    font-size: 24px; line-height: 32px; font-weight: 600; letter-spacing: 0.01em;
+    color: var(--c-ink); border-bottom: 1px solid var(--c-line-2);
+    opacity: 0; transform: translateY(24px);
+    transition: opacity 0.5s var(--ease-out), transform 0.5s var(--ease-out);
+    transition-delay: calc(min(var(--i) * 60ms, 340ms));
+  }
+  .nav__panel[data-open="true"] a { opacity: 1; transform: none; }
+  /* メニューを開いている間は「AI に聞く」を隠す */
+  .menu-open .askai { visibility: hidden; }  /* 出現アニメーションが opacity を固定するので visibility で隠す */
 }
 
 /* ── Hero ─────────────────────────────────────────────────────────────────── */
@@ -448,7 +481,7 @@ button { font: inherit; color: inherit; }
 .hfield__mark {
   position: absolute; width: 18px; height: 18px; border-radius: 50%;
   display: inline-flex; align-items: center; justify-content: center;
-  font-size: 10px; font-weight: 600; font-variant-numeric: tabular-nums;
+  font-size: 12px; font-weight: 600; font-variant-numeric: tabular-nums;
   color: var(--c-bg); background: var(--c-ink-3);
   pointer-events: auto; cursor: pointer; will-change: transform;
   transition: background 0.25s var(--ease-out), box-shadow 0.25s var(--ease-out);
@@ -802,8 +835,18 @@ button { font: inherit; color: inherit; }
 
 @media (max-width: 880px) {
   .manifesto {
-    height: calc(100vh + (var(--m-len, 3) - 1) * 100vh);
+    height: auto;
+    padding: 96px var(--pad-x);
   }
+  .manifesto__stage { position: static; height: auto; }
+  .manifesto__count { display: none; }
+  .manifesto__viewport { display: flex; flex-direction: column; gap: 56px; }
+  .manifesto__card {
+    transform: none !important; opacity: 1 !important; filter: none !important;
+    pointer-events: auto !important;
+    padding: 0;
+  }
+  .manifesto__nav { display: none; }
 }
 
 /* ── Research theme cards ─────────────────────────────────────────────────── */
@@ -871,7 +914,7 @@ button { font: inherit; color: inherit; }
   display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto;
 }
 .theme__kw span {
-  font-size: 11px; letter-spacing: 0.04em;
+  font-size: 12px; letter-spacing: 0.04em;
   padding: 4px 9px; border-radius: 999px;
   background: rgba(255,255,255,0.04); border: 1px solid var(--c-line);
   color: var(--c-ink-2);
@@ -900,7 +943,7 @@ button { font: inherit; color: inherit; }
   margin-right: 6px; vertical-align: middle;
 }
 .map-node circle { transition: transform .25s var(--ease-out), opacity .25s; cursor: pointer; }
-.map-node text { fill: var(--c-ink); font-size: 11px; letter-spacing: 0.02em; pointer-events: none; }
+.map-node text { fill: var(--c-ink); font-size: 12px; letter-spacing: 0.02em; pointer-events: none; }
 .map-node--theme text { font-weight: 600; font-size: 12.5px; }
 .map-node--theme circle { filter: drop-shadow(0 0 12px color-mix(in oklab, var(--c-a2) 60%, transparent)); }
 /* Non-theme labels hidden until the node is hovered; eliminates dense
@@ -1052,7 +1095,7 @@ select.pub-tag option { background: #0e1230; color: #fff; }
 .pub-venue { font-size: var(--type-small); color: var(--c-ink-3); font-style: italic; margin: 0; }
 .pub-meta { display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
 .pub-badge {
-  font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase;
+  font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase;
   padding: 4px 8px; border-radius: 4px;
   background: rgba(255,255,255,0.06); border: 1px solid var(--c-line);
   color: var(--c-ink-2);
@@ -1180,7 +1223,7 @@ select.pub-tag option { background: #0e1230; color: #fff; }
 .news-body { color: var(--c-ink-2); margin: 0; font-size: var(--type-small); line-height: 1.7; text-wrap: pretty; }
 .news-tags { display: flex; gap: 6px; margin-top: 10px; }
 .news-tags span {
-  font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase;
+  font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase;
   padding: 3px 8px; border-radius: 4px; color: var(--c-ink-3);
   border: 1px solid var(--c-line);
 }
@@ -1222,7 +1265,7 @@ select.pub-tag option { background: #0e1230; color: #fff; }
   color: var(--c-ink);
   display: inline-flex; align-items: center; gap: 8px;
   padding: 10px 14px; border-radius: 999px;
-  font: 500 12px/1 "Inter", "Noto Sans JP", system-ui, sans-serif;
+  font: 500 12px/1 "Geist", "Noto Sans JP", system-ui, sans-serif;
   letter-spacing: 0.08em; text-transform: uppercase;
   cursor: default;
   transition: transform .35s var(--ease-out),
@@ -1250,7 +1293,7 @@ select.pub-tag option { background: #0e1230; color: #fff; }
   position: fixed; top: -100px; left: 12px; z-index: 2147483647;
   padding: 10px 16px; border-radius: 8px;
   background: #fff; color: #050818;
-  font: 600 14px/1 "Inter", "Noto Sans JP", system-ui, sans-serif;
+  font: 600 14px/1 "Geist", "Noto Sans JP", system-ui, sans-serif;
   text-decoration: none;
   transition: top .2s var(--ease-out);
 }
@@ -1448,7 +1491,7 @@ select.pub-tag option { background: #0e1230; color: #fff; }
   border: 1px solid var(--c-line);
   border-radius: 4px;
   padding: 2px 8px;
-  font-size: 11px;
+  font-size: 12px;
   color: var(--c-ink);
 }
 @media (pointer: coarse) { .lang-hint { display: none; } }
@@ -1675,7 +1718,7 @@ select.pub-tag option { background: #0e1230; color: #fff; }
   display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto;
 }
 .proj-item__kw span {
-  font-size: 10.5px;
+  font-size: 12px;
   letter-spacing: 0.04em;
   padding: 3px 8px;
   border-radius: 999px;
@@ -1696,4 +1739,10 @@ select.pub-tag option { background: #0e1230; color: #fff; }
   outline: 1px solid color-mix(in oklab, var(--c-a2) 60%, transparent);
   outline-offset: 2px;
   transition: outline-color .4s;
+}
+
+/* スマホのメニュー：動きを減らす設定では、ずらして出さずにそのまま表示 */
+@media (prefers-reduced-motion: reduce) {
+  .nav__panel a, .nav__burger span { transition: none; }
+  .nav__panel a { transform: none; }
 }

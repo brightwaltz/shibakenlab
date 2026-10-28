@@ -121,7 +121,7 @@ python3 -m http.server 8000
 
 ### 表示の切り替え
 
-右下 **Tweaks** の Hero モードで `field`（既定）/ `particles` / `geometry` / `fluid` を切り替えられます。
+右下 **Tweaks** の Hero モードで `field`（既定）/ `particles` / `geometry` / `fluid` を切り替えられます。Tweaks のボタンは、URL の末尾に `?tweaks` を付けたとき（例：`https://brightwaltz.github.io/shibakenlab/?tweaks`）だけ表示されます。訪問者には見えません。
 `field` 以外は従来の Three.js シーン（`assets/js/hero.jsx`）で、削除していません。
 既定値は `assets/js/app.jsx` の `TWEAK_DEFAULTS.heroMode`。
 
@@ -129,6 +129,12 @@ python3 -m http.server 8000
 
 - **必ずブラウザで実際にマウントさせて確認してください。** ブラウザ側の Babel は `const` を `var` に落とすため、宣言順の誤りが TDZ エラーにならず `undefined` として走り、React 18 はルートごと巻き戻して**ページ全体が真っ白**になります。構文チェックだけでは捕まりません。
 - 「この図について」パネルは画面下端に `position: fixed` で置いています。ヒーローの下端に絶対配置すると、ヒーローが画面より高いときにボタンが画面外に出て押せなくなります。
+
+---
+
+## 見た目を直すとき
+
+`.claude/skills/site-design-ja/SKILL.md` に、触らないもの（Personal Field・配色・暗い地）、文字の大きさの下限（12px）、書体、スマホのメニューなどの決まりと、直すときの手順（診断の一覧 → 見本 → 了承 → 直す）が書いてあります。Claude Code でこのリポジトリを開いて「見た目を直して」と頼むと、このスキルが使われます。
 
 ---
 
@@ -238,7 +244,7 @@ node scripts/build-llms.mjs      # llms.txt を書き出す
 - URL 長は日本語 1 文字あたり約 9 バイトに膨らみます。現状は約 2,500 文字で、
   4 サービスとも問題なく開きます（Google は 1 万文字超まで受け付けることを実測で確認）。
   `intents` の文面を大幅に長くするときは、この点だけ気にしてください。
-- ボタンは右下に浮かび、Tweaks トリガの真上に積みます。スクロール 40px で現れます。
+- ボタンは右下に浮かびます（`?tweaks` で Tweaks トリガを出しているときは、その真上に積みます）。スクロール 40px で現れます。
 
 ---
 
@@ -355,6 +361,6 @@ CSS Custom Properties で全てコントロールしています（`assets/css/s
 
 - コンテンツ著作権: 柴田研究室 / 玉川大学
 - フレームワーク: React 18, Three.js, D3.js（CDN ロード）。ヒーロー図解は素の Canvas 2D で、外部ライブラリを使っていません。
-- フォント: Inter, Noto Sans JP（Google Fonts）
+- フォント: Geist, Noto Sans JP（Google Fonts）
 
 不明点や追加要望は、リポジトリの Issue または主宰までご連絡ください。

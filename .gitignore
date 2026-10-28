@@ -10,5 +10,6 @@ node_modules/
 # Design/work snapshots from parallel agents (kept locally for diff/backup only)
 shibakenlab[0-9]*/
 
-# Local Claude Code launch / preview config
-.claude/
+# Local Claude Code launch / preview config（スキルだけは共有する）
+.claude/*
+!.claude/skills/
