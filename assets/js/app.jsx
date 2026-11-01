@@ -330,18 +330,21 @@ function App() {
   React.useEffect(() => {
     const el = document.getElementById("cursor-glow");
     if (!el) return;
-    if (!tw.cursor) { el.style.display = "none"; return; }
+    // 動きを減らす設定と、指で触る端末では出さない（追う相手のカーソルが無い）
+    const still = window.matchMedia("(prefers-reduced-motion: reduce), (pointer: coarse)").matches;
+    if (!tw.cursor || still) { el.style.display = "none"; return; }
     el.style.display = "block";
     let tx = window.innerWidth / 2, ty = window.innerHeight / 2;
     let cx = tx, cy = ty;
-    const onMove = (e) => { tx = e.clientX; ty = e.clientY; };
-    window.addEventListener("pointermove", onMove);
-    let raf;
+    let raf = 0;
+    // 追いついたらループを止め、次にカーソルが動いたら回し直す
     const loop = () => {
       cx += (tx - cx) * 0.12; cy += (ty - cy) * 0.12;
       el.style.transform = `translate(${cx}px, ${cy}px) translate(-50%, -50%)`;
-      raf = requestAnimationFrame(loop);
+      raf = Math.abs(tx - cx) + Math.abs(ty - cy) > 0.5 ? requestAnimationFrame(loop) : 0;
     };
+    const onMove = (e) => { tx = e.clientX; ty = e.clientY; if (!raf) raf = requestAnimationFrame(loop); };
+    window.addEventListener("pointermove", onMove);
     loop();
     return () => { cancelAnimationFrame(raf); window.removeEventListener("pointermove", onMove); };
   }, [tw.cursor]);

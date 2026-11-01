@@ -285,7 +285,7 @@ function Manifesto({ lang }) {
               <div key={it.no}
                    className={`manifesto__dot ${idx === active ? "is-active" : ""}`}>
                 <div className="manifesto__dotfill"
-                     style={{ width: `${fill * 100}%` }}>
+                     style={{ transform: `scaleX(${fill})` }}>
                 </div>
               </div>
             );
