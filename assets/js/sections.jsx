@@ -125,8 +125,7 @@ function About({ lang }) {
               borderRadius: "50%",
               overflow: "hidden",
               margin: "0 auto 22px",
-              border: "1px solid rgba(255,255,255,0.12)",
-              boxShadow: "0 20px 60px -20px color-mix(in oklab, var(--c-a2) 60%, transparent)",
+              border: "1px solid var(--c-line)",
             }}
           >
             <img
@@ -444,33 +443,21 @@ window.ResearchThemes = ResearchThemes;
 function PaiDiagram({ lang }) {
   return (
     <svg className="theme__diagram" viewBox="0 0 520 180" aria-hidden="true">
-      <defs>
-        <linearGradient id="paiGrad" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%"  stopColor="var(--c-a1)"/>
-          <stop offset="50%" stopColor="var(--c-a2)"/>
-          <stop offset="100%" stopColor="var(--c-a3)"/>
-        </linearGradient>
-        <radialGradient id="paiCore" cx="50%" cy="50%" r="50%">
-          <stop offset="0%"  stopColor="rgba(34,211,238,0.55)"/>
-          <stop offset="100%" stopColor="rgba(34,211,238,0)"/>
-        </radialGradient>
-      </defs>
-
       {/* Backdrop grid */}
-      <rect x="0" y="0" width="520" height="180" fill="rgba(255,255,255,0.012)"/>
+      <rect x="0" y="0" width="520" height="180" fill="none"/>
 
       {/* Person (left) */}
       <g transform="translate(50, 90)">
-        <circle r="22" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.3)" strokeWidth="1.2"/>
-        <circle cy="-6" r="6" fill="rgba(255,255,255,0.6)"/>
-        <path d="M -10 10 Q 0 4 10 10 L 10 14 Q 0 8 -10 14 Z" fill="rgba(255,255,255,0.6)"/>
-        <text x="0" y="44" fill="rgba(236,238,246,0.55)" fontSize="10"
+        <circle r="22" fill="var(--c-surface)" stroke="var(--c-line-strong)" strokeWidth="1.2"/>
+        <circle cy="-6" r="6" fill="var(--c-ink-2)"/>
+        <path d="M -10 10 Q 0 4 10 10 L 10 14 Q 0 8 -10 14 Z" fill="var(--c-ink-2)"/>
+        <text x="0" y="44" fill="var(--c-ink-2)" fontSize="10"
               textAnchor="middle" letterSpacing="0.1em">{lang === "ja" ? "本人" : "Person"}</text>
       </g>
 
       {/* PDS — scattered data points */}
       <g transform="translate(180, 90)">
-        <circle r="42" fill="rgba(59,130,246,0.04)" stroke="rgba(255,255,255,0.12)" strokeDasharray="3 3"/>
+        <circle r="42" fill="none" stroke="var(--c-line-strong)" strokeDasharray="3 3"/>
         {[
           [-22, -12], [-8, -22], [14, -16], [-18, 6], [4, 4],
           [22, 10], [-12, 18], [10, 22], [0, -4], [-26, 0],
@@ -479,17 +466,17 @@ function PaiDiagram({ lang }) {
                   fill={i % 3 === 0 ? "var(--c-a1)" : i % 3 === 1 ? "var(--c-a2)" : "var(--c-a3)"}
                   opacity="0.85"/>
         ))}
-        <text x="0" y="62" fill="rgba(236,238,246,0.55)" fontSize="10"
+        <text x="0" y="62" fill="var(--c-ink-2)" fontSize="10"
               textAnchor="middle" letterSpacing="0.1em">PDS</text>
       </g>
 
       {/* SLM agent — central node */}
       <g transform="translate(330, 90)">
-        <circle r="36" fill="url(#paiCore)"/>
-        <circle r="22" fill="rgba(5,8,24,0.85)" stroke="url(#paiGrad)" strokeWidth="1.6"/>
-        <text x="0" y="4" fill="#fff" fontSize="11" fontWeight="600"
+        <circle r="36" fill="none"/>
+        <circle r="22" fill="var(--c-ui)" stroke="var(--c-ui)" strokeWidth="1.6"/>
+        <text x="0" y="4" fill="var(--c-on-ui)" fontSize="11" fontWeight="600"
               textAnchor="middle" letterSpacing="0.06em">SLM</text>
-        <text x="0" y="56" fill="rgba(236,238,246,0.55)" fontSize="10"
+        <text x="0" y="56" fill="var(--c-ink-2)" fontSize="10"
               textAnchor="middle" letterSpacing="0.1em">{lang === "ja" ? "パーソナル AI" : "Personal AI"}</text>
       </g>
 
@@ -498,19 +485,19 @@ function PaiDiagram({ lang }) {
         {[[-40, -28], [-30, 0], [-44, 28]].map(([x, y], i) => (
           <g key={i} transform={`translate(${x}, ${y})`}>
             <rect x="-18" y="-9" width="36" height="18" rx="4"
-                  fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.18)"/>
+                  fill="var(--c-surface)" stroke="var(--c-line-strong)"/>
           </g>
         ))}
-        <text x="-30" y="58" fill="rgba(236,238,246,0.55)" fontSize="10"
+        <text x="-30" y="58" fill="var(--c-ink-2)" fontSize="10"
               textAnchor="middle" letterSpacing="0.1em">{lang === "ja" ? "支援サービス" : "Services"}</text>
       </g>
 
       {/* Connecting lines + animated pulse */}
       <g>
-        <line x1="80" y1="90" x2="142" y2="90" stroke="rgba(255,255,255,0.22)"/>
-        <line x1="220" y1="90" x2="298" y2="90" stroke="rgba(255,255,255,0.22)"/>
-        <line x1="362" y1="90" x2="420" y2="90" stroke="rgba(255,255,255,0.22)"/>
-        <line x1="430" y1="62" x2="430" y2="118" stroke="rgba(255,255,255,0.14)"/>
+        <line x1="80" y1="90" x2="142" y2="90" stroke="var(--c-line-strong)"/>
+        <line x1="220" y1="90" x2="298" y2="90" stroke="var(--c-line-strong)"/>
+        <line x1="362" y1="90" x2="420" y2="90" stroke="var(--c-line-strong)"/>
+        <line x1="430" y1="62" x2="430" y2="118" stroke="var(--c-line)"/>
         {/* Pulses */}
         <circle r="3" fill="var(--c-a1)">
           <animate attributeName="cx" values="80;142" dur="2.4s" repeatCount="indefinite"/>
@@ -818,32 +805,28 @@ function Access({ lang }) {
         >
           <svg className="access-map-svg" viewBox="0 0 400 400" aria-hidden="true">
             <defs>
-              <linearGradient id="mp-bg" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stopColor="rgba(34,211,238,0.18)" />
-                <stop offset="100%" stopColor="rgba(139,92,246,0.18)" />
-              </linearGradient>
               <pattern id="mp-grid" width="32" height="32" patternUnits="userSpaceOnUse">
-                <path d="M 32 0 L 0 0 0 32" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="1" />
+                <path d="M 32 0 L 0 0 0 32" fill="none" stroke="var(--c-line-2)" strokeWidth="1" />
               </pattern>
             </defs>
-            <rect width="400" height="400" fill="url(#mp-bg)" />
+            <rect width="400" height="400" fill="var(--c-surface)" />
             <rect width="400" height="400" fill="url(#mp-grid)" />
             {/* Stylized road traces */}
-            <path d="M 0 240 Q 120 220 200 240 T 400 200" stroke="rgba(255,255,255,0.18)" strokeWidth="3" fill="none" />
-            <path d="M 60 0 Q 80 140 220 200 T 400 320" stroke="rgba(255,255,255,0.14)" strokeWidth="2" fill="none" />
-            <path d="M 0 100 Q 180 110 260 60 T 400 100" stroke="rgba(255,255,255,0.10)" strokeWidth="2" fill="none" />
+            <path d="M 0 240 Q 120 220 200 240 T 400 200" stroke="var(--c-line-strong)" strokeWidth="3" fill="none" />
+            <path d="M 60 0 Q 80 140 220 200 T 400 320" stroke="var(--c-line-strong)" strokeWidth="2" fill="none" />
+            <path d="M 0 100 Q 180 110 260 60 T 400 100" stroke="var(--c-line)" strokeWidth="2" fill="none" />
             {/* Tamagawa-gakuen-mae station marker */}
             <g transform="translate(140, 280)">
-              <circle r="14" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.3)" />
-              <text x="0" y="36" fill="rgba(236,238,246,0.7)" fontSize="11" textAnchor="middle" letterSpacing="0.05em">玉川学園前駅</text>
+              <circle r="14" fill="var(--c-surface)" stroke="var(--c-line-strong)" />
+              <text x="0" y="36" fill="var(--c-ink-2)" fontSize="11" textAnchor="middle" letterSpacing="0.05em">玉川学園前駅</text>
             </g>
-            {/* Lab marker (gradient pulse) */}
+            {/* Lab marker */}
             <g transform="translate(240, 180)">
-              <circle r="34" fill="rgba(59,130,246,0.18)" />
-              <circle r="22" fill="rgba(59,130,246,0.32)" />
-              <circle r="12" fill="#3B82F6" />
-              <circle r="4" fill="#fff" />
-              <text x="0" y="-46" fill="#fff" fontSize="12" fontWeight="600" textAnchor="middle" letterSpacing="0.05em">柴田研究室</text>
+              <circle r="34" fill="color-mix(in oklab, var(--c-ui) 8%, transparent)" />
+              <circle r="22" fill="color-mix(in oklab, var(--c-ui) 16%, transparent)" />
+              <circle r="12" fill="var(--c-ui)" />
+              <circle r="4" fill="var(--c-on-ui)" />
+              <text x="0" y="-46" fill="var(--c-ink)" fontSize="12" fontWeight="600" textAnchor="middle" letterSpacing="0.05em">柴田研究室</text>
             </g>
           </svg>
           <div className="access-map-cta">

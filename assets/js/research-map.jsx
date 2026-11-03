@@ -25,18 +25,10 @@ function ResearchMap() {
       .attr("preserveAspectRatio", "xMidYMid meet");
     svg.selectAll("*").remove();
 
-    // background subtle radial gradient (in SVG)
-    const defs = svg.append("defs");
-    const grad = defs.append("radialGradient")
-      .attr("id", "mapGlow").attr("cx", "50%").attr("cy", "50%").attr("r", "60%");
-    grad.append("stop").attr("offset", "0%").attr("stop-color", "rgba(34,211,238,0.18)");
-    grad.append("stop").attr("offset", "100%").attr("stop-color", "rgba(0,0,0,0)");
-    svg.append("rect").attr("width", W).attr("height", H).attr("fill", "url(#mapGlow)");
-
     const palette = (g) =>
       g === "theme"   ? "var(--c-a2)" :
       g === "keyword" ? "var(--c-a1)" :
-      g === "paper"   ? "var(--c-a3)" : "#ffffff";
+      /* paper / project */ "var(--c-a3)";
 
     const radius = (g) => g === "theme" ? 22 : g === "keyword" ? 10 : 8;
 
@@ -54,7 +46,8 @@ function ResearchMap() {
 
     nodeSel.append("circle")
       .attr("r", (d) => radius(d.group))
-      .attr("fill", (d) => d.group === "theme" ? "rgba(59,130,246,0.45)" : "rgba(255,255,255,0.04)")
+      .attr("fill", (d) => d.group === "theme"
+        ? "color-mix(in oklab, var(--c-a2) 22%, var(--c-surface))" : "var(--c-surface)")
       .attr("stroke", (d) => palette(d.group))
       .attr("stroke-width", (d) => d.group === "theme" ? 2 : 1);
 

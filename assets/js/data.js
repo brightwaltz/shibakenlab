@@ -1072,7 +1072,7 @@ window.LAB_FIELD = {
 // ── Palettes (used by Tweaks) ───────────────────────────────────────────────
 // Each palette stores: [primary, deep, accent1, accent2, accent3]
 window.LAB_PALETTES = [
-  { id: "tama-night", label: "Tamagawa Night", colors: ["#0B2C5C", "#061838", "#22D3EE", "#3B82F6", "#8B5CF6"] },
+  { id: "tama-night", label: "Tamagawa Night", colors: ["#0B2C5C", "#061838", "#2E6E8E", "#0B2C5C", "#6A5AA5"] },
   { id: "linear-cool", label: "Linear Cool", colors: ["#0E1230", "#06081C", "#5EEAD4", "#7C3AED", "#A78BFA"] },
   { id: "vercel-mono", label: "Vercel Mono", colors: ["#0A0A0A", "#000000", "#FAFAFA", "#888888", "#444444"] },
   { id: "ember", label: "Ember Glow", colors: ["#221026", "#0D0612", "#FB7185", "#F59E0B", "#A855F7"] },
