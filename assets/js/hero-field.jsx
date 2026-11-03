@@ -102,18 +102,20 @@ function HeroField({ lang = "ja" }) {
     let pal = null, sprites = [], whiteSprite = null, light = false;
     let spriteCache = new Map();
     const readPalette = () => {
-      const cs = getComputedStyle(document.documentElement);
+      const cs = getComputedStyle(host);
       const v = (n, fb) => cs.getPropertyValue(n).trim() || fb;
       const a1 = hfRgb(v("--c-a1", "#22D3EE"));
       const a2 = hfRgb(v("--c-a2", "#3B82F6"));
       const a3 = hfRgb(v("--c-a3", "#8B5CF6"));
       const bg = hfRgb(v("--c-bg", "#050818"));
       light = hfLum(bg) > 0.5;
-      // カテゴリ色は a1→a2→a3 のランプ上に等間隔で置く
+      // カテゴリ色は #home の --c-cat-0..4 を使う。無ければ a1→a2→a3 のランプ上に置く
       const ramp = (h) => (h <= 0.5 ? hfMix(a1, a2, h * 2) : hfMix(a2, a3, (h - 0.5) * 2));
       pal = {
         a1, a2, a3, bg,
-        cat: cats.map((c) => {
+        cat: cats.map((c, i) => {
+          const own = cs.getPropertyValue(`--c-cat-${i}`).trim();
+          if (own) return hfRgb(own);
           const base = ramp(c.hue);
           return light ? hfMix(base, [12, 14, 24], 0.34) : base;
         }),
@@ -479,7 +481,6 @@ function HeroField({ lang = "ja" }) {
       });
 
       // ── 断片 ──
-      if (!light) ctx.globalCompositeOperation = "lighter";
       // 理解した粒が増えるほど 1 粒あたりは控えめに。塊が白飛びしない。
       const load = 1 - 0.4 * (knownList.length / (frags.length || 1));
       for (let i = 0; i < frags.length; i++) {
@@ -491,7 +492,6 @@ function HeroField({ lang = "ja" }) {
         ctx.drawImage(sprites[f.cat], f.x - g / 2, f.y - g / 2, g, g);
       }
       ctx.globalAlpha = k > 0.001 ? 1 - k : 1;
-      if (!light) ctx.globalCompositeOperation = "source-over";
 
       // ── 支援サービス（周縁） ──
       svcs.forEach((s, i) => {
@@ -542,12 +542,10 @@ function HeroField({ lang = "ja" }) {
           cap = T.flowSupport;
         }
         if (mote) {
-          if (!light) ctx.globalCompositeOperation = "lighter";
           const sp = hfSpriteCache(col);
           ctx.drawImage(sp, mote[0] - 13, mote[1] - 13, 26, 26);
           ctx.fillStyle = light ? hfCss(col, 0.95) : "#fff";
           ctx.beginPath(); ctx.arc(mote[0], mote[1], 2.4, 0, HF_TAU); ctx.fill();
-          if (!light) ctx.globalCompositeOperation = "source-over";
           // 粒に何が起きているかを添える — 矢印にはラベルを
           if (cap) {
             ctx.font = "500 11px Geist, 'Noto Sans JP', sans-serif";
@@ -572,12 +570,10 @@ function HeroField({ lang = "ja" }) {
         ctx.arc(L.cx, L.cy, R * 0.155, -Math.PI / 2, -Math.PI / 2 + HF_TAU * ratio);
         ctx.stroke();
       }
-      if (!light) ctx.globalCompositeOperation = "lighter";
       const halo = (focus === "core" ? 70 : 46) + pulse * 16;
       ctx.globalAlpha = (k > 0.001 ? 1 - k : 1) * (light ? 0.35 : 0.7);
       ctx.drawImage(whiteSprite, L.cx - halo / 2, L.cy - halo / 2, halo, halo);
       ctx.globalAlpha = k > 0.001 ? 1 - k : 1;
-      if (!light) ctx.globalCompositeOperation = "source-over";
       ctx.fillStyle = light ? "#0A0A0A" : "#FFFFFF";
       ctx.beginPath(); ctx.arc(L.cx, L.cy, 3.4, 0, HF_TAU); ctx.fill();
 
@@ -591,12 +587,10 @@ function HeroField({ lang = "ja" }) {
       ctx.setLineDash([2, 5]);
       ctx.beginPath(); ctx.arc(ag.x, ag.y, reach, 0, HF_TAU); ctx.stroke();
       ctx.setLineDash([]);
-      if (!light) ctx.globalCompositeOperation = "lighter";
       const ah = 30 + pulse * 8;
       ctx.globalAlpha = (k > 0.001 ? 1 - k : 1) * (light ? 0.4 : 0.85);
       ctx.drawImage(hfSpriteCache(pal.a1), ag.x - ah / 2, ag.y - ah / 2, ah, ah);
       ctx.globalAlpha = k > 0.001 ? 1 - k : 1;
-      if (!light) ctx.globalCompositeOperation = "source-over";
       ctx.fillStyle = hfCss(pal.a1, 0.95);
       ctx.beginPath(); ctx.arc(ag.x, ag.y, 2.6, 0, HF_TAU); ctx.fill();
       // 本人 ↔ 小さな AI は常に繋がっている

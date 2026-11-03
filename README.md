@@ -115,7 +115,7 @@ python3 -m http.server 8000
 
 コードではなく `assets/js/data.js` を編集します。
 
-- `window.LAB_FIELD.categories` — 粒の 5 種別。`hue` は アクセント色ランプ（a1 → a2 → a3）上の位置 0..1。
+- `window.LAB_FIELD.categories` — 粒の 5 種別。色は `style.css` の `#home` にある `--c-cat-0`〜`--c-cat-4`（並び順）。`hue` は、その変数が無いときだけ使うアクセント色ランプ（a1 → a2 → a3）上の位置 0..1。
 - `window.LAB_FIELD.services` — 周縁の 3 サービス。`angDesk` は方位（度）、`cats` は要約に含む種別、`does` は hover 時の一文。
 - `window.LAB_I18N.{ja,en}.hero.field` — 図中のラベル、「この図について」パネルのタブ名、7 段階の案内 `steps`、保存の説明、`research`（研究との関係）。
 
@@ -134,7 +134,7 @@ python3 -m http.server 8000
 
 ## 見た目を直すとき
 
-`.claude/skills/site-design-ja/SKILL.md` に、触らないもの（Personal Field・配色・暗い地）、文字の大きさの下限（12px）、書体、スマホのメニューなどの決まりと、直すときの手順（診断の一覧 → 見本 → 了承 → 直す）が書いてあります。Claude Code でこのリポジトリを開いて「見た目を直して」と頼むと、このスキルが使われます。
+`.claude/skills/site-design-ja/SKILL.md` に、触らないもの（Personal Field・配色：最初の画面だけ紺、本文は明るい地）、文字の大きさの下限（12px）、書体、スマホのメニューなどの決まりと、直すときの手順（診断の一覧 → 見本 → 了承 → 直す）が書いてあります。Claude Code でこのリポジトリを開いて「見た目を直して」と頼むと、このスキルが使われます。
 
 ---
 
@@ -255,15 +255,18 @@ CSS Custom Properties で全てコントロールしています（`assets/css/s
 | 変数 | 役割 | 既定値 |
 | --- | --- | --- |
 | `--c-primary` | 玉川ネイビー | `#0B2C5C` |
-| `--c-deep` | 深い背景色 | `#061838` |
-| `--c-a1` | アクセント1（シアン） | `#22D3EE` |
-| `--c-a2` | アクセント2（ブルー） | `#3B82F6` |
-| `--c-a3` | アクセント3（パープル） | `#8B5CF6` |
-| `--c-bg / --c-bg-2` | ステージ背景の上下 | `#050818 / #08102b` |
+| `--c-deep` | 深い紺 | `#061838` |
+| `--c-ui` / `--c-on-ui` | ボタン・押された状態・フォーカスの色と、その上の文字 | `#0B2C5C / #FFFFFF` |
+| `--c-a1` / `--c-a2` / `--c-a3` | 種類を分ける色（研究マップの凡例など） | `#2E6E8E / #0B2C5C / #6A5AA5` |
+| `--c-bg / --c-bg-2` | 本文の地（明るい） | `#F3F5F8` |
+| `--c-surface` | カード・パネル | `#FFFFFF` |
+| `--c-ink` | 文字 | `#15213A` |
+
+最初の画面（`#home`）と、その上に重なっている間のナビだけは、同じ変数を紺の組（地 `#0B2C5C`、文字 `#F2F5FA`、図解の粒の 5 色 `--c-cat-0`〜`--c-cat-4`）に置き換えています。グラデーションと光彩は使いません。
 
 ユーザーは右下の **Tweaks** パネルから 4 つのパレット（Tamagawa Night / Linear Cool / Vercel Mono / Ember Glow）を切り替え、Hero モード（`field` / 粒子 / 幾何 / 流体）も即時に試せます。気に入った組み合わせは Tweaks の値が `assets/js/app.jsx` の `TWEAK_DEFAULTS` ブロックに自動保存されます。
 
-図解の粒の色は、このアクセント 3 色のランプ上から取っています（`LAB_FIELD.categories` の `hue`）。パレットを変えれば図解の配色も追従します。
+図解の粒の色は `#home` の `--c-cat-0`〜`--c-cat-4` から取っています。Tweaks のパレット（開発用）は `--c-a1`〜`--c-a3` などを書き換えますが、地の色は `style.css` が持ちます。
 
 ---
 

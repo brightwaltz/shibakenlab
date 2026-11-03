@@ -9,8 +9,8 @@ const palettes = window.LAB_PALETTES;
 const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
   "palette": "tama-night",
   "heroMode": "field",
-  "cursor": true,
-  "grain": true
+  "cursor": false,
+  "grain": false
 }/*EDITMODE-END*/;
 
 // 右下の Tweaks ボタンは、URL に ?tweaks を付けたときだけ出す（訪問者には見せない開発用の道具）。
@@ -26,15 +26,7 @@ function applyPalette(id) {
   r.setProperty("--c-a1",      c3);
   r.setProperty("--c-a2",      c4);
   r.setProperty("--c-a3",      c5);
-  // Tweak bg from primary
-  const isLightMono = id === "vercel-mono";
-  if (isLightMono) {
-    r.setProperty("--c-bg",   "#070707");
-    r.setProperty("--c-bg-2", "#000000");
-  } else {
-    r.setProperty("--c-bg",   "#050818");
-    r.setProperty("--c-bg-2", "#08102b");
-  }
+  // 地の色（--c-bg / --c-bg-2）は style.css が持つ。ここでは書かない。
   // Repaint the hero scene with fresh colors.
   if (window.__refreshHeroPalette) window.__refreshHeroPalette();
   if (window.__heroFieldRefreshPalette) window.__heroFieldRefreshPalette();
@@ -42,24 +34,17 @@ function applyPalette(id) {
 
 // ── Nav ─────────────────────────────────────────────────────────────────────
 // Brand mark — a tiny 3×3 mini-grid of dots that telegraphs "PDS → SLM core".
-// The center dot pulses; surrounding dots use the accent gradient.
+// The center dot pulses; surrounding dots use the muted ink.
 function BrandMark() {
   return (
     <svg className="brand-mark" viewBox="0 0 20 20" aria-hidden="true">
-      <defs>
-        <linearGradient id="bm-grad" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%"  stopColor="var(--c-a1)"/>
-          <stop offset="50%" stopColor="var(--c-a2)"/>
-          <stop offset="100%" stopColor="var(--c-a3)"/>
-        </linearGradient>
-      </defs>
       {[
         [3, 3, 1.2], [10, 3, 1.4], [17, 3, 1.2],
         [3, 10, 1.4], [10, 10, 2.4], [17, 10, 1.4],
         [3, 17, 1.2], [10, 17, 1.4], [17, 17, 1.2],
       ].map(([x, y, r], i) => (
         <circle key={i} cx={x} cy={y} r={r}
-                fill={i === 4 ? "url(#bm-grad)" : "rgba(255,255,255,0.55)"}
+                fill={i === 4 ? "var(--c-ui)" : "var(--c-ink-3)"}
                 className={i === 4 ? "brand-mark__core" : "brand-mark__dot"}
                 style={i === 4 ? null : { animationDelay: `${i * 0.12}s` }}/>
       ))}
